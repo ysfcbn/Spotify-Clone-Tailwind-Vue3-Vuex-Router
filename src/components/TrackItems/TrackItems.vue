@@ -6,13 +6,19 @@
 			activeTrack: trackOptions,
 			activeTrack: active,
 			'lg:pl-[2rem]':
-				favoriteSongs || albumPage || singlePage || TrackPage2 || playlistPage,
+				favoriteSongs ||
+				albumPage ||
+				singlePage ||
+				TrackPage2 ||
+				artistPage ||
+				playlistPage,
 			'pl-5':
 				favoriteSongs ||
 				albumPage ||
 				singlePage ||
 				userPage ||
 				TrackPage ||
+				artistPage ||
 				diskografiPage ||
 				playlistPage,
 			'lg:grid-cols-colProfile sm:grid-cols-colPresm': userPage,
@@ -112,7 +118,6 @@
 		</div>
 
 		<div
-			v-if="notShowArt"
 			:class="{
 				'lg2:flex': favoriteSongs || playlistPage,
 			}"
@@ -233,9 +238,7 @@ export default {
 		getToken() {
 			return this.$store.getters.accessToken;
 		},
-		notShowArt() {
-			return this.artistPage ? false : true;
-		},
+
 		allFavTracks() {
 			return this.$store.getters['favTracks/getTracks'].items;
 		},
@@ -367,6 +370,8 @@ export default {
 									  this.$store.dispatch('albums/clearTracksID2')
 									: this.userPage
 									? this.$store.dispatch('users/clearTracksID')
+									: this.artistPage
+									? this.$store.dispatch('artists/clearTracksID')
 									: '';
 								this.findFavTracks();
 								this.TrackPage ? this.findFavTracks2() : '';

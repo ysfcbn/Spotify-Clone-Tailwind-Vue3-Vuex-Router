@@ -491,7 +491,6 @@ export default {
 				},
 				0
 			);
-			console.log(totalMiliSeconds);
 			const hours = Math.floor(totalMiliSeconds / 1000 / 60 / 60);
 			const minutes = () => {
 				if (totalMiliSeconds > 3600000) {

@@ -151,6 +151,9 @@ export default {
 		userFavEpisodes() {
 			return this.getFavEpisodes.items;
 		},
+		getUserFavEpisodes() {
+			return this.getFavEpisodes?.items?.length;
+		},
 		favEpisodesIDs() {
 			return this.userFavEpisodes.map(item => item.episode.id).join(',');
 		},
@@ -185,7 +188,6 @@ export default {
 					}
 				)
 				.then(({ data }) => {
-					console.log(data);
 					this.$store.dispatch('episodes/isFavEpisode', data);
 				})
 				.catch(err => console.log(err));
@@ -195,7 +197,7 @@ export default {
 	async created() {
 		console.log('episodes Mounted');
 		this.episodes = true;
-		await this.fetchFavEpisodes();
+		this.getUserFavEpisodes ? '' : await this.fetchFavEpisodes();
 		await this.isUserFavEpisode();
 
 		this.header = document.getElementById('header');

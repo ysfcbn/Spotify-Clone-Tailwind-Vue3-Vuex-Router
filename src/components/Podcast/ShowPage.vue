@@ -1,5 +1,5 @@
 <template>
-	<section class="podcast--show--page box-border">
+	<section class="box-border">
 		<div
 			id="showPage"
 			class="p-5 h-[326px] max-h-[800px] min-h-[340px] w-full mt-[-66px] relative shadow-[2px_0px_5px_5px_rgba(0,0,0,0.4)]"
@@ -71,7 +71,6 @@
 				</div>
 				<div class="ml-2 flex items-center">
 					<ShowOptions
-						:showOptions="showOptions"
 						:follow="currentShowIsFav"
 						:addRemoveShow="addRemoveShow"
 					/>
@@ -183,7 +182,6 @@ export default {
 	data() {
 		return {
 			podcastShowPage: true,
-			showOptions: false,
 			episodeOptions: false,
 			follow: false,
 			toggle: false,
@@ -265,7 +263,6 @@ export default {
 					},
 				})
 				.then(({ data }) => {
-					console.log(data);
 					this.$store.dispatch('shows/currentShow', data);
 				})
 				.catch(err => console.log(err));
@@ -302,7 +299,6 @@ export default {
 					}
 				)
 				.then(({ data }) => {
-					console.log(data);
 					this.$store.dispatch('episodes/currentEpisodeIsFav', data);
 				})
 				.catch(err => console.log(err));
@@ -439,132 +435,6 @@ export default {
 		toggleDescription() {
 			this.toggle = !this.toggle;
 			this.htmlDescription();
-		},
-		totalDuration(played, duration, resume = false) {
-			let totalMiliSeconds;
-			let hours;
-			let minutes;
-			let seconds;
-
-			if (played && resume) {
-				totalMiliSeconds = duration - resume;
-
-				hours = Math.floor(totalMiliSeconds / 1000 / 60 / 60);
-
-				minutes = () => {
-					if (totalMiliSeconds > 3600000) {
-						return Math.abs(
-							Math.floor((totalMiliSeconds / 1000 / 60 / 60 - hours) * 60)
-						);
-					} else {
-						return Math.floor((totalMiliSeconds / 1000 / 60 / 60) * 60);
-					}
-				};
-				seconds = Math.abs(
-					Math.floor(
-						((totalMiliSeconds / 1000 / 60 / 60) * 60 - minutes()) * 60
-					)
-				);
-			} else if (played) {
-				totalMiliSeconds = this.episode?.duration_ms;
-				hours = Math.floor(totalMiliSeconds / 1000 / 60 / 60);
-
-				minutes = () => {
-					if (totalMiliSeconds > 3600000) {
-						return Math.abs(
-							Math.floor((totalMiliSeconds / 1000 / 60 / 60 - hours) * 60)
-						);
-					} else {
-						return Math.floor((totalMiliSeconds / 1000 / 60 / 60) * 60);
-					}
-				};
-				seconds = Math.abs(
-					Math.floor(
-						((totalMiliSeconds / 1000 / 60 / 60) * 60 - minutes()) * 60
-					)
-				);
-			} else {
-				totalMiliSeconds = duration - resume;
-
-				hours = Math.floor(totalMiliSeconds / 1000 / 60 / 60);
-
-				minutes = () => {
-					if (totalMiliSeconds > 3600000) {
-						return Math.abs(
-							Math.floor((totalMiliSeconds / 1000 / 60 / 60 - hours) * 60)
-						);
-					} else {
-						return Math.floor((totalMiliSeconds / 1000 / 60 / 60) * 60);
-					}
-				};
-				seconds = Math.abs(
-					Math.floor(
-						((totalMiliSeconds / 1000 / 60 / 60) * 60 - minutes()) * 60
-					)
-				);
-			}
-
-			const result = () => {
-				if (played && resume) {
-					if (totalMiliSeconds > 3600000) {
-						return hours + ' sa. ' + minutes() + ' dk.' + ' kaldı';
-					} else {
-						return minutes() + ' dk. ' + seconds + ' sn.' + ' kaldı';
-					}
-				} else if (!played && !resume) {
-					if (totalMiliSeconds > 3600000) {
-						return hours + ' sa. ' + minutes() + ' dk.';
-					} else {
-						return minutes() + ' dk. ' + seconds + ' sn.';
-					}
-				} else if (!played && resume) {
-					if (totalMiliSeconds > 3600000) {
-						return hours + ' sa. ' + minutes() + ' dk.' + ' kaldı';
-					} else {
-						return minutes() + ' dk. ' + seconds + ' sn.' + ' kaldı';
-					}
-				} else if (played) {
-					if (totalMiliSeconds > 3600000) {
-						return hours + ' sa. ' + minutes() + ' dk.';
-					} else {
-						return minutes() + ' dk. ' + seconds + ' sn.';
-					}
-				}
-			};
-
-			return result();
-		},
-
-		currentReleaseDate() {
-			const day = new Date(this.nextEpisode?.release_date).getDate();
-			const month =
-				this.getMonths[new Date(this.nextEpisode?.release_date).getMonth()];
-			const year = new Date(this.nextEpisode?.release_date).getFullYear();
-			if (new Date().getFullYear() === year) {
-				return `${day} ${month}`;
-			} else {
-				return `${month} ${year}`;
-			}
-		},
-		episodeBarProgress(duration, resume) {
-			return (100 * resume) / duration;
-		},
-
-		toggleOptions() {
-			this.showOptions = !this.showOptions;
-		},
-		toggleShowPageFunc(val) {
-			this.showOptions = val;
-		},
-		toggleFollow() {
-			this.follow = !this.follow;
-		},
-
-		toggleEpisodeOptions() {
-			this.episodeOptions = !this.episodeOptions;
-		},
-		toggleEpisodeOptionsFunc(val) {
-			this.episodeOptions = val;
 		},
 	},
 	computed: {

@@ -470,9 +470,6 @@ export default {
 		artistTopTracks() {
 			return this.$store.getters['artists/getTopTracks'];
 		},
-		artistFirstFiveTracks() {
-			return this.$store.getters['artists/getTopTracks'].slice(0, 5);
-		},
 
 		trackArtistName() {
 			return this.currentTrack?.artists;
@@ -561,7 +558,7 @@ export default {
 				.get(
 					'https://api.spotify.com/v1/artists/' +
 						this.currentTrack?.artists[0].id +
-						'/top-tracks?market=ES',
+						'/top-tracks?market=US',
 					{
 						headers: {
 							Accept: 'application/json',

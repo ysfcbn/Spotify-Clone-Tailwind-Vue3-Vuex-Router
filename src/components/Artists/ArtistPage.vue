@@ -124,19 +124,37 @@
 				</div>
 			</div>
 
-			<TrackItems
-				v-for="(track, i) in popSongs"
-				:key="track.id"
-				:index="i"
-				:artistPage="artistPage"
-				:selectArtCardName="selectArtCardName"
-				:margin="margin"
-				class="pl-4"
+			<div
+				:class="{ 'h-[17.5rem]': !seeMore, 'h-full': seeMore }"
+				class="relative overflow-y-hidden wrapper"
 			>
-				<template #trackName>{{ track.trackName }}</template>
-				<template #listenNumber>{{ track.listensNumb }}</template>
-				<template #duration>{{ track.duration }}</template>
-			</TrackItems>
+				<TrackItems
+					v-for="(track, i) in popSongs"
+					:key="track.id"
+					:id="track.id"
+					:index="i"
+					:artistPage="true"
+					:margin="true"
+					:findFavTracks="findFavTracks"
+					:addGreenHeartFavTracks="addGreenHeartFavTracks"
+					:removeGreenHeartFavTracks="removeGreenHeartFavTracks"
+				>
+					<template #trackImg>
+						<img
+							class="object-fit w-[40px] h-[40px] mr-4"
+							:src="track?.album?.images[2]?.url"
+							alt=""
+						/>
+					</template>
+					<template #trackName>
+						<p class="cursor-default">{{ track.name }}</p></template
+					>
+					<template #listenNumber>{{ track.popularity }}</template>
+					<template #duration>{{
+						trackDuration((duration = track.duration_ms))
+					}}</template>
+				</TrackItems>
+			</div>
 			<button
 				@click="seeMoreFunc"
 				class="m-2 text-[0.75rem] text-opacwhite5 hover:text-white leading-7 tracking-widest hover:text-underline-offset-8 font-semibold cursor-default uppercase mb-8"
@@ -240,9 +258,6 @@
 					<div class="col-span-4">
 						<button
 							class="relative h-[516px] rounded-xl bg-cover bg-center w-full bg-no-repeat hover:scale-[1.01] transition duration-200 linear"
-							style="
-								background-image: url('https://i.scdn.co/image/ab6761670000ecd403d8cd0eee5f305be414ab4d');
-							"
 						>
 							<div class="w-full h-full bg-[rgba(0,0,0,0.3)]"></div>
 							<div
@@ -551,7 +566,7 @@ export default {
 					type: 'Owner',
 					playlistName: 'RUN THAT BACK',
 					title: 'Hip Hop Forever. Playlist Image: Eminem & Snoop Dogg',
-					img: 'https://i.scdn.co/image/ab67706c0000da84c5300185bc4831bddf1c295c',
+					img: 'https://i.scdn.co/image/ab67706c0000da844343967b3ec617871c303473',
 				},
 				{
 					id: 4,
@@ -605,10 +620,25 @@ export default {
 		getToken() {
 			return this.$store.getters.accessToken;
 		},
+		currentArtists() {
+			return this.$store.getters['artists/getCurrentArtist'];
+		},
+		allFavTracks() {
+			return this.$store.getters['favTracks/getTracks'].items;
+		},
+		artistTopTracks() {
+			return this.$store.getters['artists/getTopTracks'];
+		},
+		getFavTracks() {
+			return this.$store.getters['artists/getfavTracksID'];
+		},
+		addGreenHeartEl() {
+			return this.getFavTracks.map(item => document.getElementById(`${item}`));
+		},
 	},
 	methods: {
 		async fetchArtist() {
-			return await axios
+			await axios
 				.get('https://api.spotify.com/v1/artists/' + this.id, {
 					headers: {
 						Accept: 'application/json',
@@ -618,16 +648,16 @@ export default {
 				})
 				.then(({ data }) => {
 					console.log(data);
-					return data;
+					this.$store.dispatch('artists/currentArtist', data);
 				})
 				.catch(err => console.log(err));
 		},
 		async fetchArtistTopTracks() {
-			return await axios
+			await axios
 				.get(
 					'https://api.spotify.com/v1/artists/' +
 						this.id +
-						'/top-tracks?market=ES',
+						'/top-tracks?market=US',
 					{
 						headers: {
 							Accept: 'application/json',
@@ -638,13 +668,76 @@ export default {
 				)
 				.then(({ data }) => {
 					console.log(data);
-					return data;
+					this.$store.dispatch('artists/topTracks', data.tracks);
 				})
 				.catch(err => console.log(err));
 		},
 
 		toggleFollow() {
 			this.follow = !this.follow;
+		},
+		findFavTracks() {
+			this.allFavTracks.forEach(track => {
+				this.artistTopTracks.forEach(item => {
+					if (track.track.id === item.id) {
+						this.$store.dispatch('artists/favTracksID', item.id);
+					}
+				});
+			});
+		},
+		addGreenHeartFavTracks(trackItem = false) {
+			if (!trackItem) {
+				this.addGreenHeartEl.forEach(item => {
+					item?.children[4].children[0].classList.remove(
+						'emptyHeart',
+						'animationEmptyHeart'
+					);
+					item?.children[4].children[0].classList.add('greenHeart');
+
+					item?.children[4].children[0].children[0].children[0].classList.remove(
+						'hidden'
+					);
+
+					item?.children[4].children[0].children[0].children[1].classList.add(
+						'hidden'
+					);
+				});
+			} else {
+				trackItem?.children[4].children[0].classList.remove(
+					'emptyHeart',
+					'animationEmptyHeart'
+				);
+				trackItem?.children[4].children[0].classList.add('greenHeart');
+				trackItem?.children[4].children[0].classList.add('animationGreenHeart');
+				trackItem?.children[4].children[0].children[0].children[0].classList.remove(
+					'hidden'
+				);
+
+				trackItem?.children[4].children[0].children[0].children[1].classList.add(
+					'hidden'
+				);
+			}
+		},
+		removeGreenHeartFavTracks(item) {
+			item?.children[4].children[0].classList.remove(
+				'greenHeart',
+				'animationGreenHeart'
+			);
+			item?.children[4].children[0].classList.add('emptyHeart');
+			item?.children[4].children[0].classList.add('animationEmptyHeart');
+
+			item?.children[4].children[0].children[0].children[0].classList.add(
+				'hidden'
+			);
+			item?.children[4].children[0].children[0].children[1].classList.remove(
+				'hidden'
+			);
+		},
+		trackDuration(duration) {
+			const minutes = Math.floor(duration / 60000);
+			const seconds = Math.floor((duration % 60000) / 1000);
+			const result = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+			return result;
 		},
 		openCard(_, e) {
 			if (!e.target.closest('.card--container')) return;
@@ -695,13 +788,12 @@ export default {
 		},
 		seeMoreFunc() {
 			this.seeMore = !this.seeMore;
-			this.popSongs = this.seeMore ? this.popularSongs : this.firsFive;
 		},
 		toggleDiskografi() {
 			this.$router.push('/artist/id/discography/all');
 		},
 	},
-	async mounted() {
+	async created() {
 		console.log('artistPage Mounted');
 		this.artistPage = true;
 		this.margin = true;
@@ -710,9 +802,13 @@ export default {
 		await this.fetchArtist();
 		await this.fetchArtistTopTracks();
 
-		this.diskografiList = this.popularSongs;
-		this.firsFive = this.popularSongs.slice(0, 5);
-		this.popSongs = this.firsFive;
+		this.popSongs = this.artistTopTracks;
+		this.findFavTracks();
+		await this.getFavTracks;
+
+		console.log(this.addGreenHeartEl);
+		console.log(this.getFavTracks);
+		this.addGreenHeartFavTracks();
 
 		this.albumList = this.diskografiList.filter(
 			album => album.type === 'Album'
@@ -790,6 +886,10 @@ export default {
 		this.$emit('toggleHeaderBtn', false);
 		this.artistPage = false;
 	},
+	unmounted() {
+		this.$store.dispatch('controller/closeHeaderBtn');
+		this.$store.dispatch('artists/clearTracksID');
+	},
 };
 </script>
 
@@ -832,6 +932,43 @@ export default {
 		background-position: center;
 		background-image: url('https://i.ytimg.com/vi/uKWEDqkyKvU/maxresdefault.jpg');
 		transition: all 0.2s;
+	}
+}
+
+.greenHeart {
+	color: #1fdf64;
+}
+.animationGreenHeart {
+	animation: heart 0.2s ease-in;
+}
+
+.emptyHeart {
+	color: #9b9b9b;
+}
+.animationEmptyHeart {
+	animation: emptyheart 0.2s ease-in-out 1 alternate;
+}
+
+@keyframes heart {
+	33% {
+		transform: scale(1.4);
+	}
+	66% {
+		transform: scale(1.2);
+	}
+	100% {
+		transform: scale(1.5);
+	}
+}
+@keyframes emptyheart {
+	33% {
+		transform: translateX(-6px) rotate(-20deg);
+	}
+	66% {
+		transform: translateX(6px) rotate(20deg);
+	}
+	100% {
+		transform: translateX(0) rotate(0);
 	}
 }
 </style>

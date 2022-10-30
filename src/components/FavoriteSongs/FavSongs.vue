@@ -1,7 +1,7 @@
 <template>
-	<section class="begenilen-sarkılar box-border">
+	<section class="box-border">
 		<div
-			id="favoriteSongs"
+			id="favoriteSongss"
 			class="bg-bgpurple p-5 max-h-[800px] min-h-[340px] w-full mt-[-66px] relative shadow-[2px_0px_5px_5px_rgba(0,0,0,0.4)] bg-gradient-to-b from-darkpurple via-purpl4 to-dark-1"
 			style="height: 326px"
 		>
@@ -161,6 +161,7 @@ export default {
 			albumOptions: false,
 			episodeOptions: false,
 			options2: '',
+			favSongEl: null,
 			observer2: null,
 			presentation: null,
 			headerHeight: document.getElementById('header').getBoundingClientRect()
@@ -172,7 +173,7 @@ export default {
 	},
 	methods: {
 		async fetchFavTracks() {
-			return await axios
+			await axios
 				.get('https://api.spotify.com/v1/me/tracks?limit=50', {
 					headers: {
 						Accept: 'application/json',
@@ -183,7 +184,6 @@ export default {
 				.then(({ data }) => {
 					console.log(data.items);
 					this.$store.dispatch('favTracks/getTracks', data);
-					return data.items;
 				})
 				.catch(err => console.log(err));
 		},
@@ -287,25 +287,23 @@ export default {
 			return this.$store.getters.getCurrentUser?.display_name;
 		},
 		userAvatar() {
-			return this.$store.getters.getCurrentUser.images[0].url;
+			return this.$store.getters.getCurrentUser?.images[0].url;
 		},
 		currentUserID() {
 			return this.$store.getters.getCurrentUser?.id;
 		},
+
 		favTracks() {
-			return this.$store.getters['favTracks/getTracks'].items;
+			return this.$store.getters['favTracks/getTracks']?.items;
 		},
 		totalTrack() {
-			return this.$store.getters['favTracks/getTracks'].total;
+			return this.$store.getters['favTracks/getTracks']?.total;
 		},
 		trackImage() {
 			return this.favTracks.images[0]?.url;
 		},
 		getMonths() {
 			return this.$store.getters['controller/getMonths'];
-		},
-		getFavTracks() {
-			return this.$store.getters['playlists/getfavTracksID'];
 		},
 	},
 	watch: {
@@ -359,67 +357,72 @@ export default {
 		window.addEventListener('resize', this.resizeOption2);
 		this.favoriteSongs = true;
 		console.log('FavoriteSongs Mounted');
-		await this.fetchFavTracks();
 
-		this.presentation = document.querySelector('.presentation');
-		this.body = document.body;
-		this.header = document.getElementById('header');
-		this.favSongEl = document.getElementById('favoriteSongs');
+		this.favTracks?.length ? '' : this.fetchFavTracks();
 
-		this.options = {
-			root: null,
-			threshold: [0.1, 0.4],
-		};
+		setTimeout(() => {
+			this.presentation = document.querySelector('.presentation');
+			this.body = document.body;
+			this.header = document.getElementById('header');
+			this.favSongEl = document.getElementById('favoriteSongss');
+			console.log(this.favSongEl);
 
-		this.observer = new IntersectionObserver(entries => {
-			this.header.classList.toggle(
-				'fav-songs-intersec-bg1',
-				entries[0].intersectionRatio <= 0.4
-			);
-			this.header.classList.toggle(
-				'fav-songs-intersec-bg2',
-				entries[0].intersectionRatio <= 0.1
-			);
+			this.options = {
+				root: null,
+				threshold: [0.1, 0.4],
+			};
 
-			entries[0].intersectionRatio >= 0.1
-				? this.$store.dispatch('controller/closeHeaderBtn')
-				: this.$store.dispatch('controller/showHeaderBtn');
-		}, this.options);
+			this.observer = new IntersectionObserver(entries => {
+				this.header.classList.toggle(
+					'fav-songs-intersec-bg1',
+					entries[0].intersectionRatio <= 0.4
+				);
+				this.header.classList.toggle(
+					'fav-songs-intersec-bg2',
+					entries[0].intersectionRatio <= 0.1
+				);
 
-		this.observer.observe(this.favSongEl);
+				entries[0].intersectionRatio >= 0.1
+					? this.$store.dispatch('controller/closeHeaderBtn')
+					: this.$store.dispatch('controller/showHeaderBtn');
+			}, this.options);
 
-		this.options2 = {
-			root: document.body,
-			threshold: 0,
-			rootMargin: `${
-				+((this.headerHeight * 100) / this.bodyHeight).toFixed(1) * -1
-			}% 0px -${
-				100 - +((this.headerHeight * 100) / this.bodyHeight).toFixed(1)
-			}% 0px`,
-		};
+			this.favSongEl ? this.observer.observe(this.favSongEl) : '';
 
-		this.observer2 = new IntersectionObserver(entries => {
-			if (entries[0].isIntersecting) {
-				this.presentation.classList.add('prebg');
-				this.margin = false;
-			} else {
-				this.presentation.classList.remove('prebg');
-				this.margin = true;
-			}
-		}, this.options2);
+			this.options2 = {
+				root: document.body,
+				threshold: 0,
+				rootMargin: `${
+					+((this.headerHeight * 100) / this.bodyHeight).toFixed(1) * -1
+				}% 0px -${
+					100 - +((this.headerHeight * 100) / this.bodyHeight).toFixed(1)
+				}% 0px`,
+			};
 
-		this.observer2.observe(this.presentation);
+			this.observer2 = new IntersectionObserver(entries => {
+				if (entries[0].isIntersecting) {
+					this.presentation.classList.add('prebg');
+					this.margin = false;
+				} else {
+					this.presentation.classList.remove('prebg');
+					this.margin = true;
+				}
+			}, this.options2);
+
+			this.presentation ? this.observer2.observe(this.presentation) : '';
+		}, 1);
 	},
 
 	beforeUnmount() {
 		console.log('FavoriteSongs unMounted');
-		window.removeEventListener('resize', this.resizeOption2);
-		this.observer.unobserve(this.favSongEl);
-		this.observer2.unobserve(this.presentation);
-		this.presentation.classList.remove('prebg');
-		this.header.classList.remove('fav-songs-intersec-bg1');
-		this.header.classList.remove('fav-songs-intersec-bg2');
-		this.$emit('visToggleHeaderBtn', false);
+		if (this.favSongEl) {
+			window.removeEventListener('resize', this.resizeOption2);
+			this.observer.unobserve(this.favSongEl);
+			this.observer2.unobserve(this.presentation);
+			this.presentation.classList.remove('prebg');
+			this.header.classList.remove('fav-songs-intersec-bg1');
+			this.header.classList.remove('fav-songs-intersec-bg2');
+		}
 		this.margin = true;
 		this.favoriteSongs = false;
 	},
