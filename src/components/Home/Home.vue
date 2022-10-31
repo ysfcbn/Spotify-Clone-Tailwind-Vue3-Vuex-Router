@@ -70,23 +70,6 @@
 						:src="data?.images[0]?.url"
 						alt="image"
 					/>
-					<div
-						class="right-0 bottom-0 absolute flex items-center py-1 px-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
-					>
-						<button
-							id="playBtn"
-							class="p-3 bg-green3 rounded-full cursor-default lg:group-hover:block hover:scale-110 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
-						>
-							<span>
-								<svg role="img" height="24" width="24" viewBox="0 0 24 24">
-									<path
-										fill="text-black"
-										d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
-									></path>
-								</svg>
-							</span>
-						</button>
-					</div>
 				</div>
 			</template>
 			<template #firstTitle="{ data }">{{ data?.name }}</template>

@@ -224,7 +224,7 @@
 				<span v-else>daha azını göster</span>
 			</button>
 
-			<Card :currentData="artistTopTracks">
+			<Card @click="openAlbumPage(msg, $event)" :currentData="artistTopTracks">
 				<template #cardTitle
 					>{{ currentTrack?.artists[0].name }}- Popüler Müzikleri</template
 				>
@@ -236,22 +236,6 @@
 							:src="data.album.images[0].url"
 							alt="image"
 						/>
-						<div
-							class="right-0 bottom-0 absolute flex items-center py-1 px-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
-						>
-							<button
-								class="p-3 bg-green3 rounded-full cursor-default lg:group-hover:block hover:scale-110 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
-							>
-								<span>
-									<svg role="img" height="24" width="24" viewBox="0 0 24 24">
-										<path
-											fill="text-black"
-											d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
-										></path>
-									</svg>
-								</span>
-							</button>
-						</div>
 					</div>
 				</template>
 				<template #firstTitle="{ data }">{{ data.name }}</template>
@@ -263,7 +247,7 @@
 				</template>
 			</Card>
 
-			<Card :currentData="popularAlbums">
+			<Card @click="openAlbumPage(msg, $event)" :currentData="popularAlbums">
 				<template #cardTitle
 					>{{ currentTrack?.artists[0].name }} - Popüler Albümleri</template
 				>
@@ -272,25 +256,9 @@
 					<div class="w-full relative mb-5">
 						<img
 							class="h-full w-full object-cover"
-							:src="data.images[0].url"
+							:src="data?.images[0].url"
 							alt="image"
 						/>
-						<div
-							class="right-0 bottom-0 absolute flex items-center py-1 px-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
-						>
-							<button
-								class="p-3 bg-green3 rounded-full cursor-default lg:group-hover:block hover:scale-110 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
-							>
-								<span>
-									<svg role="img" height="24" width="24" viewBox="0 0 24 24">
-										<path
-											fill="text-black"
-											d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
-										></path>
-									</svg>
-								</span>
-							</button>
-						</div>
 					</div>
 				</template>
 				<template #firstTitle="{ data }">{{ data.name }}</template>
@@ -302,7 +270,7 @@
 				</template>
 			</Card>
 
-			<Card :currentData="popularSingles">
+			<Card @click="openAlbumPage(msg, $event)" :currentData="popularSingles">
 				<template #cardTitle
 					>{{ currentTrack?.artists[0].name }} - Popüler Single ve
 					EP'leri</template
@@ -315,22 +283,6 @@
 							:src="data.images[0].url"
 							alt="image"
 						/>
-						<div
-							class="right-0 bottom-0 absolute flex items-center py-1 px-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
-						>
-							<button
-								class="p-3 bg-green3 rounded-full cursor-default lg:group-hover:block hover:scale-110 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
-							>
-								<span>
-									<svg role="img" height="24" width="24" viewBox="0 0 24 24">
-										<path
-											fill="text-black"
-											d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
-										></path>
-									</svg>
-								</span>
-							</button>
-						</div>
 					</div>
 				</template>
 				<template #firstTitle="{ data }">{{ data.name }}</template>
@@ -827,9 +779,18 @@ export default {
 			this.appOptions = !this.appOptions;
 		},
 
-		toggleArtistPage(_, e) {
+		OpenArtistPage(_, e) {
 			this.$emit('selectedArtistName', e.target.textContent);
 			this.$router.push('/artist/id');
+		},
+		openAlbumPage(_, e) {
+			if (e.target.closest('#playBtn')?.id === 'playBtn') {
+				console.log('toggle Play/Stop Users');
+			} else {
+				const selectedID = e.target.closest('.card--container').id;
+				console.log(selectedID);
+				this.$router.push({ name: 'album', params: { id: selectedID } });
+			}
 		},
 		async seeMoreFunc() {
 			this.seeMore = !this.seeMore;

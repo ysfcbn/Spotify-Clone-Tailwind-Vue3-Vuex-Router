@@ -2,6 +2,7 @@ const artistModule = {
 	namespaced: true,
 	state: {
 		currentArtist: '',
+		currentArtistIsFav: '',
 		currentTrack: {},
 		topTracks: [],
 		favArtists: [],
@@ -10,6 +11,9 @@ const artistModule = {
 	mutations: {
 		currentArtist(state, payload) {
 			state.currentArtist = payload;
+		},
+		currentArtistIsFav(state, payload) {
+			state.currentArtistIsFav = payload;
 		},
 		currentTrack(state, payload) {
 			state.currentTrack = payload;
@@ -31,6 +35,9 @@ const artistModule = {
 		async currentArtist({ commit }, payload) {
 			commit('currentArtist', await payload);
 		},
+		async currentArtistIsFav({ commit }, payload) {
+			commit('currentArtistIsFav', await payload);
+		},
 		async currentTrack({ commit }, payload) {
 			commit('currentTrack', await payload);
 		},
@@ -50,6 +57,9 @@ const artistModule = {
 	getters: {
 		getCurrentArtist(state) {
 			return state.currentArtist;
+		},
+		getCurrentArtistIsFav(state) {
+			return state.currentArtistIsFav;
 		},
 		getCurrentTrack(state) {
 			return state.currentTrack;

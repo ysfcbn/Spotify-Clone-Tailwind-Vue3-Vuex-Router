@@ -35,11 +35,13 @@
 					<h1
 						class="w-full mb-3 text-[5.5rem] leading-none py-1 tracking-tighter font-semibold whitespace-nowrap"
 					>
-						{{ artistName }}
+						{{ currentArtists?.name }}
 					</h1>
 
 					<div>
-						<span class="mr-2"> 7.692.510 aylık dinleyici </span>
+						<span class="mr-2">
+							{{ currentArtists?.followers?.total }} aylık dinleyici
+						</span>
 					</div>
 				</div>
 			</div>
@@ -85,17 +87,25 @@
 							</span>
 						</button>
 					</div>
-					<div :class="{ 'w-[9.5rem]': follow, 'w-[6.6rem]': !follow }">
+
+					<div
+						:class="{
+							'w-[9.5rem]': currentArtistIsFav,
+							'w-[6.6rem]': !currentArtistIsFav,
+						}"
+					>
 						<button
-							@click="toggleFollow"
-							type="button"
+							@click="addRemoveArtist"
 							:class="{
-								'w-[8rem] border-white': follow,
-								'hover:border-white border-opacwhite2': !follow,
+								'w-[8rem] border-white': currentArtistIsFav,
+								'hover:border-white border-opacwhite2': !currentArtistIsFav,
 							}"
 							class="border cursor-default w-[5.5rem] h-fit text-white px-2 py-1 rounded-[5px]"
 						>
-							<span v-if="follow" class="text-sm" style="font-weight: 600"
+							<span
+								v-if="currentArtistIsFav"
+								class="text-sm"
+								style="font-weight: 600"
 								>TAKİP EDİLİYOR</span
 							>
 							<span v-else class="text-sm" style="font-weight: 600">
@@ -104,7 +114,10 @@
 						</button>
 					</div>
 
-					<ArtistOptions :follow="follow" :toggleFollow="toggleFollow" />
+					<ArtistOptions
+						:follow="currentArtistIsFav"
+						:addRemoveArtist="addRemoveArtist"
+					/>
 				</div>
 			</div>
 		</div>
@@ -393,7 +406,6 @@ export default {
 			singles: false,
 			albumID: '',
 			singleID: '',
-			firsFive: [],
 			popSongs: [],
 			albumList: [],
 			singleList: [],
@@ -623,6 +635,9 @@ export default {
 		currentArtists() {
 			return this.$store.getters['artists/getCurrentArtist'];
 		},
+		currentArtistIsFav() {
+			return this.$store.getters['artists/getCurrentArtistIsFav'];
+		},
 		allFavTracks() {
 			return this.$store.getters['favTracks/getTracks'].items;
 		},
@@ -637,6 +652,21 @@ export default {
 		},
 	},
 	methods: {
+		async fetchFavArtists() {
+			await axios
+				.get('https://api.spotify.com/v1/me/following?type=artist', {
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+						Authorization: 'Bearer ' + (await this.getToken),
+					},
+				})
+				.then(({ data }) => {
+					console.log(data.artists);
+					this.$store.dispatch('artists/favArtists', data.artists.items);
+				})
+				.catch(err => console.log(err));
+		},
 		async fetchArtist() {
 			await axios
 				.get('https://api.spotify.com/v1/artists/' + this.id, {
@@ -672,10 +702,71 @@ export default {
 				})
 				.catch(err => console.log(err));
 		},
-
-		toggleFollow() {
-			this.follow = !this.follow;
+		async checkUserFavArtist() {
+			await axios
+				.get(
+					'https://api.spotify.com/v1/me/following/contains?type=artist&ids=' +
+						this.id,
+					{
+						headers: {
+							Accept: 'application/json',
+							'Content-Type': 'application/json',
+							Authorization: 'Bearer ' + (await this.getToken),
+						},
+					}
+				)
+				.then(({ data }) => {
+					this.$store.dispatch('artists/currentArtistIsFav', ...data);
+				})
+				.catch(err => console.log(err));
 		},
+		async followArtist() {
+			await fetch(
+				'https://api.spotify.com/v1/me/following?type=artist&ids=' + this.id,
+				{
+					method: 'PUT',
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+						Authorization: 'Bearer ' + (await this.getToken),
+					},
+				}
+			)
+				.then(data => {
+					console.log(data.status);
+					if (data.status === 204) this.checkUserFavArtist();
+				})
+				.catch(err => console.log(err));
+		},
+		async unfollowArtist() {
+			await axios
+				.delete(
+					'https://api.spotify.com/v1/me/following?type=artist&ids=' + this.id,
+					{
+						headers: {
+							Accept: 'application/json',
+							'Content-Type': 'application/json',
+							Authorization: 'Bearer ' + (await this.getToken),
+						},
+					}
+				)
+				.then(data => {
+					console.log(data.status);
+					if (data.status === 204) this.checkUserFavArtist();
+				})
+				.catch(err => console.log(err));
+		},
+
+		async addRemoveArtist() {
+			if (this.currentArtistIsFav) {
+				await this.unfollowArtist();
+				await this.fetchFavArtists();
+			} else {
+				await this.followArtist();
+				await this.fetchFavArtists();
+			}
+		},
+
 		findFavTracks() {
 			this.allFavTracks.forEach(track => {
 				this.artistTopTracks.forEach(item => {
@@ -801,13 +892,12 @@ export default {
 
 		await this.fetchArtist();
 		await this.fetchArtistTopTracks();
+		await this.checkUserFavArtist();
 
 		this.popSongs = this.artistTopTracks;
 		this.findFavTracks();
 		await this.getFavTracks;
 
-		console.log(this.addGreenHeartEl);
-		console.log(this.getFavTracks);
 		this.addGreenHeartFavTracks();
 
 		this.albumList = this.diskografiList.filter(

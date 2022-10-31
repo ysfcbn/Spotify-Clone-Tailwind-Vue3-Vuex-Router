@@ -180,7 +180,7 @@
 							/>
 						</template>
 						<template #trackName
-							><router-link to="/track/id">
+							><router-link :to="{ name: 'track', params: { id: track?.id } }">
 								{{ track?.name }}</router-link
 							></template
 						>

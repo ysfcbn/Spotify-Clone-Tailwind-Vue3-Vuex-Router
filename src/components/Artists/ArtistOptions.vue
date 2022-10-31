@@ -20,7 +20,7 @@
 			class="z-40 absolute bg-dark2 top-[2rem] left-0 p-[4px] h-fit w-[11.6rem] text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
 		>
 			<li
-				@click="toggleFollow"
+				@click="addRemoveArtist"
 				class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 truncate"
 			>
 				<button class="cursor-default">
@@ -86,7 +86,7 @@
 <script>
 export default {
 	name: 'ArtistOptions',
-	props: ['follow', 'toggleFollow'],
+	props: ['follow', 'addRemoveArtist'],
 	data() {
 		return {
 			artistOptions: false,
