@@ -107,7 +107,7 @@
 						v-if="isArtistPage"
 						class="text-2xl font-semibold text-white"
 						style="font-weight: 700"
-						>{{ selectArtCardName }}</span
+						>{{ artistName }}</span
 					>
 					<span
 						v-if="isDiskografiPage"
@@ -521,7 +521,7 @@ export default {
 			return this.$route.fullPath === '/collection/tracks';
 		},
 		isArtistPage() {
-			return this.$route.fullPath === '/artist/id';
+			return this.$route.fullPath === `/artist/${this.$route.params.id}`;
 		},
 		isSinglePage() {
 			return this.$route.fullPath === `/single/${this.$route.params.id}`;
@@ -553,6 +553,9 @@ export default {
 		},
 		trackName() {
 			return this.$store.getters['artists/getCurrentTrack']?.name;
+		},
+		artistName() {
+			return this.$store.getters['artists/getCurrentArtist']?.name;
 		},
 		episodeName() {
 			return this.$store.getters['episodes/getCurrentEpisode']?.name;

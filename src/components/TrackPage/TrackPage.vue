@@ -417,7 +417,7 @@ export default {
 			return this.$store.getters.accessToken;
 		},
 		currentTrack() {
-			return this.$store.getters['artists/getCurrentTrack'];
+			return this.$store.getters['albums/getCurrentTrack'];
 		},
 		artistTopTracks() {
 			return this.$store.getters['artists/getTopTracks'];
@@ -501,7 +501,7 @@ export default {
 				})
 				.then(({ data }) => {
 					console.log(data);
-					this.$store.dispatch('artists/currentTrack', data);
+					this.$store.dispatch('albums/currentTrack', data);
 				})
 				.catch(err => console.log(err));
 		},

@@ -2,8 +2,8 @@
 	<section class="box-border">
 		<div
 			id="artistPage"
-			class="p-5 max-h-[800px] h-[340px] min-h-[400px] w-full mt-[-96px] relative bg-dark5"
-			:style="{ '--opacity': opac }"
+			class="p-5 max-h-[400px] h-[340px] min-h-[400px] w-full mt-[-96px] relative bg-dark5 z-10"
+			:style="{ '--opacity': opac, '--bgArtistImage': `url(${artistImage})` }"
 		>
 			<div
 				class="flex items-end justify-start h-full lg:ml-[1rem] relative z-100"
@@ -35,12 +35,12 @@
 					<h1
 						class="w-full mb-3 text-[5.5rem] leading-none py-1 tracking-tighter font-semibold whitespace-nowrap"
 					>
-						{{ currentArtists?.name }}
+						{{ currentArtist?.name }}
 					</h1>
 
 					<div>
 						<span class="mr-2">
-							{{ currentArtists?.followers?.total }} aylık dinleyici
+							{{ currentArtist?.followers?.total }} aylık dinleyici
 						</span>
 					</div>
 				</div>
@@ -142,7 +142,7 @@
 				class="relative overflow-y-hidden wrapper"
 			>
 				<TrackItems
-					v-for="(track, i) in popSongs"
+					v-for="(track, i) in topSongs"
 					:key="track.id"
 					:id="track.id"
 					:index="i"
@@ -183,6 +183,8 @@
 				:toggleAlbums="toggleAlbums"
 				:toggleSingles="toggleSingles"
 				:popPublications="popPublications"
+				:toggleCompilations="toggleCompilations"
+				:isCompExist="isCompExist"
 				:albums="albums"
 				:singles="singles"
 				:currentData="diskografiList"
@@ -193,47 +195,58 @@
 						>HEPSİNİ GÖR</span
 					>
 				</template>
-
+				<template #imgContainer="{ data }">
+					<img
+						class="h-full w-full object-cover"
+						:src="data?.images[0].url"
+						alt="image"
+					/>
+				</template>
 				<template #firstTitle="{ data }"
-					><span>{{ data.trackName }}</span></template
+					><span>{{ data.name }}</span></template
 				>
 				<template #secondTitle="{ data }"
-					><span>{{ data.year }}</span>
-					<span class="before:content-['•'] before:mx-2">{{ data.type }}</span>
+					><span>{{ cartAlbumYear(data.release_date) }}</span>
+					<span class="before:content-['•'] before:mx-2">{{
+						data.album_type
+					}}</span>
 				</template>
 			</Card>
 
-			<Card @click="openCard(msg, $event)" :currentData="popularSongs">
-				<template #cardTitle>Karşınızda {{ artistName }}</template>
-
+			<Card @click="openCard(msg, $event)" :currentData="frontOfYou">
+				<template #cardTitle>Karşınızda {{ currentArtist?.name }}</template>
+				<template #imgContainer="{ data }">
+					<img
+						class="h-full w-full object-cover"
+						:src="data?.images[0]?.url"
+						alt="image"
+					/>
+				</template>
 				<template #firstTitle="{ data }"
-					><span>{{ data.trackName }}</span></template
+					><span>{{ data.name }}</span></template
 				>
 				<template #secondTitle="{ data }"
-					><span>{{ data.year }}</span>
+					><span>{{ cartAlbumYear(data.release_date) }}</span>
+					<span class="before:content-['•'] before:mx-2">{{
+						data.album_type
+					}}</span>
 				</template>
 			</Card>
 
-			<Card :artists="true" :currentData="fansLove">
+			<Card :artists="true" :currentData="fansLove?.artists">
 				<template #cardTitle>Hayranlarının hoşlandığı</template>
-
-				<template #firstTitle="{ data }"
-					><span>{{ data.artistName }}</span></template
-				>
-				<template #secondTitle="{ data }"
-					><span>{{ data.title }}</span>
+				<template #imgContainer="{ data }">
+					<img
+						class="h-full w-full object-cover rounded-[100%] shadow-[0px_10px_16px_8px_rgba(0,0,0,0.4)]"
+						:src="data?.images[0]?.url"
+						alt="image"
+					/>
 				</template>
-			</Card>
-
-			<Card :currentData="albumList">
-				<template #cardTitle>Bulunduğu Albüm</template>
-
 				<template #firstTitle="{ data }"
-					><span>{{ data.albumName }}</span></template
+					><span>{{ data.name }}</span></template
 				>
 				<template #secondTitle="{ data }"
-					><span>{{ data.year }}</span>
-					<span class="before:content-['•'] before:mx-2">{{ data.type }}</span>
+					><span>{{ data.type }}</span>
 				</template>
 			</Card>
 
@@ -400,16 +413,15 @@ export default {
 			opac: '',
 			prevRatio: null,
 			follow: false,
-			artistName: '',
 			popPublications: true,
 			albums: false,
+			shuffled: false,
 			singles: false,
-			albumID: '',
-			singleID: '',
-			popSongs: [],
-			albumList: [],
-			singleList: [],
+			compilations: false,
+			isCompExist: true,
+			topSongs: [],
 			diskografiList: [],
+			frontOfYou: [],
 			ownPlaylists: [],
 			locatedPlaylists: [],
 			seeMore: false,
@@ -632,8 +644,11 @@ export default {
 		getToken() {
 			return this.$store.getters.accessToken;
 		},
-		currentArtists() {
+		currentArtist() {
 			return this.$store.getters['artists/getCurrentArtist'];
+		},
+		artistImage() {
+			return this.currentArtist.images[0].url;
 		},
 		currentArtistIsFav() {
 			return this.$store.getters['artists/getCurrentArtistIsFav'];
@@ -643,6 +658,21 @@ export default {
 		},
 		artistTopTracks() {
 			return this.$store.getters['artists/getTopTracks'];
+		},
+		artistPublications() {
+			return this.$store.getters['artists/getArtistPublications'];
+		},
+		artistAlbums() {
+			return this.$store.getters['artists/getArtistAlbums'];
+		},
+		artistSingles() {
+			return this.$store.getters['artists/getArtistSingles'];
+		},
+		artistCompilations() {
+			return this.$store.getters['artists/getArtistCompilations'];
+		},
+		fansLove() {
+			return this.$store.getters['artists/getFansLove'];
 		},
 		getFavTracks() {
 			return this.$store.getters['artists/getfavTracksID'];
@@ -699,6 +729,102 @@ export default {
 				.then(({ data }) => {
 					console.log(data);
 					this.$store.dispatch('artists/topTracks', data.tracks);
+				})
+				.catch(err => console.log(err));
+		},
+		async fetchArtistPublications() {
+			await axios
+				.get(
+					'https://api.spotify.com/v1/artists/' + this.id + '/albums?limit=10',
+					{
+						headers: {
+							Accept: 'application/json',
+							'Content-Type': 'application/json',
+							Authorization: 'Bearer ' + (await this.getToken),
+						},
+					}
+				)
+				.then(({ data }) => {
+					console.log(data);
+					this.$store.dispatch('artists/artistPublications', data);
+				})
+				.catch(err => console.log(err));
+		},
+		async fetchArtistAlbums() {
+			await axios
+				.get(
+					'https://api.spotify.com/v1/artists/' +
+						this.id +
+						'/albums?limit=10&include_groups=album,single,compilation',
+					{
+						headers: {
+							Accept: 'application/json',
+							'Content-Type': 'application/json',
+							Authorization: 'Bearer ' + (await this.getToken),
+						},
+					}
+				)
+				.then(({ data }) => {
+					console.log(data);
+					this.$store.dispatch('artists/artistAlbums', data);
+				})
+				.catch(err => console.log(err));
+		},
+		async fetchArtistSingles() {
+			await axios
+				.get(
+					'https://api.spotify.com/v1/artists/' +
+						this.id +
+						'/albums?limit=10&include_groups=single',
+					{
+						headers: {
+							Accept: 'application/json',
+							'Content-Type': 'application/json',
+							Authorization: 'Bearer ' + (await this.getToken),
+						},
+					}
+				)
+				.then(({ data }) => {
+					console.log(data);
+					this.$store.dispatch('artists/artistSingles', data);
+				})
+				.catch(err => console.log(err));
+		},
+		async fetchArtistCompilations() {
+			await axios
+				.get(
+					'https://api.spotify.com/v1/artists/' +
+						this.id +
+						'/albums?limit=10&include_groups=compilation',
+					{
+						headers: {
+							Accept: 'application/json',
+							'Content-Type': 'application/json',
+							Authorization: 'Bearer ' + (await this.getToken),
+						},
+					}
+				)
+				.then(({ data }) => {
+					console.log(data);
+					this.$store.dispatch('artists/artistCompilations', data);
+				})
+				.catch(err => console.log(err));
+		},
+		async fetchFansLoveArtists() {
+			await axios
+				.get(
+					'https://api.spotify.com/v1/artists/' + this.id + '/related-artists',
+					{
+						headers: {
+							Accept: 'application/json',
+							'Content-Type': 'application/json',
+							Authorization: 'Bearer ' + (await this.getToken),
+						},
+					}
+				)
+				.then(({ data }) => {
+					console.log(data);
+					this.$store.dispatch('artists/fansLove', data);
 				})
 				.catch(err => console.log(err));
 		},
@@ -830,31 +956,17 @@ export default {
 			const result = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
 			return result;
 		},
+
+		cartAlbumYear(currentSection) {
+			return new Date(currentSection).getFullYear();
+		},
 		openCard(_, e) {
 			if (!e.target.closest('.card--container')) return;
-			if (this.popPublications) {
+			if (e.target.closest('#playBtn')?.id === 'playBtn') {
+				console.log('toggle Play/Stop Users');
+			} else {
 				const cardID = e.target.closest('.card--container').id;
-				const selectedCardContent = [
-					...e.target.closest('.card--container').children,
-				];
-				let cardType =
-					selectedCardContent[0].children[1].children[1].children[1]
-						.textContent;
-				if (cardType === 'Album') {
-					this.albumID = cardID;
-					this.$router.push(`/album/${this.albumID}`);
-				}
-				if (cardType === 'Single') {
-					this.singleID = cardID;
-					this.$router.push(`/single/${this.singleID}`);
-				}
-			}
-			if (this.singles) {
-				this.singleID = e.target.closest('.card--container').id;
-				this.$router.push(`/single/${this.singleID}`);
-			} else if (this.albums) {
-				this.albumID = e.target.closest('.card--container').id;
-				this.$router.push(`/album/${this.albumID}`);
+				this.$router.push({ name: 'album', params: { id: cardID } });
 			}
 		},
 
@@ -862,20 +974,28 @@ export default {
 			this.popPublications ? '' : (this.popPublications = true);
 			this.albums ? (this.albums = false) : '';
 			this.singles ? (this.singles = false) : '';
-			this.diskografiList = this.popularSongs;
+			this.diskografiList = this.artistPublications?.items;
 		},
-		toggleAlbums() {
-			console.log('toggle Albums');
+		async toggleAlbums() {
 			this.albums ? '' : (this.albums = true);
 			this.popPublications ? (this.popPublications = false) : '';
 			this.singles ? (this.singles = false) : '';
-			this.diskografiList = this.albumList;
+			this.diskografiList = this.artistAlbums?.items;
 		},
-		toggleSingles() {
+		async toggleSingles() {
+			this.artistSingles?.items?.length ? '' : await this.fetchArtistSingles();
 			this.singles ? '' : (this.singles = true);
 			this.albums ? (this.albums = false) : '';
 			this.popPublications ? (this.popPublications = false) : '';
-			this.diskografiList = this.singleList;
+			this.diskografiList = this.artistSingles?.items;
+		},
+		toggleCompilations() {
+			this.compilations ? '' : (this.singles = true);
+			this.albums ? (this.albums = false) : '';
+			this.singles ? (this.singles = false) : '';
+
+			this.popPublications ? (this.popPublications = false) : '';
+			this.diskografiList = this.artistCompilations?.items;
 		},
 		seeMoreFunc() {
 			this.seeMore = !this.seeMore;
@@ -891,29 +1011,37 @@ export default {
 		this.prevRatio = 0.0;
 
 		await this.fetchArtist();
+		this.topSongs = this.artistTopTracks;
+		this.findFavTracks();
+		await this.getFavTracks;
+		this.addGreenHeartFavTracks();
+
 		await this.fetchArtistTopTracks();
 		await this.checkUserFavArtist();
 
-		this.popSongs = this.artistTopTracks;
-		this.findFavTracks();
-		await this.getFavTracks;
+		await this.fetchArtistPublications();
+		this.diskografiList = this.artistPublications?.items;
+		await this.fetchArtistAlbums();
+		this.frontOfYou = this.artistAlbums?.items;
+		console.log(this.frontOfYou);
+		if (!this.shuffled) {
+			this.frontOfYou = this.frontOfYou.sort(() => Math.random() - 0.5);
+			this.shuffled = true;
+		}
 
-		this.addGreenHeartFavTracks();
+		await this.fetchArtistCompilations();
+		this.artistCompilations?.items.length
+			? (this.isCompExist = true)
+			: (this.isCompExist = false);
 
-		this.albumList = this.diskografiList.filter(
-			album => album.type === 'Album'
-		);
-		this.singleList = this.diskografiList.filter(
-			single => single.type === 'Single'
-		);
+		await this.fetchFansLoveArtists();
+
 		this.ownPlaylists = this.playlistList.filter(
 			playlist => playlist.type === 'Owner'
 		);
 		this.locatedPlaylists = this.playlistList.filter(
 			playlist => playlist.type === 'located'
 		);
-
-		this.artistName = this.selectArtCardName;
 
 		this.header = document.getElementById('header');
 		this.artistEl = document.getElementById('artistPage');
@@ -942,8 +1070,6 @@ export default {
 					this.prevRatio = entry.intersectionRatio;
 					this.opac = entry.intersectionRatio + 0.15;
 					entry.intersectionRatio <= 0.3 ? (this.opac = 0.15) : '';
-
-					console.log(this.prevRatio);
 				} else {
 					this.prevRatio = entry.intersectionRatio;
 					this.opac = this.prevRatio - 0.2;
@@ -961,8 +1087,8 @@ export default {
 			);
 
 			entries[0].intersectionRatio >= 0.1
-				? this.$emit('toggleHeaderBtn', false)
-				: this.$emit('toggleHeaderBtn', true);
+				? this.$store.dispatch('controller/closeHeaderBtn')
+				: this.$store.dispatch('controller/showHeaderBtn');
 		}, this.options);
 		console.log(this.observer);
 
@@ -973,12 +1099,12 @@ export default {
 		this.observer.unobserve(this.artistEl);
 		this.header.classList.remove('fav-songs-intersec-bg1');
 		this.header.classList.remove('fav-songs-intersec-bg2');
-		this.$emit('toggleHeaderBtn', false);
 		this.artistPage = false;
 	},
 	unmounted() {
 		this.$store.dispatch('controller/closeHeaderBtn');
 		this.$store.dispatch('artists/clearTracksID');
+		this.$store.dispatch('artists/clearArtistPageData');
 	},
 };
 </script>
@@ -1018,9 +1144,9 @@ export default {
 		padding: 5rem;
 		background-repeat: no-repeat;
 		background-size: cover;
-		background-attachment: fixed;
+		background-attachment: scroll;
 		background-position: center;
-		background-image: url('https://i.ytimg.com/vi/uKWEDqkyKvU/maxresdefault.jpg');
+		background-image: var(--bgArtistImage);
 		transition: all 0.2s;
 	}
 }

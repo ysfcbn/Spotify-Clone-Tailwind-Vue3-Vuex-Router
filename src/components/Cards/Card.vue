@@ -48,6 +48,14 @@
 				>
 					<span>Singlelar ve EPler</span>
 				</button>
+				<button
+					v-if="isCompExist"
+					@click="toggleCompilations"
+					:class="compilations ? 'active' : 'inactive'"
+					class="w-fit h-fit rounded-full px-3 py-[6px] cursor-default bg-dark2 hover:bg-dark3/70 transition duration-200 mx-2"
+				>
+					<span>Derlemeler</span>
+				</button>
 			</div>
 		</div>
 		<!-- Cards -->
@@ -69,20 +77,13 @@
 			>
 				<div class="h-full w-full relative">
 					<div
-						:class="{ 'h-[70%] mb-[10%] z-10': artists, 'mb-5': !artists }"
+						:class="{
+							'h-[65%] mb-[10%] w-full z-10': artists,
+							'mb-5': !artists,
+						}"
 						class="w-full relative"
 					>
-						<slot name="imgContainer" :data="data">
-							<img
-								:class="{
-									'rounded-[100%] shadow-[0px_10px_16px_8px_rgba(0,0,0,0.4)]':
-										artists,
-								}"
-								class="h-full w-full object-cover"
-								:src="data?.img"
-								alt="image"
-							/>
-						</slot>
+						<slot name="imgContainer" :data="data"> </slot>
 						<div
 							v-if="!shows"
 							class="right-0 bottom-0 absolute flex items-center py-1 px-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
@@ -106,10 +107,7 @@
 						</div>
 					</div>
 
-					<div
-						:class="{ 'pb-4': artists }"
-						class="flex items-middle flex-col justify-center"
-					>
+					<div class="flex items-middle flex-col justify-center">
 						<div class="text-white max-w-full text-base truncate font-semibold">
 							<slot name="firstTitle" :data="data"></slot>
 						</div>
@@ -137,9 +135,12 @@ export default {
 		'albums',
 		'singles',
 		'artists',
+		'compilations',
 		'togglePublications',
 		'toggleAlbums',
 		'toggleSingles',
+		'toggleCompilations',
+		'isCompExist',
 	],
 	data() {
 		return {};
