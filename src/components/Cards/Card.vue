@@ -140,10 +140,14 @@ export default {
 		'toggleAlbums',
 		'toggleSingles',
 		'toggleCompilations',
-		'isCompExist',
 	],
 	data() {
 		return {};
+	},
+	computed: {
+		isCompExist() {
+			return this.$store.getters['artists/isCompExist'];
+		},
 	},
 	methods: {
 		playItems(uri, e) {

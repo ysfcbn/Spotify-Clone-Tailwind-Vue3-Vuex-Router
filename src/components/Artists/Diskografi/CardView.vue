@@ -8,15 +8,16 @@
 			class="relative grid grid-cols-colDiscoCard grid-rows-rowDiscoCard gap-5"
 		>
 			<div
-				v-for="data in 10"
-				:key="data"
+				v-for="album in renderTypes"
+				:key="album.id"
+				:id="album.id"
 				class="bg-dark1 hover:bg-opacblack1 ease duration-300 w-full h-auto cursor-pointer rounded-md flex-1 isolate p-4 relative"
 			>
 				<div class="h-full group">
 					<div class="w-full mb-5 relative">
 						<img
 							class="h-full w-full object-cover"
-							src="https://i.scdn.co/image/ab67706f00000003a436e3f6117f461ea879c8a2"
+							:src="album?.images[0]?.url"
 							alt=""
 						/>
 						<div
@@ -37,10 +38,9 @@
 						</div>
 					</div>
 					<div class="flex items-middle flex-col justify-center">
-						<div class="text-white max-w-full truncate">Ev Ofis</div>
+						<div class="text-white max-w-full truncate">{{ album.name }}</div>
 						<div class="text-sm text-lightest w-full truncate">
-							The hip-hop playlist that's a whole mood. Art By Laci Jordan;
-							Cover: Erica Banks
+							{{ album.description }}
 						</div>
 					</div>
 				</div>
@@ -52,7 +52,7 @@
 <script>
 export default {
 	name: 'CardList',
-	props: ['viewCard'],
+	props: ['viewCard', 'renderTypes'],
 	data() {
 		return {};
 	},

@@ -102,6 +102,7 @@
 				</button>
 			</li>
 			<li
+				v-if="isCompExist"
 				@click="toggleCompilations"
 				class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3"
 			>
@@ -142,6 +143,7 @@ export default {
 			compilations: false,
 		};
 	},
+
 	methods: {
 		togglediskografiOptions() {
 			this.diskografiOption = !this.diskografiOption;
@@ -208,6 +210,9 @@ export default {
 				: this.singlesEps
 				? 'w-[10rem]'
 				: 'w-[6.5rem]';
+		},
+		isCompExist() {
+			return this.$store.getters['artists/isCompExist'];
 		},
 	},
 

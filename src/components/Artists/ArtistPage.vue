@@ -40,7 +40,7 @@
 
 					<div>
 						<span class="mr-2">
-							{{ currentArtist?.followers?.total }} aylık dinleyici
+							Aylık {{ currentArtist?.followers?.total }} dinleyici
 						</span>
 					</div>
 				</div>
@@ -177,14 +177,13 @@
 			</button>
 
 			<Card
-				@click="openCard(msg, $event)"
+				@click="openCard(type, $event)"
 				:artistPage="true"
 				:togglePublications="togglePublications"
 				:toggleAlbums="toggleAlbums"
 				:toggleSingles="toggleSingles"
 				:popPublications="popPublications"
 				:toggleCompilations="toggleCompilations"
-				:isCompExist="isCompExist"
 				:albums="albums"
 				:singles="singles"
 				:currentData="diskografiList"
@@ -213,7 +212,7 @@
 				</template>
 			</Card>
 
-			<Card @click="openCard(msg, $event)" :currentData="frontOfYou">
+			<Card @click="openCard(type, $event)" :currentData="frontOfYou">
 				<template #cardTitle>Karşınızda {{ currentArtist?.name }}</template>
 				<template #imgContainer="{ data }">
 					<img
@@ -233,7 +232,11 @@
 				</template>
 			</Card>
 
-			<Card :artists="true" :currentData="fansLove?.artists">
+			<Card
+				@click="openCard((type = true), $event)"
+				:artists="true"
+				:currentData="fansLove?.artists"
+			>
 				<template #cardTitle>Hayranlarının hoşlandığı</template>
 				<template #imgContainer="{ data }">
 					<img
@@ -249,28 +252,6 @@
 					><span>{{ data.type }}</span>
 				</template>
 			</Card>
-
-			<Card :currentData="ownPlaylists">
-				<template #cardTitle>Sanatçı Çalma Listeleri</template>
-
-				<template #firstTitle="{ data }"
-					><span>{{ data.playlistName }}</span></template
-				>
-				<template #secondTitle="{ data }"
-					><span>{{ data.title }}</span>
-				</template>
-			</Card>
-
-			<Card :currentData="locatedPlaylists">
-				<template #cardTitle>Yer Aldığı Çalma Listeleri</template>
-
-				<template #firstTitle="{ data }"
-					><span>{{ data.playlistName }}</span></template
-				>
-				<template #secondTitle="{ data }"
-					><span>{{ data.title }}</span>
-				</template>
-			</Card>
 		</section>
 
 		<section class="p-5 lg:ml-[1rem]">
@@ -283,14 +264,15 @@
 					</h2>
 					<div class="col-span-4">
 						<button
-							class="relative h-[516px] rounded-xl bg-cover bg-center w-full bg-no-repeat hover:scale-[1.01] transition duration-200 linear"
+							:style="{ '--bgArtistImage': `url(${artistImage})` }"
+							class="info-container relative h-[516px] rounded-xl bg-cover bg-center w-full bg-no-repeat hover:scale-[1.01] transition duration-200 linear"
 						>
 							<div class="w-full h-full bg-[rgba(0,0,0,0.3)]"></div>
 							<div
 								class="absolute bottom-0 p-[40px] text-white max-w-[672px] h-[11rem] box-border"
 							>
 								<div class="text-[1rem] text-left font-semibold">
-									232432423 aylık dinleyici
+									Aylık {{ currentArtist?.followers?.total }} dinleyici
 								</div>
 								<div
 									class="mt-[8px] h-[4.5rem] text-justify overflow-hidden line-clamp-3"
@@ -418,12 +400,9 @@ export default {
 			shuffled: false,
 			singles: false,
 			compilations: false,
-			isCompExist: true,
 			topSongs: [],
 			diskografiList: [],
 			frontOfYou: [],
-			ownPlaylists: [],
-			locatedPlaylists: [],
 			seeMore: false,
 
 			popularSongs: [
@@ -526,50 +505,7 @@ export default {
 					id: 10,
 				},
 			],
-			fansLove: [
-				{
-					artistName: 'D12',
-					type: 'Artist',
-					title: 'Sanatçı',
-					img: 'https://i.scdn.co/image/ab6761610000f1784f52827861ae9b860a5e62f6',
-					id: 1,
-				},
-				{
-					artistName: 'Bad Meets Evil',
-					type: 'Artist',
-					title: 'Sanatçı',
-					img: 'https://i.scdn.co/image/4f153c72bff6dccba21ffd360fc308f268a23659',
-					id: 2,
-				},
-				{
-					artistName: 'Obie Trice',
-					type: 'Artist',
-					title: 'Sanatçı',
-					img: 'https://i.scdn.co/image/d6ebc26b7f361aa6de3a8992b49bf4a2536af3fc',
-					id: 3,
-				},
-				{
-					artistName: 'The Game',
-					type: 'Artist',
-					title: 'Sanatçı',
-					img: 'https://i.scdn.co/image/ab6761610000f178a657aa5506945d264e147244',
-					id: 4,
-				},
-				{
-					artistName: 'DMX',
-					type: 'Artist',
-					title: 'Sanatçı',
-					img: '	https://i.scdn.co/image/ab6772690000dd223074f51af22630a1c86da016',
-					id: 5,
-				},
-				{
-					artistName: 'James Newton Howard',
-					type: 'Artist',
-					title: 'Sanatçı',
-					img: 'https://i.scdn.co/image/ab6761610000f178e9d190a9e39a772d84b068ab',
-					id: 6,
-				},
-			],
+
 			playlistList: [
 				{
 					id: 1,
@@ -671,6 +607,7 @@ export default {
 		artistCompilations() {
 			return this.$store.getters['artists/getArtistCompilations'];
 		},
+
 		fansLove() {
 			return this.$store.getters['artists/getFansLove'];
 		},
@@ -960,13 +897,16 @@ export default {
 		cartAlbumYear(currentSection) {
 			return new Date(currentSection).getFullYear();
 		},
-		openCard(_, e) {
+		openCard(type, e) {
 			if (!e.target.closest('.card--container')) return;
 			if (e.target.closest('#playBtn')?.id === 'playBtn') {
 				console.log('toggle Play/Stop Users');
 			} else {
+				console.log(type);
 				const cardID = e.target.closest('.card--container').id;
-				this.$router.push({ name: 'album', params: { id: cardID } });
+				type
+					? this.$router.push({ name: 'artist', params: { id: cardID } })
+					: this.$router.push({ name: 'album', params: { id: cardID } });
 			}
 		},
 
@@ -1011,12 +951,12 @@ export default {
 		this.prevRatio = 0.0;
 
 		await this.fetchArtist();
+		await this.fetchArtistTopTracks();
 		this.topSongs = this.artistTopTracks;
 		this.findFavTracks();
 		await this.getFavTracks;
 		this.addGreenHeartFavTracks();
 
-		await this.fetchArtistTopTracks();
 		await this.checkUserFavArtist();
 
 		await this.fetchArtistPublications();
@@ -1031,17 +971,10 @@ export default {
 
 		await this.fetchArtistCompilations();
 		this.artistCompilations?.items.length
-			? (this.isCompExist = true)
-			: (this.isCompExist = false);
+			? this.$store.dispatch('artists/isCompExist', true)
+			: this.$store.dispatch('artists/isCompExist', false);
 
 		await this.fetchFansLoveArtists();
-
-		this.ownPlaylists = this.playlistList.filter(
-			playlist => playlist.type === 'Owner'
-		);
-		this.locatedPlaylists = this.playlistList.filter(
-			playlist => playlist.type === 'located'
-		);
 
 		this.header = document.getElementById('header');
 		this.artistEl = document.getElementById('artistPage');
@@ -1142,6 +1075,25 @@ export default {
 		top: 0;
 		left: 0;
 		padding: 5rem;
+		background-repeat: no-repeat;
+		background-size: cover;
+		background-attachment: scroll;
+		background-position: center;
+		background-image: var(--bgArtistImage);
+		transition: all 0.2s;
+	}
+}
+
+.info-container {
+	&::before {
+		content: '';
+		position: absolute;
+		z-index: 0;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
+		border-radius: 0.5rem;
 		background-repeat: no-repeat;
 		background-size: cover;
 		background-attachment: scroll;

@@ -6,7 +6,11 @@
 			style="z-index: 102"
 		>
 			<div class="text-white w-full font-semibold text-2xl">
-				<a class="hover:underline" href="#">{{ selectArtCardName }}</a>
+				<router-link
+					class="hover:underline"
+					:to="{ name: 'artist', params: { id: currentArtist?.id } }"
+					>{{ currentArtist?.name }}</router-link
+				>
 			</div>
 			<DiskoOptions @selectedType="selectedTypeFunc" />
 			<button
@@ -62,7 +66,18 @@
 			/>
 		</div>
 
-		<CardView v-if="viewCard" :viewCard="viewCard" />
+		<div v-if="viewCard">
+			<CardView
+				v-for="(data, i) in renderTypes"
+				:key="data.id"
+				:indx="i"
+				:renderTypes="renderTypes"
+				:data="data"
+				:viewCard="viewCard"
+				:diskografiPage="diskografiPage"
+			/>
+		</div>
+
 		<section class="sm:pl-5 lg:p-5 lg:ml-[1rem]">
 			<Info />
 		</section>
@@ -83,7 +98,6 @@ export default {
 		CardView,
 		Info,
 	},
-	props: ['diskografiPage', 'selectArtCardName'],
 	emits: [
 		'visToggleHeaderDisko',
 		'toggleHeaderDisko',
@@ -96,89 +110,27 @@ export default {
 			selected: {},
 			viewList: true,
 			viewCard: false,
+			margin: false,
 			selectedType: '',
 			renderTypes: [],
-			albums: [],
-			singles: [],
-			artAlbums: [
-				{
-					trackName: 'Breathing Ben Böhmer Ben BöhmerBen BöhmerBen Böhmer',
-					artist: 'Ben Böhmer',
-					albumName: 'Begin Again',
-					duration: '03:25',
-					favTime: '13 gün önce',
-					type: 'single',
-					id: 1,
-				},
-				{
-					trackName: 'Turnalar',
-					artist: 'Murat Kekilli',
-					albumName: 'Albüm adı-1',
-					duration: '03:25',
-					favTime: '13 gün önce',
-					type: 'album',
-					id: 2,
-				},
-				{
-					trackName: 'Empty Floor',
-					artist: 'Jan Blomqvist',
-					albumName: 'Disconnected',
-					duration: '03:25',
-					favTime: '13 gün önce',
-					type: 'album',
-					id: 3,
-				},
-				{
-					trackName: 'deneneme Floor',
-					artist: 'yusuf  Blomqvist',
-					albumName: 'Kuşlar',
-					duration: '03:45',
-					favTime: '12 gün önce',
-					type: 'album',
-					id: 4,
-				},
-
-				{
-					trackName: 'mehmet Floor',
-					artist: 'yusuf  Blomqvist',
-					albumName: 'Çiçekler',
-					duration: '03:45',
-					favTime: '12 gün önce',
-					type: 'single',
-					id: 5,
-				},
-
-				{
-					trackName: 'yusuf Floor',
-					artist: 'yusuf  Blomqvist',
-					albumName: 'Gökyüzü MAVİ',
-					duration: '03:45',
-					favTime: '12 gün önce',
-					type: 'album',
-					id: 6,
-				},
-
-				{
-					trackName: 'kuşlar kuşlar',
-					artist: 'yusuf  Blomqvist',
-					albumName: 'Kuşlar Uçuyor',
-					duration: '03:45',
-					favTime: '12 gün önce',
-					type: 'album',
-					id: 7,
-				},
-
-				{
-					trackName: 'yapraklar',
-					artist: 'yusuf  Blomqvist',
-					albumName: 'SONBAHAR',
-					duration: '03:45',
-					favTime: '12 gün önce',
-					type: 'album',
-					id: 8,
-				},
-			],
 		};
+	},
+	computed: {
+		currentArtist() {
+			return this.$store.getters['artists/getCurrentArtist'];
+		},
+		artistPublications() {
+			return this.$store.getters['artists/getArtistPublications']?.items;
+		},
+		artistAlbums() {
+			return this.$store.getters['artists/getArtistAlbums']?.items;
+		},
+		artistSingles() {
+			return this.$store.getters['artists/getArtistSingles']?.items;
+		},
+		artistCompilations() {
+			return this.$store.getters['artists/getArtistCompilations']?.items;
+		},
 	},
 	methods: {
 		toggleView(_, e) {
@@ -215,36 +167,26 @@ export default {
 		renderSelectedType() {
 			switch (this.selectedType) {
 				case 'all':
-					this.renderTypes = this.artAlbums;
+					this.renderTypes = this.artistPublications;
 					break;
 				case 'album':
-					this.albums = this.artAlbums.filter(album => album.type === 'album');
-					console.log(this.albums);
-					this.renderTypes = this.albums;
+					this.renderTypes = this.artistAlbums;
 					break;
 				case 'singles':
-					this.singles = this.artAlbums.filter(
-						single => single.type === 'single'
-					);
-					console.log(this.singles);
-
-					this.renderTypes = this.singles;
+					this.renderTypes = this.artistSingles;
 					break;
 				case 'compilations':
-					this.singles = this.artAlbums.filter(
-						single => single.type === 'single'
-					);
-					this.renderTypes = this.singles;
+					this.renderTypes = this.artistCompilations;
 					break;
 				default:
-					console.log(`Sorry, we are out of ${expr}.`);
+					console.log(`Sorry, we are out of type`);
 			}
 		},
 	},
 
 	mounted() {
 		this.diskografiPage = true;
-		this.renderTypes = this.artAlbums;
+		this.renderTypes = this.artistPublications;
 	},
 	updated() {
 		console.log(this.selected);
