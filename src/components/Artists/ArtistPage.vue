@@ -186,12 +186,19 @@
 				:toggleCompilations="toggleCompilations"
 				:albums="albums"
 				:singles="singles"
+				:compilations="compilations"
 				:currentData="diskografiList"
 			>
 				<template #cardTitle>Diskografi</template>
 				<template #seeMore>
-					<span @click="toggleDiskografi" class="uppercase text-lightest"
-						>HEPSİNİ GÖR</span
+					<router-link
+						@click="openDiscografi"
+						:to="{
+							name: 'discography',
+							params: { id: currentArtist?.id, type: 'all' },
+						}"
+						class="uppercase text-lightest"
+						>HEPSİNİ GÖR</router-link
 					>
 				</template>
 				<template #imgContainer="{ data }">
@@ -404,173 +411,6 @@ export default {
 			diskografiList: [],
 			frontOfYou: [],
 			seeMore: false,
-
-			popularSongs: [
-				{
-					trackName: 'UP',
-					albumName: '2001',
-					duration: '04:32',
-					listensNumb: '22.343.434',
-					year: '2022',
-					type: 'Album',
-					img: 'https://i.scdn.co/image/ab67616d00001e0275a2c90eca545e6b0557897c',
-					id: 1,
-				},
-				{
-					trackName: 'Magical Love',
-					duration: '04:54',
-					albumName: 'The Massacre',
-					listensNumb: '65.344.434',
-					year: '2022',
-					type: 'Album',
-					img: 'https://i.scdn.co/image/ab67616d00001e0275a2c90eca545e6b0557897c',
-					id: 2,
-				},
-				{
-					trackName: 'FlashBacks',
-					duration: '05:35',
-					albumName: 'No.6 Collaboration Project',
-					listensNumb: '12.233.654',
-					year: '2022',
-					type: 'Album',
-					img: 'https://i.scdn.co/image/ab67616d00001e0275a2c90eca545e6b0557897c',
-					id: 3,
-				},
-				{
-					trackName: 'It Dont Matter',
-					duration: '05:12',
-					listensNumb: '15.345.975',
-					year: '2022',
-					type: 'Single',
-					img: 'https://i.scdn.co/image/ab67616d00001e02de335339b8c7223760c3add0',
-					id: 4,
-				},
-				{
-					trackName:
-						'Sun is UpSun is UpSun is UpSun is UpSun is UpSun is UpSun is Up',
-					duration: '03:25',
-					listensNumb: '9.211.123',
-					year: '2022',
-					type: 'Single',
-					img: 'https://i.scdn.co/image/ab67616d00001e02de335339b8c7223760c3add0',
-					id: 5,
-				},
-				{
-					trackName: 'Magical Love',
-					albumName: 'The Truth About Love',
-					duration: '04:54',
-					listensNumb: '65.344.434',
-					year: '2022',
-					type: 'Album',
-					img: 'https://i.scdn.co/image/ab67616d00001e0275a2c90eca545e6b0557897c',
-					id: 6,
-				},
-
-				{
-					trackName: 'FlashBacks',
-					duration: '05:35',
-					albumName: 'The Documentary',
-					listensNumb: '12.233.654',
-					year: '2022',
-					type: 'Album',
-					img: 'https://i.scdn.co/image/ab67616d00001e0275a2c90eca545e6b0557897c',
-					id: 7,
-				},
-				{
-					trackName: 'It Dont Matter',
-					duration: '05:12',
-					albumName: 'Konvicted',
-					listensNumb: '15.345.975',
-					year: '2022',
-					type: 'Album',
-					img: 'https://i.scdn.co/image/ab67616d00001e0275a2c90eca545e6b0557897c',
-					id: 8,
-				},
-				{
-					trackName: 'Sun is Up',
-					duration: '03:25',
-					listensNumb: '9.211.123',
-					year: '2020',
-					type: 'Single',
-					img: 'https://i.scdn.co/image/ab67616d00001e02de335339b8c7223760c3add0',
-					id: 9,
-				},
-				{
-					trackName: 'UP',
-					duration: '04:32',
-					listensNumb: '22.343.434',
-					year: '2022',
-					type: 'Single',
-					img: 'https://i.scdn.co/image/ab67616d00001e0275a2c90eca545e6b0557897c',
-					id: 10,
-				},
-			],
-
-			playlistList: [
-				{
-					id: 1,
-					type: 'Owner',
-					playlistName: 'EMINEM BEST OF',
-					title: 'Oluşturan: Eminem',
-					img: 'https://i.scdn.co/image/ab67706c0000da84132592c603bf37999f614f07',
-				},
-				{
-					id: 2,
-					type: 'Owner',
-					playlistName: 'EMINEM COMPLETE',
-					title: 'Oluşturan: Eminem',
-					img: 'https://i.scdn.co/image/ab67706c0000da844343967b3ec617871c303473',
-				},
-				{
-					id: 3,
-					type: 'Owner',
-					playlistName: 'RUN THAT BACK',
-					title: 'Hip Hop Forever. Playlist Image: Eminem & Snoop Dogg',
-					img: 'https://i.scdn.co/image/ab67706c0000da844343967b3ec617871c303473',
-				},
-				{
-					id: 4,
-					type: 'located',
-					playlistName: 'This Is Eminem',
-					title: 'This Is Eminem. The essential tracks, all in one playlist.',
-					img: 'https://i.scdn.co/image/ab67706f000000027a181d9fed936372672c40ca',
-				},
-				{
-					id: 5,
-					type: 'located',
-					playlistName: 'All Out 2000s',
-					title: 'The biggest songs of the 2000s.',
-					img: 'https://i.scdn.co/image/ab67706f00000002128217f6ecc1036a29759168',
-				},
-				{
-					id: 6,
-					type: 'located',
-					playlistName: 'EMINEM BEST OF',
-					title: 'Oluşturan: Eminem',
-					img: 'https://i.scdn.co/image/ab67706c0000da84132592c603bf37999f614f07',
-				},
-				{
-					id: 7,
-					type: 'located',
-					playlistName: 'Gold School',
-					title: 'Taking it way back! Cover: Eminem',
-					img: 'https://i.scdn.co/image/ab67706f00000002bb127d86cd3377c693b9f119',
-				},
-				{
-					id: 8,
-					type: 'located',
-					playlistName: 'Top Gaming Tracks',
-					title: 'Press playi press start',
-					img: 'https://i.scdn.co/image/ab67706f00000002b3e682b5049e2e0b86da6b5a',
-				},
-				{
-					id: 9,
-					type: 'located',
-					playlistName: "I Love My '90s Hip-Hop'",
-					title: 'Real rap music from the golden era.',
-					img: 'https://i.scdn.co/image/ab67706f0000000217f5a91128f800d0223948cd',
-				},
-			],
 		};
 	},
 	computed: {
@@ -584,7 +424,7 @@ export default {
 			return this.$store.getters['artists/getCurrentArtist'];
 		},
 		artistImage() {
-			return this.currentArtist.images[0].url;
+			return this.currentArtist?.images[0]?.url;
 		},
 		currentArtistIsFav() {
 			return this.$store.getters['artists/getCurrentArtistIsFav'];
@@ -607,7 +447,6 @@ export default {
 		artistCompilations() {
 			return this.$store.getters['artists/getArtistCompilations'];
 		},
-
 		fansLove() {
 			return this.$store.getters['artists/getFansLove'];
 		},
@@ -909,39 +748,40 @@ export default {
 					: this.$router.push({ name: 'album', params: { id: cardID } });
 			}
 		},
+		openDiscografi() {
+			this.$store.dispatch('discography/selectedType', 'all');
+		},
 
 		togglePublications() {
 			this.popPublications ? '' : (this.popPublications = true);
 			this.albums ? (this.albums = false) : '';
 			this.singles ? (this.singles = false) : '';
+			this.compilations ? (this.compilations = false) : '';
 			this.diskografiList = this.artistPublications?.items;
 		},
 		async toggleAlbums() {
 			this.albums ? '' : (this.albums = true);
 			this.popPublications ? (this.popPublications = false) : '';
 			this.singles ? (this.singles = false) : '';
+			this.compilations ? (this.compilations = false) : '';
 			this.diskografiList = this.artistAlbums?.items;
 		},
 		async toggleSingles() {
-			this.artistSingles?.items?.length ? '' : await this.fetchArtistSingles();
 			this.singles ? '' : (this.singles = true);
 			this.albums ? (this.albums = false) : '';
 			this.popPublications ? (this.popPublications = false) : '';
+			this.compilations ? (this.compilations = false) : '';
 			this.diskografiList = this.artistSingles?.items;
 		},
 		toggleCompilations() {
-			this.compilations ? '' : (this.singles = true);
+			this.compilations ? '' : (this.compilations = true);
 			this.albums ? (this.albums = false) : '';
 			this.singles ? (this.singles = false) : '';
-
 			this.popPublications ? (this.popPublications = false) : '';
 			this.diskografiList = this.artistCompilations?.items;
 		},
 		seeMoreFunc() {
 			this.seeMore = !this.seeMore;
-		},
-		toggleDiskografi() {
-			this.$router.push('/artist/id/discography/all');
 		},
 	},
 	async created() {
@@ -962,6 +802,7 @@ export default {
 		await this.fetchArtistPublications();
 		this.diskografiList = this.artistPublications?.items;
 		await this.fetchArtistAlbums();
+		await this.fetchArtistSingles();
 		this.frontOfYou = this.artistAlbums?.items;
 		console.log(this.frontOfYou);
 		if (!this.shuffled) {
@@ -971,8 +812,8 @@ export default {
 
 		await this.fetchArtistCompilations();
 		this.artistCompilations?.items.length
-			? this.$store.dispatch('artists/isCompExist', true)
-			: this.$store.dispatch('artists/isCompExist', false);
+			? this.$store.dispatch('discography/isCompExist', true)
+			: this.$store.dispatch('discography/isCompExist', false);
 
 		await this.fetchFansLoveArtists();
 

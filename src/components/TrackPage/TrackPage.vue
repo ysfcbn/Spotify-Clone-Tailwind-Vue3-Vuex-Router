@@ -157,11 +157,15 @@
 						>
 							Sanatçı
 						</h2>
-						<h4
+						<router-link
+							:to="{
+								name: 'artist',
+								params: { id: currentTrack?.artists[0]?.id },
+							}"
 							class="text-white/95 font-semibold cursor-ponter hover:underline"
 						>
-							{{ currentTrack.artists[0].name }}
-						</h4>
+							{{ currentTrack?.artists[0]?.name }}
+						</router-link>
 					</div>
 				</div>
 			</div>

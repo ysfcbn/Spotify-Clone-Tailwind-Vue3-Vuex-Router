@@ -10,7 +10,6 @@ const artistModule = {
 		artistSingles: [],
 		fansLove: [],
 		artistCompilations: [],
-		isCompExist: true,
 		favTracksIDInArtist: [],
 	},
 	mutations: {
@@ -46,9 +45,6 @@ const artistModule = {
 		},
 		favArtists(state, payload) {
 			state.favArtists = payload;
-		},
-		isCompExist(state, payload) {
-			state.isCompExist = payload;
 		},
 		clearArtistPageData(state) {},
 	},
@@ -86,12 +82,8 @@ const artistModule = {
 		clearArtistPageData({ commit }) {
 			commit('clearArtistPageData');
 		},
-
 		async favArtists({ commit }, payload) {
 			commit('favArtists', await payload);
-		},
-		async isCompExist({ commit }, payload) {
-			commit('isCompExist', await payload);
 		},
 	},
 	getters: {
@@ -124,9 +116,6 @@ const artistModule = {
 		},
 		getFavArtists(state) {
 			return state.favArtists;
-		},
-		isCompExist(state) {
-			return state.isCompExist;
 		},
 	},
 };

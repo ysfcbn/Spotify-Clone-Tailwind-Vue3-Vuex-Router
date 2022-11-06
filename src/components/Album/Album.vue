@@ -742,14 +742,12 @@ export default {
 
 	beforeUnmount() {
 		console.log('albumPage unMounted!');
-
 		window.removeEventListener('resize', this.resizeOption2);
 		this.observer.unobserve(this.albumsEl);
 		this.observer2.unobserve(this.presentation);
 		this.presentation.classList.remove('prebg');
 		this.header.classList.remove('fav-songs-intersec-bg1');
 		this.header.classList.remove('fav-songs-intersec-bg2');
-		this.$emit('visToggleHeaderBtn', false);
 		this.albumPage = false;
 	},
 	unmounted() {

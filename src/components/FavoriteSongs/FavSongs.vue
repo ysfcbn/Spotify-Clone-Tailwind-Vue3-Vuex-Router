@@ -426,6 +426,9 @@ export default {
 		this.margin = true;
 		this.favoriteSongs = false;
 	},
+	unmounted() {
+		this.$store.dispatch('controller/closeHeaderBtn');
+	},
 };
 </script>
 

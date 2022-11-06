@@ -146,7 +146,7 @@ export default {
 	},
 	computed: {
 		isCompExist() {
-			return this.$store.getters['artists/isCompExist'];
+			return this.$store.getters['discography/isCompExist'];
 		},
 	},
 	methods: {

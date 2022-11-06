@@ -13,25 +13,11 @@
 				:class="{ truncate: isAuth && !isNavVisible }"
 				class="flex mt-[8px] text-lightest"
 			>
-				<div
-					@click="goBack"
-					:class="{
-						'cursor-not-allowed': this.historyCounter === 1,
-					}"
-					class="mt-[1px] flex justify-between items-center"
-				>
+				<div @click="goBack" class="mt-[1px] flex justify-between items-center">
 					<button
 						class="w-fit h-fit rounded-full bg-opacblack p-[4px] ml-4 cursor-default"
 					>
-						<svg
-							role="img"
-							height="24"
-							width="24"
-							viewBox="0 0 24 24"
-							:class="{
-								'cursor-not-allowed': this.historyCounter === 1,
-							}"
-						>
+						<svg role="img" height="24" width="24" viewBox="0 0 24 24">
 							<path
 								fill="currentColor"
 								d="M15.957 2.793a1 1 0 010 1.414L8.164 12l7.793 7.793a1 1 0 11-1.414 1.414L5.336 12l9.207-9.207a1 1 0 011.414 0z"
@@ -41,7 +27,6 @@
 					<button
 						@click="goForward"
 						:class="{
-							'cursor-not-allowed': this.historyCounter === 1,
 							'bg-opacblack': this.historyCounter !== 1,
 						}"
 						class="w-fit h-fit ml-4 p-[4px] rounded-full hidden lg:block"
@@ -51,7 +36,6 @@
 							height="24"
 							width="24"
 							viewBox="0 0 24 24"
-							:class="{ 'cursor-not-allowed': this.historyCounter === 1 }"
 							class="text-opacwhite"
 						>
 							<path
@@ -65,7 +49,9 @@
 				<div
 					v-if="currentPlaylist && !isNavVisible"
 					:class="{
-						'transition-all duration-700 activeBtn': getHeaderBtn,
+						activeBtn: getHeaderBtn && isDiskografiPage && listView,
+						'transition-all duration-700 activeBtn':
+							getHeaderBtn && !isDiskografiPage,
 					}"
 					class="flex items-center relative ml-4 opacity-0 truncate"
 				>
@@ -110,8 +96,8 @@
 						>{{ artistName }}</span
 					>
 					<span
-						v-if="isDiskografiPage"
-						class="text-2xl font-semibold text-white"
+						v-if="isDiskografiPage && listView"
+						class="text-2xl font-semibold text-white truncate"
 						style="font-weight: 700"
 						>{{ currentDiskoSection }}</span
 					>
@@ -121,12 +107,7 @@
 						style="font-weight: 700"
 						>{{ albumName }}</span
 					>
-					<span
-						v-if="isSinglePage"
-						class="text-2xl font-semibold text-white"
-						style="font-weight: 700"
-						>Single Adı</span
-					>
+
 					<div
 						v-if="isPlaylistPage"
 						class="w-full text-2xl font-semibold text-white truncate"
@@ -172,8 +153,8 @@
 				</div>
 
 				<div
-					v-if="visToggleHeaderProfile"
-					:class="{ active: toggleHeaderProfile }"
+					v-if="isUsersPage"
+					:class="{ active: isUsersPage }"
 					class="profile-header flex w-full items-center relative opacity-0 transition-opacity duration-500"
 				>
 					<span
@@ -392,16 +373,6 @@
 
 <script>
 export default {
-	props: [
-		'toggleHeaderBtn',
-		'visToggleHeaderBtn',
-		'toggleHeaderProfile',
-		'visToggleHeaderProfile',
-		'toggleHeaderDisko',
-		'visToggleHeaderDisko',
-		'selectArtCardName',
-		'currentDiskoSection',
-	],
 	data() {
 		return {
 			accountOptions: false,
@@ -514,8 +485,20 @@ export default {
 		isAlbumPage() {
 			return this.$route.fullPath === `/album/${this.$route.params.id}`;
 		},
+		getSelectredType() {
+			return this.$store.getters['discography/getSelectedType'];
+		},
 		isDiskografiPage() {
-			return this.$route.fullPath === '/artist/id/discography/all';
+			return (
+				this.$route.fullPath ===
+				`/artist/${this.$route.params.id}/discography/${this.$route.params.type}`
+			);
+		},
+		getDiscoRenderType() {
+			return this.$store.getters['discography/getDiscoRenderType'];
+		},
+		listView() {
+			return this.getDiscoRenderType === 'listView';
 		},
 		isFavoriteSongs() {
 			return this.$route.fullPath === '/collection/tracks';
@@ -567,6 +550,9 @@ export default {
 			return this.$store.getters['genres/getGenreTitle'];
 		},
 
+		currentDiskoSection() {
+			return this.$store.getters['discography/getCurrentDiskoSection'];
+		},
 		currentUserName() {
 			return this.$route.params.id === this.currentUserID ? this.userName : '';
 		},

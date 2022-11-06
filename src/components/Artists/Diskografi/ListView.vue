@@ -17,13 +17,18 @@
 					alt="track image"
 				/>
 			</div>
-			<div :class="{ 'mt-[6.8rem]': indexCalc, 'mt-[-0.3rem]': !indexCalc }">
-				<span class="font-semibold text-3xl hover:underline text-white">
+			<div
+				class="flex flex-col justify-around"
+				:class="{ 'mt-[6.8rem]': indexCalc, 'mt-[-0.3rem]': !indexCalc }"
+			>
+				<span
+					class="font-semibold text-3xl hover:underline text-white line-clamp-2"
+				>
 					<router-link :to="{ name: 'album', params: { id: data?.id } }">{{
 						data?.name
 					}}</router-link>
 				</span>
-				<div class="text-sm sm:mt-2 md:mt-7">
+				<div class="text-sm">
 					<span class="text-lightest">{{ albumType }}</span>
 					<span class="text-lightest before:content-['•'] before:mx-1">{{
 						cartAlbumYear(data.release_date)
@@ -32,9 +37,7 @@
 						>{{ data?.total_tracks }} şarkı</span
 					>
 				</div>
-				<div
-					class="flex items-center justify-between absolute bottom-8 text-lightest w-[7rem]"
-				>
+				<div class="flex items-center justify-between text-lightest w-[7.5rem]">
 					<div>
 						<button
 							class="items-center bg-white rounded-full w-fit p-[8px] cursor-default hover:scale-110"
@@ -64,7 +67,15 @@
 							</svg>
 						</button>
 					</div>
-					<button type="button" class="">
+					<button
+						id="this.renderTypes[this.indx].id"
+						@click="unFollowAlbum"
+						:class="{
+							greenHeart: isFavAlbum(),
+							emptyHeart: !isFavAlbum(),
+						}"
+						class="heartBtn"
+					>
 						<svg role="img" height="24" width="24" viewBox="0 0 24 24" class="">
 							<path
 								fill="currentColor"
@@ -93,15 +104,23 @@
 	<div
 		:id="data.name"
 		:class="{ 'mt-[-7rem]': indexCalc }"
-		class="playlistContainer relative h-full min-w-[450] mb-5 disko--title lg:mx-4"
+		class="playlistContainer relative h-full min-w-[450] mb-5 disko--title sm:mx-5"
 	>
-		<TrackItemsHeader :margin="margin" :diskografiPage="diskografiPage" />
+		<TrackItemsHeader
+			class="mb-4"
+			:margin="margin"
+			:diskografiPage="diskografiPage"
+		/>
 		<TrackItems
+			class="lg:ml-3"
 			v-for="(track, i) in playlistTracks[0]?.items"
 			:key="track.id"
+			:id="track.id"
 			:index="i"
-			class="my-2"
 			:diskografiPage="diskografiPage"
+			:findFavTracks="findFavTracks"
+			:addGreenHeartFavTracks="addGreenHeartFavTracks"
+			:removeGreenHeartFavTracks="removeGreenHeartFavTracks"
 		>
 			<template #trackName>{{ track.name }}</template>
 			<template #artist
@@ -135,12 +154,7 @@ import axios from 'axios';
 export default {
 	components: { TrackItems, TrackItemsHeader },
 	props: ['data', 'diskografiPage', 'renderTypes', 'indx', 'viewList'],
-	emits: [
-		'visToggleHeaderDisko',
-		'toggleHeaderDisko',
-		'sectionTitle',
-		'selectedArtistName2',
-	],
+
 	data() {
 		return {
 			options: '',
@@ -150,6 +164,7 @@ export default {
 				.height,
 			bodyHeight: document.body.getBoundingClientRect().height,
 			playlistTracks: [],
+			albumIDs: [],
 		};
 	},
 
@@ -167,6 +182,23 @@ export default {
 			return (
 				this.data?.album_type.charAt(0).toUpperCase() +
 				this.data?.album_type.slice(1)
+			);
+		},
+		currentSectionAlbumsID() {
+			return this.$store.getters['discography/getCurrentSectionAlbumsID'];
+		},
+		allFavAlbums() {
+			return this.$store.getters['albums/getFavAlbums'];
+		},
+		allFavTracks() {
+			return this.$store.getters['favTracks/getTracks'].items;
+		},
+		getFavTracksonalbum() {
+			return this.$store.getters['discography/getfavTracksID'];
+		},
+		addGreenHeartEl() {
+			return this.getFavTracksonalbum.map(item =>
+				document.getElementById(`${item}`)
 			);
 		},
 	},
@@ -210,6 +242,133 @@ export default {
 				})
 				.catch(err => console.log(err));
 		},
+		async fetchFavAlbums() {
+			return await axios
+				.get('https://api.spotify.com/v1/me/albums', {
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+						Authorization: 'Bearer ' + (await this.getToken),
+					},
+				})
+				.then(({ data }) => {
+					console.log(data);
+					this.$store.dispatch('albums/favAlbums', data.items);
+				})
+				.catch(err => console.log(err));
+		},
+		isFavAlbum() {
+			return false;
+		},
+		async unFollowAlbum(_, event) {
+			if (this.isFavAlbum()) {
+				let currentHeartBtnID = event.target.closest('.heartBtn').id;
+				await axios
+					.delete(
+						'https://api.spotify.com/v1/me/albums?ids=' + currentHeartBtnID,
+						{
+							headers: {
+								Accept: 'application/json',
+								'Content-Type': 'application/json',
+								Authorization: 'Bearer ' + (await this.getToken),
+							},
+						}
+					)
+					.then(data => {
+						console.log(data);
+						if (data.status === 200) {
+							currentHeartBtnID.classList.add('animationEmptyHeart');
+							currentHeartBtnID.classList.remove('animationGreenHeart');
+							this.fetchFavAlbums();
+						}
+					})
+					.catch(err => console.log(err));
+			} else {
+				await this.followAlbum(currentHeartBtnID);
+			}
+		},
+
+		async followAlbum(currentHeartBtnID) {
+			await fetch(
+				'https://api.spotify.com/v1/me/albums?ids=' + currentHeartBtnID,
+				{
+					method: 'PUT',
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+						Authorization: 'Bearer ' + (await this.getToken),
+					},
+				}
+			)
+				.then(data => {
+					console.log(data);
+					if (data.status === 200) {
+						currentHeartBtnID.classList.add('animationGreenHeart');
+						currentHeartBtnID.classList.remove('animationEmptyHeart');
+						this.fetchFavAlbums();
+					}
+				})
+				.catch(err => console.log(err));
+		},
+
+		findFavTracks() {
+			this.allFavTracks.forEach((track, i) => {
+				this.playlistTracks[0]?.items.forEach((item, i) => {
+					if (track.track.id === item.id) {
+						this.$store.dispatch('discography/favTracksID', item.id);
+					}
+				});
+			});
+		},
+
+		addGreenHeartFavTracks(trackItem = false) {
+			if (!trackItem) {
+				this.addGreenHeartEl.forEach(item => {
+					item.children[3].children[0].classList.remove(
+						'emptyHeart',
+						'animationEmptyHeart'
+					);
+					item.children[3].children[0].classList.add('greenHeart');
+
+					item.children[3].children[0].children[0].children[0].classList.remove(
+						'hidden'
+					);
+
+					item.children[3].children[0].children[0].children[1].classList.add(
+						'hidden'
+					);
+				});
+			} else {
+				trackItem.children[3].children[0].classList.remove(
+					'emptyHeart',
+					'animationEmptyHeart'
+				);
+				trackItem.children[3].children[0].classList.add('greenHeart');
+				trackItem.children[3].children[0].classList.add('animationGreenHeart');
+				trackItem.children[3].children[0].children[0].children[0].classList.remove(
+					'hidden'
+				);
+
+				trackItem.children[3].children[0].children[0].children[1].classList.add(
+					'hidden'
+				);
+			}
+		},
+		removeGreenHeartFavTracks(item) {
+			item.children[3].children[0].classList.remove(
+				'greenHeart',
+				'animationGreenHeart'
+			);
+			item.children[3].children[0].classList.add('emptyHeart');
+			item.children[3].children[0].classList.add('animationEmptyHeart');
+
+			item.children[3].children[0].children[0].children[0].classList.add(
+				'hidden'
+			);
+			item.children[3].children[0].children[0].children[1].classList.remove(
+				'hidden'
+			);
+		},
 	},
 
 	watch: {
@@ -217,8 +376,6 @@ export default {
 			if (newVal !== oldVal) {
 				this.bodyHeight = +newVal;
 				this.bodyHeight = +this.bodyHeight.toFixed(1);
-
-				this.$emit('visToggleHeaderDisko', true);
 
 				this.headerHeight =
 					this.header.getBoundingClientRect().height +
@@ -239,14 +396,13 @@ export default {
 					? (this.observer = new IntersectionObserver(entries => {
 							entries.forEach(entry => {
 								if (entry.isIntersecting) {
-									console.log('observing', entry.target.id);
-									this.$emit('sectionTitle', entry.target.id);
-									this.$emit('toggleHeaderDisko', true);
+									this.$store.dispatch(
+										'discography/currentDiskoSection',
+										entry.target.id
+									);
 								}
 								if (!entry.isIntersecting) {
-									console.log('Not observing', entry.target.id);
-
-									this.$emit('toggleHeaderDisko', false);
+									this.$store.dispatch('discography/clearCurrentDiskoSection');
 								}
 							});
 					  }, this.resizeOption(this.options)))
@@ -263,23 +419,27 @@ export default {
 
 	async created() {
 		window.addEventListener('resize', this.resizeOption);
-
 		console.log('ListView Mounted');
-		await this.fetchPlaylistTracks(this.indx, this.renderTypes);
 
 		console.log(this.playlistTracks);
+		console.log(this.renderTypes[this.indx].id);
+
+		await this.fetchPlaylistTracks(this.indx, this.renderTypes);
+
+		this.findFavTracks();
+
+		await this.getFavTracksonalbum;
+
+		this.addGreenHeartFavTracks();
 
 		this.header = document.getElementById('header');
 		this.diskoHeader = document.getElementById('diskoHeader');
 		this.firstEl = document.getElementById('firstElement');
 		this.diskoEl = document.querySelectorAll('.disko--title');
 
-		this.$emit('visToggleHeaderDisko', true);
-
 		this.headerHeight =
 			this.header.getBoundingClientRect().height +
 			document.getElementById('diskoHeader').getBoundingClientRect().height;
-		console.log(this.headerHeight);
 
 		this.options = {
 			root: document.body,
@@ -294,18 +454,24 @@ export default {
 		this.observer = new IntersectionObserver(entries => {
 			entries.forEach(entry => {
 				if (entry.isIntersecting) {
-					this.$emit('sectionTitle', entry.target.id);
-					this.$emit('toggleHeaderDisko', true);
+					this.$store.dispatch(
+						'discography/currentDiskoSection',
+						entry.target.id
+					);
+					this.$store.dispatch('controller/showHeaderBtn');
 				}
 				if (!entry.isIntersecting) {
-					this.$emit('toggleHeaderDisko', false);
+					this.$store.dispatch('discography/clearCurrentDiskoSection');
+					this.$store.dispatch('controller/closeHeaderBtn');
 				}
 			});
 		}, this.options);
 
-		this.diskoEl.forEach(section => {
-			this.observer.observe(section);
-		});
+		this.diskoEl
+			? this.diskoEl.forEach(section => {
+					this.observer.observe(section);
+			  })
+			: '';
 
 		this.options2 = {
 			root: null,
@@ -314,9 +480,7 @@ export default {
 
 		this.observer2 = new IntersectionObserver((entries, obs) => {
 			if (entries[0].intersectionRatio <= 0.9) {
-				console.log(obs);
 				this.header.classList.add('disko-intersec-bg1');
-
 				this.diskoHeader.classList.add('list--view-intersect');
 			} else {
 				this.header.classList.remove('disko-intersec-bg1');
@@ -325,21 +489,30 @@ export default {
 			}
 		}, this.options2);
 
-		this.observer2.observe(this.firstEl);
+		this.firstEl ? this.observer2.observe(this.firstEl) : '';
 	},
 
 	beforeUnmount() {
 		window.removeEventListener('resize', this.resizeOption);
-		this.header.classList.remove('disko-intersec-bg1');
-		this.diskoHeader.classList.remove('list--view-intersect');
+		this.header ? this.header.classList.remove('disko-intersec-bg1') : '';
+		this.diskoHeader
+			? this.diskoHeader.classList.remove('list--view-intersect')
+			: '';
 		this.$emit('visToggleHeaderDisko', false);
 		this.$emit('toggleHeaderDisko', false);
 		if (this.viewList) {
-			this.diskoEl.forEach(section => {
-				this.observer.unobserve(section);
-			});
-			this.observer2.unobserve(this.firstEl);
+			this.diskoEl
+				? this.diskoEl.forEach(section => {
+						this.observer.unobserve(section);
+				  })
+				: '';
+			this.firstEl ? this.observer2.unobserve(this.firstEl) : '';
 		}
+	},
+
+	unmounted() {
+		this.$store.dispatch('controller/closeHeaderBtn');
+		this.$store.dispatch('discography/clearTracksID');
 	},
 };
 </script>
@@ -349,4 +522,42 @@ export default {
 	background-color: #181818 !important;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
 }
+
+.greenHeart {
+	color: #1fdf64;
+}
+.animationGreenHeart {
+	animation: heart 0.2s ease-in;
+}
+
+.emptyHeart {
+	color: #9b9b9b;
+}
+.animationEmptyHeart {
+	animation: emptyheart 0.2s ease-in-out 1 alternate;
+}
+
+@keyframes heart {
+	33% {
+		transform: scale(1.4);
+	}
+	66% {
+		transform: scale(1.2);
+	}
+	100% {
+		transform: scale(1.5);
+	}
+}
+@keyframes emptyheart {
+	33% {
+		transform: translateX(-6px) rotate(-20deg);
+	}
+	66% {
+		transform: translateX(6px) rotate(20deg);
+	}
+	100% {
+		transform: translateX(0) rotate(0);
+	}
+}
 </style>
+<!-- -->

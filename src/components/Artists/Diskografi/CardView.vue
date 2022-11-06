@@ -39,8 +39,8 @@
 					</div>
 					<div class="flex items-middle flex-col justify-center">
 						<div class="text-white max-w-full truncate">{{ album.name }}</div>
-						<div class="text-sm text-lightest w-full truncate">
-							{{ album.description }}
+						<div class="text-sm text-lightest w-full mt-2">
+							{{ cartAlbumYear(album.release_date) }}
 						</div>
 					</div>
 				</div>
@@ -56,6 +56,12 @@ export default {
 	data() {
 		return {};
 	},
+	methods: {
+		cartAlbumYear(currentSection) {
+			return new Date(currentSection).getFullYear();
+		},
+	},
+
 	mounted() {
 		if (this.viewCard) {
 			console.log('CardList Mounted!');

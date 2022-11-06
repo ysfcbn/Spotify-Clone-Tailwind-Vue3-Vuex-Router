@@ -248,6 +248,9 @@ export default {
 		getUserTopFavTracks() {
 			return this.$store.getters['users/getFavTracksID'];
 		},
+		getFavTracksDiscographyAlbum() {
+			return this.$store.getters['discography/getfavTracksID'];
+		},
 		getFavTracksOnAlbum() {
 			return this.$store.getters['albums/getfavTracksID'];
 		},
@@ -315,6 +318,14 @@ export default {
 						]
 					}`
 				);
+			if (this.diskografiPage)
+				return document.getElementById(
+					`${
+						this.getFavTracksDiscographyAlbum[
+							`${this.getFavTracksDiscographyAlbum.indexOf(trackID)}`
+						]
+					}`
+				);
 			if (this.userPage)
 				return document.getElementById(
 					`${
@@ -372,6 +383,8 @@ export default {
 									? this.$store.dispatch('users/clearTracksID')
 									: this.artistPage
 									? this.$store.dispatch('artists/clearTracksID')
+									: this.diskografiPage
+									? this.$store.dispatch('discography/clearTracksID')
 									: '';
 								this.findFavTracks();
 								this.TrackPage ? this.findFavTracks2() : '';
@@ -407,7 +420,8 @@ export default {
 									this.getFavTracksOnPlaylist.length ||
 									this.getFavTracksOnAlbum.length ||
 									this.getFavTracksOnAlbum2.length ||
-									this.getUserTopFavTracks.length
+									this.getUserTopFavTracks.length ||
+									this.getFavTracksDiscographyAlbum.length
 								) {
 									console.log(this.selectedTrackEl(trackID));
 
@@ -425,12 +439,14 @@ export default {
 									this.getFavTracksOnPlaylist.length ||
 									this.getFavTracksOnAlbum.length ||
 									this.getFavTracksOnAlbum2.length ||
-									this.getUserTopFavTracks.length
+									this.getUserTopFavTracks.length ||
+									this.getFavTracksDiscographyAlbum.length
 								) {
 									this.$store.dispatch('playlists/clearTracksID');
 									this.$store.dispatch('albums/clearTracksID');
 									this.$store.dispatch('users/clearTracksID');
 									this.$store.dispatch('albums/clearTracksID2');
+									this.$store.dispatch('discography/clearTracksID');
 									this.findFavTracks();
 									this.TrackPage ? this.findFavTracks2() : '';
 								}

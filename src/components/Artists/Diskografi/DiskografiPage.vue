@@ -12,19 +12,13 @@
 					>{{ currentArtist?.name }}</router-link
 				>
 			</div>
-			<DiskoOptions @selectedType="selectedTypeFunc" />
+			<DiskoOptions />
 			<button
 				@click="toggleView(msg, $event)"
-				:class="{ 'bg-dark2': viewList }"
+				:class="{ 'bg-dark2': listView }"
 				class="view-list rounded-full text-opacwhite3 mx-3 p-2 hover:bg-dark2"
 			>
-				<svg
-					role="img"
-					height="16"
-					width="16"
-					viewBox="0 0 16 16"
-					class="Svg-sc-1bi12j5-0 EQkJl"
-				>
+				<svg role="img" height="16" width="16" viewBox="0 0 16 16">
 					<path
 						fill="currentColor"
 						d="M15 14.5H5V13h10v1.5zm0-5.75H5v-1.5h10v1.5zM15 3H5V1.5h10V3zM3 3H1V1.5h2V3zm0 11.5H1V13h2v1.5zm0-5.75H1v-1.5h2v1.5z"
@@ -33,16 +27,10 @@
 			</button>
 			<button
 				@click="toggleView(msg, $event)"
-				:class="{ 'bg-dark2': viewCard }"
+				:class="{ 'bg-dark2': cardView }"
 				class="view-card hover:bg-dark2 rounded-full text-opacwhite3 p-2"
 			>
-				<svg
-					role="img"
-					height="16"
-					width="16"
-					viewBox="0 0 16 16"
-					class="Svg-sc-1bi12j5-0 EQkJl"
-				>
+				<svg role="img" height="16" width="16" viewBox="0 0 16 16">
 					<path
 						fill="currentColor"
 						d="M1 1h6v6H1V1zm1.5 1.5v3h3v-3h-3zM1 9h6v6H1V9zm1.5 1.5v3h3v-3h-3zM9 1h6v6H9V1zm1.5 1.5v3h3v-3h-3zM9 9h6v6H9V9zm1.5 1.5v3h3v-3h-3z"
@@ -50,32 +38,20 @@
 				</svg>
 			</button>
 		</div>
-		<div v-if="viewList">
+		<div v-if="listView">
 			<ListView
-				v-for="(data, i) in renderTypes"
+				v-for="(data, i) in selectedType"
 				:key="data.id"
+				:id="data.id"
 				:indx="i"
-				:renderTypes="renderTypes"
+				:renderTypes="selectedType"
 				:data="data"
 				:diskografiPage="diskografiPage"
-				:viewList="viewList"
-				@visToggleHeaderDisko="visToggleHeaderDiskoFunc"
-				@toggleHeaderDisko="toggleHeaderDiskoFunc"
-				@sectionTitle="diskoSectionName"
-				@selectedArtistName2="selectedArtsitNameFunc"
+				:viewList="listView"
 			/>
 		</div>
-
-		<div v-if="viewCard">
-			<CardView
-				v-for="(data, i) in renderTypes"
-				:key="data.id"
-				:indx="i"
-				:renderTypes="renderTypes"
-				:data="data"
-				:viewCard="viewCard"
-				:diskografiPage="diskografiPage"
-			/>
+		<div v-else>
+			<CardView :renderTypes="selectedType" :viewCard="cardView" />
 		</div>
 
 		<section class="sm:pl-5 lg:p-5 lg:ml-[1rem]">
@@ -98,6 +74,7 @@ export default {
 		CardView,
 		Info,
 	},
+
 	emits: [
 		'visToggleHeaderDisko',
 		'toggleHeaderDisko',
@@ -107,13 +84,18 @@ export default {
 	data() {
 		return {
 			diskografiPage: true,
-			selected: {},
-			viewList: true,
-			viewCard: false,
 			margin: false,
-			selectedType: '',
-			renderTypes: [],
+			currentPath: '',
+			currentSectionAlbums: [],
 		};
+	},
+	watch: {
+		$route(to, from) {
+			let pathArr = to.path.split('/');
+			this.currentPath = pathArr[pathArr.length - 1];
+			console.log(this.currentPath);
+			this.$store.dispatch('discography/selectedType', this.currentPath);
+		},
 	},
 	computed: {
 		currentArtist() {
@@ -131,26 +113,39 @@ export default {
 		artistCompilations() {
 			return this.$store.getters['artists/getArtistCompilations']?.items;
 		},
+		selectedType() {
+			return this.getSelectredType === 'all'
+				? this.artistPublications
+				: this.getSelectredType === 'albums'
+				? this.artistAlbums
+				: this.getSelectredType === 'singles'
+				? this.artistSingles
+				: this.getSelectredType === 'compilations'
+				? this.artistCompilations
+				: null;
+		},
+		getSelectredType() {
+			return this.$store.getters['discography/getSelectedType'];
+		},
+		getDiscoRenderType() {
+			return this.$store.getters['discography/getDiscoRenderType'];
+		},
+		listView() {
+			return this.getDiscoRenderType === 'listView';
+		},
+		cardView() {
+			return this.getDiscoRenderType === 'cardView';
+		},
 	},
 	methods: {
 		toggleView(_, e) {
 			if (e.target.closest('.view-list')) {
-				this.viewList = true;
-				this.viewCard = false;
+				this.$store.dispatch('discography/discoRenderType', 'listView');
 			} else {
-				this.viewCard = true;
-				this.viewList = false;
+				this.$store.dispatch('discography/discoRenderType', 'cardView');
 			}
 		},
-		selectedTypeFunc(name) {
-			console.log(name);
-			this.selected = name;
-			for (const select in this.selected) {
-				this.selected[select] === true ? (this.selectedType = select) : '';
-			}
-			console.log(this.selectedType);
-			this.renderSelectedType();
-		},
+
 		toggleHeaderDiskoFunc(value) {
 			this.$emit('toggleHeaderDisko', value);
 		},
@@ -163,33 +158,20 @@ export default {
 		selectedArtsitNameFunc(name) {
 			this.$emit('selectedArtistName', name);
 		},
-
-		renderSelectedType() {
-			switch (this.selectedType) {
-				case 'all':
-					this.renderTypes = this.artistPublications;
-					break;
-				case 'album':
-					this.renderTypes = this.artistAlbums;
-					break;
-				case 'singles':
-					this.renderTypes = this.artistSingles;
-					break;
-				case 'compilations':
-					this.renderTypes = this.artistCompilations;
-					break;
-				default:
-					console.log(`Sorry, we are out of type`);
-			}
-		},
 	},
 
-	mounted() {
+	created() {
 		this.diskografiPage = true;
-		this.renderTypes = this.artistPublications;
+		console.log(this.artistPublications);
+		this.selectedType.forEach(item => this.currentSectionAlbums.push(item.id));
+		console.log(this.currentSectionAlbums);
+		this.$store.dispatch(
+			'discography/currentSectionAlbumsID',
+			this.currentSectionAlbums
+		);
 	},
-	updated() {
-		console.log(this.selected);
+	unmounted() {
+		this.$store.dispatch('controller/closeHeaderBtn');
 	},
 };
 </script>

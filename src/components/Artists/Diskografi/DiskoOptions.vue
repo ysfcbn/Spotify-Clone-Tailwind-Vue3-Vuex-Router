@@ -8,7 +8,7 @@
 			:class="[curWidth]"
 			class="text-sm min-w-[72px] flex items-center justify-between px-[6px] py-[4px]"
 		>
-			<span class="w-full">{{ selected }}</span>
+			<span class="w-full">{{ activeType }}</span>
 			<svg
 				v-if="!active"
 				role="img"
@@ -31,110 +31,129 @@
 			</svg>
 		</div>
 
-		<ul
+		<div
 			v-if="diskografiOption"
-			id="getSongs"
 			class="type--list z-40 absolute bg-dark2 top-[2.5rem] left-0 p-[4px] min-w-[160px] max-w-[360px] h-fit w-fit text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
 		>
-			<li
-				@click="toggleAll"
+			<router-link
+				:to="{ name: 'discography', params: { type: 'all' } }"
 				class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3"
 			>
-				<button class="cursor-default w-full flex justify-between">
-					<span class="text-xs md:text-sm">Tümü</span>
+				<div class="cursor-default w-full flex justify-between">
+					<span
+						:class="{ 'text-green3': this.$route.params.type === 'all' }"
+						class="text-xs md:text-sm"
+						>Tümü</span
+					>
 					<svg
-						v-if="all"
+						v-if="this.$route.params.type === 'all'"
 						role="img"
 						height="16"
 						width="16"
 						viewBox="0 0 16 16"
-						class=""
+						class="text-green3"
 					>
 						<path
 							fill="currentColor"
 							d="M15.53 2.47a.75.75 0 010 1.06L4.907 14.153.47 9.716a.75.75 0 011.06-1.06l3.377 3.376L14.47 2.47a.75.75 0 011.06 0z"
 						></path>
 					</svg>
-				</button>
-			</li>
-			<li
-				@click="toggleAlbums"
+				</div>
+			</router-link>
+			<router-link
+				:to="{ name: 'discography', params: { type: 'albums' } }"
 				class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3"
 			>
-				<button class="cursor-default w-full flex justify-between">
-					<span class="text-xs md:text-sm">Albümler</span>
+				<div class="cursor-default w-full flex justify-between">
+					<span
+						:class="{ 'text-green3': this.$route.params.type === 'albums' }"
+						class="text-xs md:text-sm"
+						>Albümler</span
+					>
 					<svg
-						v-if="albums"
+						v-if="this.$route.params.type === 'albums'"
 						role="img"
 						height="16"
 						width="16"
 						viewBox="0 0 16 16"
-						class="Svg-sc-1bi12j5-0 EQkJl"
+						class="text-green3"
 					>
 						<path
 							fill="currentColor"
 							d="M15.53 2.47a.75.75 0 010 1.06L4.907 14.153.47 9.716a.75.75 0 011.06-1.06l3.377 3.376L14.47 2.47a.75.75 0 011.06 0z"
 						></path>
 					</svg>
-				</button>
-			</li>
-			<li
-				@click="toggleSingles"
+				</div>
+			</router-link>
+			<router-link
+				:to="{ name: 'discography', params: { type: 'singles' } }"
 				class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3"
 			>
-				<button class="cursor-default w-full flex justify-between">
-					<span class="text-xs md:text-sm w-full flex"
+				<div class="cursor-default w-full flex justify-between">
+					<span
+						:class="{ 'text-green3': this.$route.params.type === 'singles' }"
+						class="text-xs md:text-sm w-full flex"
 						>Single'lar ve EP'ler</span
 					>
 					<svg
-						v-if="singlesEps"
+						v-if="this.$route.params.type === 'singles'"
 						role="img"
 						height="16"
 						width="16"
 						viewBox="0 0 16 16"
-						class="Svg-sc-1bi12j5-0 EQkJl"
+						class="text-green3"
 					>
 						<path
 							fill="currentColor"
 							d="M15.53 2.47a.75.75 0 010 1.06L4.907 14.153.47 9.716a.75.75 0 011.06-1.06l3.377 3.376L14.47 2.47a.75.75 0 011.06 0z"
 						></path>
 					</svg>
-				</button>
-			</li>
-			<li
+				</div>
+			</router-link>
+			<router-link
 				v-if="isCompExist"
-				@click="toggleCompilations"
+				:to="{ name: 'discography', params: { type: 'compilations' } }"
 				class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3"
 			>
-				<button class="cursor-default w-full flex justify-between">
-					<span class="text-xs md:text-sm">Derlemeler</span>
+				<div class="cursor-default w-full flex justify-between">
+					<span
+						:class="{
+							'text-green3': this.$route.params.type === 'compilations',
+						}"
+						class="text-xs md:text-sm"
+						>Derlemeler</span
+					>
 					<svg
-						v-if="compilations"
+						v-if="this.$route.params.type === 'compilations'"
 						role="img"
 						height="16"
 						width="16"
 						viewBox="0 0 16 16"
-						class="Svg-sc-1bi12j5-0 EQkJl"
+						class="text-green3"
 					>
 						<path
 							fill="currentColor"
 							d="M15.53 2.47a.75.75 0 010 1.06L4.907 14.153.47 9.716a.75.75 0 011.06-1.06l3.377 3.376L14.47 2.47a.75.75 0 011.06 0z"
 						></path>
 					</svg>
-				</button>
-			</li>
-		</ul>
+				</div>
+			</router-link>
+		</div>
 	</button>
 </template>
 
 <script>
 export default {
 	name: 'DiskoOptions',
-	emits: ['selectedType'],
+	props: {
+		type: {
+			type: String,
+			required: false,
+		},
+	},
 
 	data() {
 		return {
-			selected: 'Tümü',
 			active: false,
 			diskografiOption: false,
 			all: true,
@@ -150,52 +169,6 @@ export default {
 			this.active = !this.active;
 		},
 
-		toggleAll() {
-			this.$router.push('/artist/id/discography/all');
-			this.all ? '' : (this.all = true);
-			this.selected = 'Tümü';
-			this.albums ? (this.albums = false) : '';
-			this.singlesEps ? (this.singlesEps = false) : '';
-			this.compilations ? (this.compilations = false) : '';
-			this.selectedType();
-		},
-		toggleAlbums() {
-			this.$router.push('/artist/id/discography/album');
-			this.albums ? '' : (this.albums = true);
-			this.selected = 'Albümler';
-			this.all ? (this.all = false) : '';
-			this.singlesEps ? (this.singlesEps = false) : '';
-			this.compilations ? (this.compilations = false) : '';
-			this.selectedType();
-		},
-		toggleSingles() {
-			this.$router.push('/artist/id/discography/single');
-			this.singlesEps ? '' : (this.singlesEps = true);
-			this.selected = `Single'lar ve EP'ler`;
-			this.albums ? (this.albums = false) : '';
-			this.all ? (this.all = false) : '';
-			this.compilations ? (this.compilations = false) : '';
-			this.selectedType();
-		},
-		toggleCompilations() {
-			this.$router.push('/artist/id/discography/compilation');
-			this.compilations ? '' : (this.compilations = true);
-			this.selected = 'Derlemeler';
-			this.albums ? (this.albums = false) : '';
-			this.all ? (this.all = false) : '';
-			this.singlesEps ? (this.singlesEps = false) : '';
-			this.selectedType();
-		},
-
-		selectedType() {
-			this.$emit('selectedType', {
-				all: this.all,
-				singles: this.singlesEps,
-				album: this.albums,
-				compilations: this.compilations,
-			});
-		},
-
 		close(e) {
 			if (!this.$el.contains(e.target)) {
 				this.diskografiOption = false;
@@ -205,17 +178,31 @@ export default {
 	},
 	computed: {
 		curWidth() {
-			return this.all
+			return this.getSelectredType === 'all'
 				? 'w-[5rem]'
-				: this.singlesEps
+				: this.getSelectredType === 'singles'
 				? 'w-[10rem]'
 				: 'w-[6.5rem]';
 		},
 		isCompExist() {
-			return this.$store.getters['artists/isCompExist'];
+			return this.$store.getters['discography/isCompExist'];
+		},
+		getSelectredType() {
+			return this.$store.getters['discography/getSelectedType'];
+		},
+		activeType() {
+			return this.getSelectredType === 'all'
+				? 'Tümü'
+				: this.getSelectredType === 'albums'
+				? 'Albümler'
+				: this.getSelectredType === 'singles'
+				? "Single'ler ve EP'ler"
+				: this.getSelectredType === 'compilations'
+				? 'Derlemeler'
+				: null;
 		},
 	},
-
+	watch: {},
 	mounted() {
 		document.addEventListener('click', this.close);
 	},
@@ -227,5 +214,3 @@ export default {
 </script>
 
 <style></style>
-<!-- 		e.target ===
-					document.getElementById('typeSelection').closest('.type--list') -->
