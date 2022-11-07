@@ -1,6 +1,10 @@
 <template>
 	<ul
-		class="z-50 absolute bg-dark2 top-[4.8rem] left-[10.8rem] p-[4px] w-fit h-fit text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
+		:class="{
+			'top-[17.8rem] left-[18.5rem] p-[4px] ': diskografiPage && firstElement,
+			'top-[11rem] left-[18.5rem] p-[4px] ': diskografiPage && !firstElement,
+		}"
+		class="app--option absolute bg-dark2 top-[4.8rem] left-[10.8rem] p-[4px] w-fit h-fit text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
 	>
 		<li
 			class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 truncate"
@@ -16,7 +20,10 @@
 				<span v-if="TrackPage" class="text-xs md:text-sm">
 					Şarkı radyosuna git
 				</span>
-				<span v-if="albumsPage || singlePage" class="text-xs md:text-sm">
+				<span
+					v-if="albumPage || singlePage || diskografiPage"
+					class="text-xs md:text-sm"
+				>
 					Sanatçı radyosuna git
 				</span>
 				<span v-if="playlistPage" class="text-xs md:text-sm">
@@ -63,15 +70,19 @@
 		</li>
 		<li
 			v-if="!TrackPage"
+			@click="unFollowAlbum"
 			class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3"
 		>
-			<button class="cursor-default">
+			<button v-if="!isFavAlbum" class="cursor-default">
 				<span class="text-xs md:text-sm"> Kitaplığına Ekle </span>
+			</button>
+			<button v-else class="cursor-default">
+				<span class="text-xs md:text-sm"> Kitaplığından Kaldır </span>
 			</button>
 		</li>
 
 		<li
-			v-if="albumsPage || singlePage || TrackPage"
+			v-if="albumPage || singlePage || TrackPage"
 			@mouseenter="visibleFunc"
 			@mouseleave="visibleFunc2"
 			class="group w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-b border-opacwhite"
@@ -93,7 +104,7 @@
 			<ul
 				v-if="visible"
 				:class="{ 'left-[15.65rem] top-[-12.5rem]': TrackPage }"
-				class="z-50 absolute bg-dark2 top-[-15rem] left-[12.6rem] p-[4px] h-[25rem] w-fit text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
+				class="z-50 absolute bg-dark2 top-[-14.9rem] left-[12.2rem] p-[4px] h-[25rem] w-fit text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
 			>
 				<li
 					class="w-full flex items-center justify-start hover:bg-dark3 border-opacwhite mb-1"
@@ -169,13 +180,13 @@
 					'w-[16.2rem] top-[7.4rem] ': playlistPage,
 					'left-[15.55rem] top-[12.65rem]': TrackPage,
 				}"
-				class="z-50 absolute bg-dark2 top-[10rem] left-[12.6rem] p-[4px] h-fit w-[13.3rem] text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
+				class="z-50 absolute bg-dark2 top-[10rem] left-[12.2rem] p-[4px] h-fit w-[13.3rem] text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
 			>
 				<li
 					class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-opacwhite"
 				>
 					<button class="cursor-default w-full">
-						<span v-if="albumsPage || singlePage" class="text-xs md:text-sm"
+						<span v-if="albumPage || singlePage" class="text-xs md:text-sm"
 							>Albüm bağlantısını kopyala</span
 						>
 						<span v-if="TrackPage" class="text-xs md:text-sm"
@@ -188,7 +199,7 @@
 				</li>
 				<li class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3">
 					<button class="cursor-default">
-						<span v-if="albumsPage || singlePage" class="text-xs md:text-sm"
+						<span v-if="albumPage || singlePage" class="text-xs md:text-sm"
 							>Albümü göm</span
 						>
 						<span v-if="TrackPage" class="text-xs md:text-sm">Parçayı göm</span>
@@ -220,10 +231,14 @@ export default {
 	name: 'AppOptions',
 	props: [
 		'appOptions',
-		'albumsPage',
+		'albumPage',
 		'singlePage',
 		'TrackPage',
 		'playlistPage',
+		'isFavAlbum',
+		'unFollowAlbum',
+		'diskografiPage',
+		'firstElement',
 	],
 	emits: ['toggleAppOptions'],
 	data() {

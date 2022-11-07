@@ -136,8 +136,11 @@
 						</svg>
 					</button>
 					<AppOptions
-						:albumPage="albumPage"
 						v-if="appOptions"
+						:albumPage="albumPage"
+						:isFavAlbum="isFavAlbum"
+						:followAlbum="followAlbum"
+						:unFollowAlbum="unFollowAlbum"
 						:appOptions="appOptions"
 						@toggleAppOptions="toggleAppOptions"
 					/>

@@ -3,9 +3,9 @@
 		<div
 			:id="indexCalc ? 'firstElement' : ''"
 			:class="{
-				'absolute h-[20rem] top-[-6.5rem] w-full z-0': indexCalc,
+				'absolute h-[20rem] top-[-6.5rem] w-full ': indexCalc,
 			}"
-			class="p-[32px] flex bg-gradient-to-b from-dark1 to-dark relative"
+			class="p-[32px] flex bg-gradient-to-b from-dark1 to-dark relative z-50"
 		>
 			<div
 				:class="{ 'flex-col justify-end': indexCalc }"
@@ -68,22 +68,32 @@
 						</button>
 					</div>
 					<button
-						id="this.renderTypes[this.indx].id"
-						@click="unFollowAlbum"
+						:id="renderTypes[indx].id"
+						@click="unFollowAlbum(false, $event)"
 						:class="{
-							greenHeart: isFavAlbum(),
-							emptyHeart: !isFavAlbum(),
+							greenHeart: isFavAlbum(renderTypes[indx].id),
+							emptyHeart: !isFavAlbum(renderTypes[indx].id),
 						}"
 						class="heartBtn"
 					>
-						<svg role="img" height="24" width="24" viewBox="0 0 24 24" class="">
+						<svg role="img" height="24" width="24" viewBox="0 0 24 24">
 							<path
 								fill="currentColor"
 								d="M5.21 1.57a6.757 6.757 0 016.708 1.545.124.124 0 00.165 0 6.741 6.741 0 015.715-1.78l.004.001a6.802 6.802 0 015.571 5.376v.003a6.689 6.689 0 01-1.49 5.655l-7.954 9.48a2.518 2.518 0 01-3.857 0L2.12 12.37A6.683 6.683 0 01.627 6.714 6.757 6.757 0 015.21 1.57zm3.12 1.803a4.757 4.757 0 00-5.74 3.725l-.001.002a4.684 4.684 0 001.049 3.969l.009.01 7.958 9.485a.518.518 0 00.79 0l7.968-9.495a4.688 4.688 0 001.049-3.965 4.803 4.803 0 00-3.931-3.794 4.74 4.74 0 00-4.023 1.256l-.008.008a2.123 2.123 0 01-2.9 0l-.007-.007a4.757 4.757 0 00-2.214-1.194z"
 							></path>
+							<path
+								v-if="isFavAlbum(renderTypes[indx].id)"
+								:class="{ 'text-green3': isFavAlbum(renderTypes[indx].id) }"
+								fill="currentColor"
+								d="M8.667 1.912a6.257 6.257 0 00-7.462 7.677c.24.906.683 1.747 1.295 2.457l7.955 9.482a2.015 2.015 0 003.09 0l7.956-9.482a6.188 6.188 0 001.382-5.234l-.49.097.49-.099a6.303 6.303 0 00-5.162-4.98h-.002a6.24 6.24 0 00-5.295 1.65.623.623 0 01-.848 0 6.257 6.257 0 00-2.91-1.568z"
+							></path>
 						</svg>
 					</button>
-					<button class="text-lightest cursor-default w-fit relative">
+					<button
+						@click="toggleAppOptions(_, $event)"
+						:id="indexCalc ? 'firstElement' : ''"
+						class="text-lightest cursor-default w-fit relative"
+					>
 						<svg
 							role="img"
 							height="26"
@@ -97,6 +107,16 @@
 							></path>
 						</svg>
 					</button>
+					<AppOptions
+						v-if="appOptions"
+						:id="renderTypes[indx].id"
+						:diskografiPage="diskografiPage"
+						:firstElement="firstElement"
+						:isFavAlbum="isFavAlbum(renderTypes[indx].id)"
+						:unFollowAlbum="unFollowAlbum(true, $event)"
+						:appOptions="appOptions"
+						@toggleAppOptions="toggleAppOptions"
+					/>
 				</div>
 			</div>
 		</div>
@@ -149,22 +169,24 @@
 <script>
 import TrackItems from '../../TrackItems/TrackItems.vue';
 import TrackItemsHeader from '../../TrackItems/TrackItemsHeader.vue';
+import AppOptions from '../../AppOptions/AppOptions.vue';
 import axios from 'axios';
 
 export default {
-	components: { TrackItems, TrackItemsHeader },
+	components: { TrackItems, TrackItemsHeader, AppOptions },
 	props: ['data', 'diskografiPage', 'renderTypes', 'indx', 'viewList'],
 
 	data() {
 		return {
 			options: '',
+			appOptions: false,
+			firstElement: false,
 			observer: null,
 			margin: true,
 			headerHeight: document.getElementById('header').getBoundingClientRect()
 				.height,
 			bodyHeight: document.body.getBoundingClientRect().height,
 			playlistTracks: [],
-			albumIDs: [],
 		};
 	},
 
@@ -257,12 +279,19 @@ export default {
 				})
 				.catch(err => console.log(err));
 		},
-		isFavAlbum() {
-			return false;
+		isFavAlbum(id) {
+			return this.allFavAlbums?.filter(item => item.album.id === id).length > 0
+				? true
+				: false;
 		},
-		async unFollowAlbum(_, event) {
-			if (this.isFavAlbum()) {
-				let currentHeartBtnID = event.target.closest('.heartBtn').id;
+		async unFollowAlbum(opt, event) {
+			let currentHeartBtnID;
+			opt
+				? (currentHeartBtnID = event.target.closest('.app--option').id)
+				: (currentHeartBtnID = event.target.closest('.heartBtn').id);
+
+			console.log(currentHeartBtnID);
+			if (this.isFavAlbum(currentHeartBtnID)) {
 				await axios
 					.delete(
 						'https://api.spotify.com/v1/me/albums?ids=' + currentHeartBtnID,
@@ -277,8 +306,9 @@ export default {
 					.then(data => {
 						console.log(data);
 						if (data.status === 200) {
-							currentHeartBtnID.classList.add('animationEmptyHeart');
-							currentHeartBtnID.classList.remove('animationGreenHeart');
+							let albumID = document.getElementById(currentHeartBtnID);
+							albumID.classList.add('animationEmptyHeart');
+							albumID.classList.remove('animationGreenHeart');
 							this.fetchFavAlbums();
 						}
 					})
@@ -303,8 +333,9 @@ export default {
 				.then(data => {
 					console.log(data);
 					if (data.status === 200) {
-						currentHeartBtnID.classList.add('animationGreenHeart');
-						currentHeartBtnID.classList.remove('animationEmptyHeart');
+						let albumID = document.getElementById(currentHeartBtnID);
+						albumID.classList.add('animationGreenHeart');
+						albumID.classList.remove('animationEmptyHeart');
 						this.fetchFavAlbums();
 					}
 				})
@@ -369,6 +400,12 @@ export default {
 				'hidden'
 			);
 		},
+		toggleAppOptions(_, e) {
+			this.appOptions = !this.appOptions;
+			e.target.closest('#firstElement')
+				? (this.firstElement = true)
+				: (this.firstElement = false);
+		},
 	},
 
 	watch: {
@@ -423,6 +460,10 @@ export default {
 
 		console.log(this.playlistTracks);
 		console.log(this.renderTypes[this.indx].id);
+		console.log(this.currentSectionAlbumsID);
+		console.log(this.allFavAlbums);
+		await this.currentSectionAlbumsID;
+		await this.allFavAlbums;
 
 		await this.fetchPlaylistTracks(this.indx, this.renderTypes);
 
