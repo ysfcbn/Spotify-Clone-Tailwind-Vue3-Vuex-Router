@@ -811,28 +811,9 @@ export default {
 		console.log('Home Mounted');
 		this.home = true;
 		const isAuth = await this.isAuth;
-		// console.log(this.getBrowseCategories);
-		// console.log(this.randomIndexs);
-		// console.log(this.getSeveralPlaylists);975fd3eb76424ac49bd2a701a015fc89
 
 		this.colorTheme = document.getElementById('colorTheme');
 		this.header = document.getElementById('header');
-
-		if (isAuth) {
-			this.totaldummydata = [];
-			this.totaldummydata = this.totaldummydata.concat(
-				[this.dummydata],
-				[this.dummydata2]
-			);
-		} else {
-			this.totaldummydata = [];
-			this.totaldummydata = this.totaldummydata.concat(
-				[this.dummydata3],
-				[this.dummydata4],
-				[this.dummydata5],
-				[this.dummydata6]
-			);
-		}
 
 		if (!isAuth) {
 			this.homeEl = document.getElementById('home');
@@ -879,6 +860,10 @@ export default {
 		if (this.isAuth) {
 			this.getCurrentUser ? '' : await this.currentUser();
 			this.favTracks ? '' : await this.fetchFavTracks();
+			await this.$store.dispatch('controller/fetchCurrentlyPlayingTrack');
+			await this.$store.dispatch('controller/fetchPlaybackState');
+			await this.$store.dispatch('controller/fetchDevice');
+
 			this.favArtists ? '' : await this.fetchFavArtists();
 			this.getCurrentUserTopArtists ? '' : await this.fetchTopArtists();
 			this.favAlbums ? '' : await this.fetchFavAlbums();
