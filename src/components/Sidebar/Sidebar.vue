@@ -135,13 +135,7 @@
 		>
 			<span
 				class="w-6 h-6 flex items-center justify-center bg-gradient-to-br from-purple-900 to-blue-300"
-				><svg
-					xmlns="http://www.w3.org/2000/svg"
-					height="13"
-					width="13"
-					aria-hidden="true"
-					viewBox="0 0 16 16"
-				>
+				><svg height="13" width="13" aria-hidden="true" viewBox="0 0 16 16">
 					<path fill="none" d="M0 0h16v16H0z"></path>
 					<path
 						fill="currentColor"
@@ -152,7 +146,10 @@
 					></path></svg></span
 			><span class="ml-4 flex-start">Beğenilen Şarkılar</span>
 			<button
-				class="absolute right-[2rem] bottom-0 cursor-default group flex items-center justify-center w-10 h-4"
+				id="pause"
+				v-if="isPlayingCollection"
+				@click="pauseTrack(_, $event)"
+				class="absolute right-[2rem] bottom-0 cursor-default group flex items-center justify-center w-10 h-4 z-50"
 			>
 				<svg
 					role="img"
@@ -219,6 +216,7 @@
 					></path></svg></span
 			><span class="ml-4 h-full">Bölümlerin</span>
 			<button
+				v-if="isPlayingEpisodes"
 				class="absolute right-[2rem] bottom-1 cursor-default group flex items-center justify-center w-10"
 			>
 				<svg
@@ -316,8 +314,8 @@
 				<div class="w-full h-full group">
 					<img
 						class="w-full h-full object-cover"
-						src="https://i.scdn.co/image/ab67616d00001e02ba05d7b5b57bfbea40019ab5"
-						alt=""
+						:src="currentTrackAlbumImage"
+						alt="album ımg"
 					/>
 					<span
 						@click="toggleImg"
@@ -396,9 +394,7 @@ export default {
 			const currentID = event.target.id;
 			this.$router.push({ name: 'playlist', params: { id: currentID } });
 		},
-		notNow() {
-			this.favoriteSongsPopup = false;
-		},
+
 		toggleCollectionPopup() {
 			this.visible = true;
 			!this.collectionPopup || this.collectionPopup
@@ -424,6 +420,11 @@ export default {
 		visibleFunc(val) {
 			this.visible = val;
 		},
+		pauseTrack(_, e) {
+			if (e.target.closest('#pause').id === 'pause') {
+				this.$store.dispatch('controller/pauseCurrentTrack');
+			}
+		},
 	},
 	computed: {
 		isAuth() {
@@ -432,7 +433,9 @@ export default {
 		getToken() {
 			return this.$store.getters.accessToken;
 		},
-
+		currentTrackAlbumImage() {
+			return this.$store.getters['controller/getCurrentTrackAlbumImage'];
+		},
 		getUserFavPlaylists() {
 			return this.$store.getters['playlists/getUserFavPlaylists'];
 		},
@@ -456,13 +459,24 @@ export default {
 				this.$route.fullPath === '/collection/albums'
 			);
 		},
-
 		searchNav() {
 			return this.$route.path === '/search';
 		},
-
 		homeNav() {
 			return this.$route.path === '/';
+		},
+		getCurrentTrack() {
+			return this.$store.getters['controller/getCurrentlyPlayingTrack'];
+		},
+
+		isPlayingCollection() {
+			return (
+				this.getCurrentTrack?.context?.type === 'collection' &&
+				this.getCurrentTrack?.is_playing
+			);
+		},
+		isPlayingEpisodes() {
+			return this.getCurrentTrack?.context.type === 'episode';
 		},
 	},
 	watch: {

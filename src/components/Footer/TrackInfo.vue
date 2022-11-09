@@ -1,11 +1,14 @@
 <template>
-  <div class="flex m-4 w-[29%] min-w-[12.5rem]">
+  <div class="flex m-4 w-[29%] min-w-[12.5rem] flex-shrink">
     <div
+      v-show="getCurrentTrack"
       :class="`relative flex items-center justify-center ease-in duration-200 ${
         !trackImgDisplay ? 'right-[5rem] ease-in duration-200' : 'right-[0rem]'
       }`"
     >
-      <div class="group img relative shrink-0 mr-4">
+      <div
+        class="group img relative shrink-0 mr-3 shadow-[0_15px_15px_8px_rgba(0,0,0,0.6)]"
+      >
         <span
           class="hidden group-hover:block text-lightest w-fit rounded-full p-1 bg-opacblack absolute right-1 top-1 hover:scale-105 hover:bg-opacblack3 hover:text-white"
           @click="toggleImg"
@@ -17,32 +20,43 @@
             ></path>
           </svg>
         </span>
-        <img
-          width="60"
-          height="60"
-          src="https://i.scdn.co/image/ab67616d00001e02ba05d7b5b57bfbea40019ab5"
-        />
+        <img width="60" height="60" :src="currentTrackAlbumImage" />
       </div>
-      <div class="flex flex-col overflow-x-hidden shrink min-w-[20%]">
-        <div class="flex shrink-0 w-fit">
-          <p class="text-sm text-white shrink-0 hover:underline">
-            Dark Noise (Live In Munich) - Mixed
-          </p>
-        </div>
-        <div class="flex shrink-0 min-w-fit">
-          <p
-            class="text-[11px] text-lightest shrink-0 hover:underline hover:text-white"
+      <div
+        class="trackInfo flex flex-col overflow-x-hidden shrink min-w-[20%] py-2 px-1"
+      >
+        <div class="flex shrink-0 w-fit relative z-0">
+          <router-link
+            :to="{ name: 'album', params: { id: `${currentTrackID}` } }"
+            class="text-[14px] text-white shrink-0 hover:underline font-semibold cursor-pointer"
           >
-            Jan Blomqvist
-          </p>
+            {{ currentTrackName }}
+          </router-link>
+        </div>
+        <div class="flex shrink-0 min-w-fit relative z-0">
+          <router-link
+            class="text-[11px] text-lightest shrink-0 hover:underline hover:text-white"
+            v-for="artist in currentTrackArtistsArr"
+            :key="artist.id"
+            :to="{ name: 'artist', params: { id: `${artist.id}` } }"
+          >
+            {{
+              currentTrackArtistsArr.length > 1
+                ? artist.name ===
+                  currentTrackArtistsArr[currentTrackArtistsArr.length - 1].name
+                  ? artist.name
+                  : `${artist.name},`
+                : artist.name
+            }}
+          </router-link>
         </div>
       </div>
       <div class="flex items-center justify-center text-lightest">
-        <button class="ml-5">
+        <button class="ml-3">
           <svg
             role="img"
-            height="18"
-            width="18"
+            height="16"
+            width="16"
             viewBox="0 0 16 16"
             class="hover:text-white"
           >
@@ -117,7 +131,65 @@ export default {
   data() {
     return {};
   },
+  computed: {
+    getCurrentTrack() {
+      return this.$store.getters["controller/getCurrentlyPlayingTrack"];
+    },
+    currentTrackAlbumImage() {
+      return this.$store.getters["controller/getCurrentTrackAlbumImage"];
+    },
+    currentTrackName() {
+      return this.getCurrentTrack ? this.getCurrentTrack?.item?.name : "";
+    },
+    currentTrackID() {
+      return this.getCurrentTrack
+        ? this.getCurrentTrack?.item?.album?.id
+        : "null";
+    },
+    currentTrackArtistsArr() {
+      return this.getCurrentTrack?.item?.artists;
+    },
+    currentTrackArtists() {
+      return this.getCurrentTrack ? this.currentTrackArtistsArr[0].name : "";
+    },
+
+    isPlaying() {
+      return this.getCurrentTrack?.is_playing;
+    },
+  },
+  methods: {},
+  created() {
+    console.log("CREATED!!!!! Footer");
+  },
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.trackInfo {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    width: 15px;
+    height: 100%;
+    top: 0;
+    right: 0;
+    background-image: linear-gradient(
+      (to left, rgba(24, 24, 24, 1) 10%, rgba(24, 24, 24, 0.1) 100%)
+    );
+  }
+  &::before {
+    content: "";
+    position: absolute;
+    z-index: 10;
+    width: 5px;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-image: linear-gradient(
+      (to right, rgba(24, 24, 24, 1) 10%, rgba(24, 24, 24, 0.1) 100%)
+    );
+  }
+}
+</style>

@@ -139,6 +139,9 @@ module.exports = {
         9: "9",
         10: "10",
       },
+      boxShadow: {
+        trackInfo: "inset 0 10px 5px 10px 0 rgba(2, 23, 216,0.5)",
+      },
     },
   },
   plugins: [require("@tailwindcss/line-clamp")],
