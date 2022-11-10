@@ -22,14 +22,23 @@ const controllerModule = {
 		currentTrackAlbumImage: null,
 		headerBtn: false,
 		device_id: null,
-		devices: null,
+		myDevice: null,
+		volumePercent: null,
+		currentTrackID: null,
+		currentTrackIsFav: '',
 	},
 	mutations: {
 		myDevice(state, payload) {
-			state.devices = payload;
+			state.myDevice = payload;
+		},
+		volumePercent(state, payload) {
+			state.volumePercent = payload;
 		},
 		deviceID(state, id) {
 			state.device_id = id;
+		},
+		currentTrackID(state, id) {
+			state.currentTrackID = id;
 		},
 		currentlyPlayingTrack(state, payload) {
 			state.currentlyPlayingTrack = payload;
@@ -39,6 +48,9 @@ const controllerModule = {
 		},
 		currentTrackAlbumImage(state, payload) {
 			state.currentTrackAlbumImage = payload;
+		},
+		currentTrackIsFav(state, payload) {
+			state.currentTrackIsFav = payload;
 		},
 		showHeaderBtn(state) {
 			state.headerBtn = true;
@@ -54,7 +66,7 @@ const controllerModule = {
 					headers: {
 						Accept: 'application/json',
 						'Content-Type': 'application/json',
-						Authorization: 'Bearer ' + (await getters.getToken),
+						Authorization: 'Bearer ' + getters.getToken,
 					},
 				})
 				.then(({ data }) => {
@@ -62,10 +74,11 @@ const controllerModule = {
 					commit('myDevice', data.devices);
 					commit('deviceID', data.devices[0].id);
 					dispatch('transferDevice');
+					dispatch('volumePercent');
 				})
 				.catch(err => console.log(err));
 		},
-		async transferDevice({ getters, state }) {
+		async transferDevice({ getters }) {
 			await fetch(`https://api.spotify.com/v1/me/player`, {
 				method: 'PUT',
 				body: JSON.stringify(
@@ -75,7 +88,7 @@ const controllerModule = {
 				headers: {
 					Accept: 'application/json',
 					'Content-Type': 'application/json',
-					Authorization: 'Bearer ' + (await getters.getToken),
+					Authorization: 'Bearer ' + getters.getToken,
 				},
 			})
 				.then(data => {
@@ -94,7 +107,7 @@ const controllerModule = {
 						headers: {
 							Accept: 'application/json',
 							'Content-Type': 'application/json',
-							Authorization: 'Bearer ' + (await getters.getToken),
+							Authorization: 'Bearer ' + getters.getToken,
 						},
 					}
 				)
@@ -102,6 +115,9 @@ const controllerModule = {
 					console.log(data);
 					if (data) {
 						dispatch('currentlyPlayingTrack', data);
+						dispatch('fetchPlaybackState');
+						commit('currentTrackID', data.item.id);
+						dispatch('isFavTrack');
 						commit('currentTrackAlbumImage', data.item.album.images[0].url);
 					}
 				})
@@ -128,7 +144,31 @@ const controllerModule = {
 		async playbackState({ commit }, playback_State) {
 			commit('playbackState', await playback_State);
 		},
-
+		async isFavTrack({ dispatch, getters }) {
+			await axios
+				.get(
+					`https://api.spotify.com/v1/me/tracks/contains?ids=` +
+						getters.currentTrackID,
+					{
+						headers: {
+							Accept: 'application/json',
+							'Content-Type': 'application/json',
+							Authorization: 'Bearer ' + getters.getToken,
+						},
+					}
+				)
+				.then(({ data }) => {
+					console.log(data);
+					dispatch('currentTrackIsFav', ...data);
+				})
+				.catch(err => console.log(err));
+		},
+		async currentTrackIsFav({ commit }, payload) {
+			commit('currentTrackIsFav', await payload);
+		},
+		async volumePercent({ commit, state }) {
+			commit('volumePercent', await state.myDevice[0].volume_percent);
+		},
 		async playCurrentTrack({ getters, dispatch }) {
 			if (!getters.getCurrentlyPlayingTrack?.context?.uri) return;
 			fetch(`https://api.spotify.com/v1/me/player/play`, {
@@ -225,7 +265,12 @@ const controllerModule = {
 		deviceID(state) {
 			return state.device_id;
 		},
-
+		currentTrackID(state) {
+			return state.currentTrackID;
+		},
+		getVolumePercent(state) {
+			return state.volumePercent;
+		},
 		getCurrentlyPlayingTrack(state) {
 			return state.currentlyPlayingTrack;
 		},
@@ -234,6 +279,9 @@ const controllerModule = {
 		},
 		getCurrentTrackAlbumImage(state) {
 			return state.currentTrackAlbumImage;
+		},
+		getCurrentTrackIsFav(state) {
+			return state.currentTrackIsFav;
 		},
 		getHeaderBtn(state) {
 			return state.headerBtn;

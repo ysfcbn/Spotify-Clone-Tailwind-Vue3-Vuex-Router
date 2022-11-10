@@ -858,18 +858,16 @@ export default {
 			this.observer.observe(this.homeEl);
 		}
 		if (this.isAuth) {
-			this.getCurrentUser ? '' : await this.currentUser();
-			this.favTracks ? '' : await this.fetchFavTracks();
-			await this.$store.dispatch('controller/fetchCurrentlyPlayingTrack');
-			await this.$store.dispatch('controller/fetchPlaybackState');
 			await this.$store.dispatch('controller/fetchDevice');
-
-			this.favArtists ? '' : await this.fetchFavArtists();
-			this.getCurrentUserTopArtists ? '' : await this.fetchTopArtists();
-			this.favAlbums ? '' : await this.fetchFavAlbums();
-			this.favEpisodes ? '' : await this.fetchFavEpisodes();
+			await this.$store.dispatch('controller/fetchCurrentlyPlayingTrack');
+			this.getCurrentUser ? '' : await this.currentUser();
 			this.getFavShows ? '' : await this.fetchFavShows();
 			this.severalPlaylists ? '' : await this.fetchSeveralPlaylists();
+			this.getCurrentUserTopArtists ? '' : await this.fetchTopArtists();
+			this.favTracks ? '' : await this.fetchFavTracks();
+			this.favArtists ? '' : await this.fetchFavArtists();
+			this.favAlbums ? '' : await this.fetchFavAlbums();
+			this.favEpisodes ? '' : await this.fetchFavEpisodes();
 			if (!this.RandomSelectedPlaylists.length) {
 				await this.fetchBrowseCategories();
 				this.randomNumbers();

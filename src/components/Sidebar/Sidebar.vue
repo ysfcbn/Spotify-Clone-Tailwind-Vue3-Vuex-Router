@@ -476,7 +476,7 @@ export default {
 			);
 		},
 		isPlayingEpisodes() {
-			return this.getCurrentTrack?.context.type === 'episode';
+			return this.getCurrentTrack?.currently_playing_type === 'episode';
 		},
 	},
 	watch: {
