@@ -40,27 +40,32 @@
 			role="track-index"
 			class="flex w-full h-full items-center justify-center"
 		>
-			<div
-				class="relative flex text-right items-center justify-end pr-[14px] w-full"
-			>
-				<span class="text-lg group-hover:hidden text-white">
-					{{ index + 1 }}</span
+			<slot name="trackIndex">
+				<div
+					class="relative flex text-right items-center justify-end pr-[14px] w-full"
 				>
-				<button class="absolute right-3">
-					<svg role="img" height="16" width="16" viewBox="0 0 24 24">
-						<path
-							class="hidden group-hover:block"
-							fill="#FFFFFF"
-							d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
-						></path>
-						<path
-							class="hidden"
-							fill="#FFFFFF"
-							d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
-						></path>
-					</svg>
-				</button>
-			</div>
+					<span class="text-white text-lg group-hover:hidden">
+						{{ index + 1 }}</span
+					>
+					<button
+						@click="playTrack((uri = uri), $event)"
+						class="absolute right-3 cursor-default"
+					>
+						<svg role="img" height="16" width="16" viewBox="0 0 24 24">
+							<path
+								class="hidden group-hover:block"
+								fill="#FFFFFF"
+								d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
+							></path>
+							<path
+								class="hidden"
+								fill="#FFFFFF"
+								d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
+							></path>
+						</svg>
+					</button>
+				</div>
+			</slot>
 		</div>
 
 		<div class="flex justify-start items-center">
@@ -84,7 +89,9 @@
 				class="font-normal text-base truncate"
 			>
 				<div
-					:class="{ 'hover:underline': favoriteSongs || playlistPage }"
+					:class="{
+						'hover:underline': favoriteSongs || playlistPage,
+					}"
 					class="text-white font-semibold sm:max-w-[13rem] md:max-w-full truncate"
 				>
 					<slot name="trackName"></slot>
@@ -209,6 +216,7 @@ export default {
 		'isFav',
 		'duration',
 		'favoriteSongs',
+		'uri',
 		'artistPage',
 		'userPage',
 		'topTracks',
@@ -224,6 +232,8 @@ export default {
 		'findFavTracks',
 		'addGreenHeartFavTracks',
 		'removeGreenHeartFavTracks',
+		'addGreenTextTrackName',
+		'removeGreenTextTrackName',
 		'findFavTracks2',
 		'addGreenHeartFavTracks2',
 		'removeGreenHeartFavTracks2',
@@ -232,13 +242,13 @@ export default {
 		return {
 			trackOptions: false,
 			active: false,
+			playingTrackID: null,
 		};
 	},
 	computed: {
 		getToken() {
 			return this.$store.getters.accessToken;
 		},
-
 		allFavTracks() {
 			return this.$store.getters['favTracks/getTracks'].items;
 		},
@@ -257,7 +267,11 @@ export default {
 		getFavTracksOnAlbum2() {
 			return this.$store.getters['albums/getfavTracksID2'];
 		},
+		currentPlayingTrackID() {
+			return this.$store.getters['controller/currentTrackID'];
+		},
 	},
+
 	methods: {
 		toggleTrackOptions() {
 			this.trackOptions = !this.trackOptions;
@@ -268,7 +282,30 @@ export default {
 				this.active = false;
 			}
 		},
+		async playTrack(uri, e) {
+			this.playingTrackID = e.target.closest('.track--container').id;
+			const trackUri = uri;
 
+			await this.$store.dispatch(
+				'controller/fetchCurrentlyPlayingTrack',
+				trackUri
+			);
+
+			if (this.currentPlayingTrackID === this.playingTrackID) {
+				await this.$store.dispatch('controller/pauseCurrentTrack');
+			} else
+				await this.$store.dispatch('controller/playSelectedTrack', trackUri);
+
+			let selectedTracksEl = [document.querySelector('.trackItems--container')];
+			selectedTracksEl = [...selectedTracksEl[0].children];
+
+			this.removeGreenTextTrackName(selectedTracksEl);
+
+			const selectedPlayingTrackEl = [
+				document.getElementById(`${this.playingTrackID}`),
+			];
+			this.addGreenTextTrackName(selectedPlayingTrackEl[0]);
+		},
 		async fetchFavTracks() {
 			await axios
 				.get('https://api.spotify.com/v1/me/tracks?limit=50', {
@@ -398,7 +435,6 @@ export default {
 				})
 				.catch(err => console.log(err));
 		},
-
 		async removeFavTrack(trackID) {
 			await axios
 				.delete('https://api.spotify.com/v1/me/tracks?ids=' + trackID, {
@@ -456,6 +492,7 @@ export default {
 				.catch(err => console.log(err));
 		},
 	},
+
 	mounted() {
 		document.addEventListener('click', this.close);
 	},

@@ -351,7 +351,7 @@
 										class="hover:underline"
 										v-for="artist in track.artists"
 										:key="artist.id"
-										:to="{ name: 'artist', params: { id: `${artist.id}` } }"
+										:to="{ name: 'artist', params: { id: artist.id } }"
 									>
 										{{
 											track.artists.length > 1

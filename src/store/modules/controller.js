@@ -26,6 +26,7 @@ const controllerModule = {
 		volumePercent: null,
 		currentTrackID: null,
 		currentTrackIsFav: '',
+		userQueue: [],
 	},
 	mutations: {
 		myDevice(state, payload) {
@@ -51,6 +52,9 @@ const controllerModule = {
 		},
 		currentTrackIsFav(state, payload) {
 			state.currentTrackIsFav = payload;
+		},
+		userQueue(state, payload) {
+			state.userQueue = payload;
 		},
 		showHeaderBtn(state) {
 			state.headerBtn = true;
@@ -115,7 +119,6 @@ const controllerModule = {
 					console.log(data);
 					if (data) {
 						dispatch('currentlyPlayingTrack', data);
-						dispatch('fetchPlaybackState');
 						commit('currentTrackID', data.item.id);
 						dispatch('isFavTrack');
 						commit('currentTrackAlbumImage', data.item.album.images[0].url);
@@ -170,16 +173,16 @@ const controllerModule = {
 			commit('volumePercent', await state.myDevice[0].volume_percent);
 		},
 		async playCurrentTrack({ getters, dispatch }) {
-			if (!getters.getCurrentlyPlayingTrack?.context?.uri) return;
-			fetch(`https://api.spotify.com/v1/me/player/play`, {
+			if (!getters.getCurrentlyPlayingTrack?.item?.uri) return;
+			await fetch(`https://api.spotify.com/v1/me/player/play`, {
 				method: 'PUT',
 				context_uri: JSON.stringify(
-					getters.getCurrentlyPlayingTrack.context.uri
+					getters.getCurrentlyPlayingTrack?.item?.uri
 				),
 				headers: {
 					Accept: 'application/json',
 					'Content-Type': 'application/json',
-					Authorization: 'Bearer ' + (await getters.getToken),
+					Authorization: 'Bearer ' + getters.getToken,
 				},
 			})
 				.then(data => {
@@ -191,13 +194,37 @@ const controllerModule = {
 				})
 				.catch(err => console.log(err));
 		},
+		async playSelectedTrack({ getters, dispatch }, trackUri) {
+			await axios
+				.put(
+					`https://api.spotify.com/v1/me/player/play?device_id=${getters.deviceID}`,
+					{
+						uris: [trackUri],
+					},
+					{
+						headers: {
+							Accept: 'application/json',
+							'Content-Type': 'application/json',
+							Authorization: 'Bearer ' + getters.getToken,
+						},
+					}
+				)
+				.then(data => {
+					if (data.status === 204) {
+						console.log('Selected Playback started');
+						dispatch('fetchCurrentlyPlayingTrack');
+						dispatch('userQueue');
+					}
+				})
+				.catch(err => console.log(err));
+		},
 		async pauseCurrentTrack({ getters, dispatch }) {
 			fetch(`https://api.spotify.com/v1/me/player/pause`, {
 				method: 'PUT',
 				headers: {
 					Accept: 'application/json',
 					'Content-Type': 'application/json',
-					Authorization: 'Bearer ' + (await getters.getToken),
+					Authorization: 'Bearer ' + getters.getToken,
 				},
 			})
 				.then(data => {
@@ -210,14 +237,14 @@ const controllerModule = {
 				.catch(err => console.log(err));
 		},
 		async skipToNextTrack({ getters, dispatch }) {
-			fetch(
+			await fetch(
 				`https://api.spotify.com/v1/me/player/next?device_id=${getters.deviceID}`,
 				{
 					method: 'POST',
 					headers: {
 						Accept: 'application/json',
 						'Content-Type': 'application/json',
-						Authorization: 'Bearer ' + (await getters.getToken),
+						Authorization: 'Bearer ' + getters.getToken,
 					},
 				}
 			)
@@ -251,6 +278,22 @@ const controllerModule = {
 				})
 				.catch(err => console.log(err));
 		},
+		async userQueue({ getters, commit, dispatch }) {
+			await axios
+				.get(`https://api.spotify.com/v1/me/player/queue`, {
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+						Authorization: 'Bearer ' + getters.getToken,
+					},
+				})
+				.then(({ data }) => {
+					console.log(data, '!!!USER QUEUE!!!!');
+					commit('userQueue', data);
+				})
+				.catch(err => console.log(err));
+		},
+
 		showHeaderBtn({ commit }) {
 			commit('showHeaderBtn');
 		},

@@ -50,7 +50,10 @@
 								<router-link
 									v-for="artist in albumArtistName"
 									:key="artist.id"
-									to="/artist/id"
+									:to="{
+										name: 'artist',
+										params: { id: artist.id },
+									}"
 									class="hover:underline after:content-['•'] after:ml-1 after:inline-block"
 									>{{ artist.name }}</router-link
 								>

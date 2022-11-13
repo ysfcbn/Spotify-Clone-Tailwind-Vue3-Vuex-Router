@@ -88,60 +88,69 @@
 			class="playlistContainer relative h-full min-w-[450]"
 		>
 			<trackItemsHeader :margin="margin" :favoriteSongs="favoriteSongs" />
-			<TrackItems
-				v-for="({ track }, i) in favTracks"
-				:key="track.id"
-				:id="track.id"
-				:index="i"
-				:favoriteSongs="favoriteSongs"
-				:margin="margin"
-				:removeGreenHeartFavTracks="removeGreenHeartFavTracks"
-			>
-				<template #trackImg>
-					<img
-						class="object-fit w-[40px] h-[40px]"
-						:src="track.album.images[2]?.url"
-						alt=""
-					/>
-				</template>
-				<template #trackName
-					><router-link :to="{ name: 'track', params: { id: `${track.id}` } }">
-						{{ track.name }}</router-link
-					></template
+			<div class="trackItems--container">
+				<TrackItems
+					v-for="({ track }, i) in favTracks"
+					:key="track.id"
+					:id="track.id"
+					:uri="track.uri"
+					:index="i"
+					:favoriteSongs="favoriteSongs"
+					:margin="margin"
+					:removeGreenHeartFavTracks="removeGreenHeartFavTracks"
+					:removeGreenTextTrackName="removeGreenTextTrackName"
+					:addGreenTextTrackName="addGreenTextTrackName"
 				>
-				<template #artist
-					><router-link
-						class="hover:underline"
-						v-for="artist in track.artists"
-						:key="artist.id"
-						:to="{ name: 'artist', params: { id: `${artist.id}` } }"
+					<template #trackIndex> </template>
+					<template #trackImg>
+						<img
+							class="object-fit w-[40px] h-[40px]"
+							:src="track.album.images[2]?.url"
+							alt=""
+						/>
+					</template>
+
+					<template #trackName
+						><router-link
+							:to="{ name: 'track', params: { id: `${track.id}` } }"
+						>
+							{{ track.name }}</router-link
+						></template
 					>
-						{{
-							track.artists.length > 1
-								? artist.name === track.artists[track.artists.length - 1].name
-									? artist.name
-									: artist.name + ', '
-								: artist.name
-						}}
-					</router-link></template
-				>
-				<template #albumName
-					><router-link
-						:to="{
-							name: 'album',
-							params: { id: `${track.album.id}` },
-						}"
+					<template #artist
+						><router-link
+							class="hover:underline"
+							v-for="artist in track.artists"
+							:key="artist.id"
+							:to="{ name: 'artist', params: { id: `${artist.id}` } }"
+						>
+							{{
+								track.artists.length > 1
+									? artist.name === track.artists[track.artists.length - 1].name
+										? artist.name
+										: artist.name + ', '
+									: artist.name
+							}}
+						</router-link></template
 					>
-						{{ track.album.name }}</router-link
-					></template
-				>
-				<template #favTime>{{
-					uploadDate((date = favTracks[i].added_at))
-				}}</template>
-				<template #duration>{{
-					trackDuration((duration = track.duration_ms))
-				}}</template>
-			</TrackItems>
+					<template #albumName
+						><router-link
+							:to="{
+								name: 'album',
+								params: { id: `${track.album.id}` },
+							}"
+						>
+							{{ track.album.name }}</router-link
+						></template
+					>
+					<template #favTime>{{
+						uploadDate((date = favTracks[i].added_at))
+					}}</template>
+					<template #duration>{{
+						trackDuration((duration = track.duration_ms))
+					}}</template>
+				</TrackItems>
+			</div>
 		</div>
 	</section>
 </template>
@@ -187,7 +196,33 @@ export default {
 				})
 				.catch(err => console.log(err));
 		},
-
+		addGreenTextTrackName(item) {
+			console.log(item);
+			item.children[1].children[1].children[0].classList.add('text-green3');
+			item.children[0].children[0].children[0].classList.add('text-green3');
+			item.children[0].children[0].children[1].children[0].children[0].classList.remove(
+				'group-hover:block'
+			);
+			item.children[0].children[0].children[1].children[0].children[1].classList.add(
+				'group-hover:block'
+			);
+		},
+		removeGreenTextTrackName(item) {
+			item.forEach(track => {
+				track.children[1].children[1].children[0].classList.remove(
+					'text-green3'
+				);
+				track.children[0].children[0].children[0].classList.remove(
+					'text-green3'
+				);
+				track.children[0].children[0].children[1].children[0].children[0].classList.add(
+					'group-hover:block'
+				);
+				track.children[0].children[0].children[1].children[0].children[1].classList.remove(
+					'group-hover:block'
+				);
+			});
+		},
 		removeGreenHeartFavTracks(item) {
 			item.children[4].children[0].classList.remove('greenHeart');
 			item.children[4].children[0].classList.add('emptyHeart');
@@ -250,18 +285,6 @@ export default {
 			this.episodeOptions = !this.episodeOptions;
 		},
 
-		ifInCollection(val) {
-			return val ? 'block' : 'hidden';
-		},
-		toggleAlbumOptions(val) {
-			this.albumOptions = val;
-		},
-
-		toggleTrackPage(_, e) {
-			this.$emit('selectedArtistName', e.target.textContent);
-			this.$router.push('/artist/id');
-		},
-
 		resizeOption2(options) {
 			if (window.innerHeight - 92 <= 64) {
 				this.bodyHeight = +window.innerHeight - 92;
@@ -287,12 +310,11 @@ export default {
 			return this.$store.getters.getCurrentUser?.display_name;
 		},
 		userAvatar() {
-			return this.$store.getters.getCurrentUser?.images[0].url;
+			return this.$store.getters.getCurrentUser?.images[0]?.url;
 		},
 		currentUserID() {
 			return this.$store.getters.getCurrentUser?.id;
 		},
-
 		favTracks() {
 			return this.$store.getters['favTracks/getTracks']?.items;
 		},
@@ -302,6 +324,7 @@ export default {
 		trackImage() {
 			return this.favTracks.images[0]?.url;
 		},
+
 		getMonths() {
 			return this.$store.getters['controller/getMonths'];
 		},

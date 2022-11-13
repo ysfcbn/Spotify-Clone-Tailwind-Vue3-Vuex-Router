@@ -858,8 +858,6 @@ export default {
 			this.observer.observe(this.homeEl);
 		}
 		if (this.isAuth) {
-			await this.$store.dispatch('controller/fetchDevice');
-			await this.$store.dispatch('controller/fetchCurrentlyPlayingTrack');
 			this.getCurrentUser ? '' : await this.currentUser();
 			this.getFavShows ? '' : await this.fetchFavShows();
 			this.severalPlaylists ? '' : await this.fetchSeveralPlaylists();
