@@ -27,6 +27,7 @@ const controllerModule = {
 		currentTrackID: null,
 		currentTrackIsFav: '',
 		userQueue: [],
+		recentlyPlayedTracks: null,
 	},
 	mutations: {
 		myDevice(state, payload) {
@@ -56,6 +57,9 @@ const controllerModule = {
 		userQueue(state, payload) {
 			state.userQueue = payload;
 		},
+		recentlyPlayedTracks(state, payload) {
+			state.recentlyPlayedTracks = payload;
+		},
 		showHeaderBtn(state) {
 			state.headerBtn = true;
 		},
@@ -79,6 +83,7 @@ const controllerModule = {
 					commit('deviceID', data.devices[0].id);
 					dispatch('transferDevice');
 					dispatch('volumePercent');
+					dispatch('fetchRecentlyPlayedTracks');
 				})
 				.catch(err => console.log(err));
 		},
@@ -278,7 +283,7 @@ const controllerModule = {
 				})
 				.catch(err => console.log(err));
 		},
-		async userQueue({ getters, commit, dispatch }) {
+		async userQueue({ getters, commit }) {
 			await axios
 				.get(`https://api.spotify.com/v1/me/player/queue`, {
 					headers: {
@@ -290,6 +295,42 @@ const controllerModule = {
 				.then(({ data }) => {
 					console.log(data, '!!!USER QUEUE!!!!');
 					commit('userQueue', data);
+				})
+				.catch(err => console.log(err));
+		},
+		async addItemToQueue({ getters, dispatch }, uri) {
+			fetch(
+				`https://api.spotify.com/v1/me/player/queue?uri=${uri}&device_id=${getters.deviceID}`,
+				{
+					method: 'POST',
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+						Authorization: 'Bearer ' + (await getters.getToken),
+					},
+				}
+			)
+				.then(data => {
+					console.log(data);
+					if (data.status === 204) {
+						console.log('!!!!!!!!item added to Queue!!!!!!!!!!!!');
+						dispatch('fetchCurrentlyPlayingTrack');
+					}
+				})
+				.catch(err => console.log(err));
+		},
+		async fetchRecentlyPlayedTracks({ getters, commit, dispatch }) {
+			await axios
+				.get(`https://api.spotify.com/v1/me/player/recently-played`, {
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+						Authorization: 'Bearer ' + getters.getToken,
+					},
+				})
+				.then(({ data }) => {
+					console.log(data, 'RECENTLY PLAYED TRACKS');
+					commit('recentlyPlayedTracks', data);
 				})
 				.catch(err => console.log(err));
 		},
@@ -307,6 +348,9 @@ const controllerModule = {
 		},
 		deviceID(state) {
 			return state.device_id;
+		},
+		getRecentlyPlayedTracks(state) {
+			return state.recentlyPlayedTracks;
 		},
 		currentTrackID(state) {
 			return state.currentTrackID;

@@ -196,6 +196,7 @@
 		<TrackOptions
 			v-if="trackOptions"
 			:trackOptions="trackOptions"
+			:uri="uri"
 			:artistPage="artistPage"
 			:selectArtCardName="selectArtCardName"
 		/>

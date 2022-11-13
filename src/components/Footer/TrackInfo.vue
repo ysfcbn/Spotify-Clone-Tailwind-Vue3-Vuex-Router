@@ -1,14 +1,12 @@
 <template>
-	<div class="flex m-4 w-[29%] min-w-[12.5rem] flex-shrink">
+	<div class="flex ml-3 w-[29%] min-w-[13.3rem] flex-shrink mr-5">
 		<div
 			v-show="getCurrentTrack"
 			:class="`relative flex items-center justify-center ease-in duration-200 ${
 				!trackImgDisplay ? 'right-[5rem] ease-in duration-200' : 'right-[0rem]'
 			}`"
 		>
-			<div
-				class="group img relative shrink-0 mr-3 shadow-[0_15px_15px_8px_rgba(0,0,0,0.6)]"
-			>
+			<div class="group relative shrink-0 mr-3">
 				<span
 					class="hidden group-hover:block text-lightest w-fit rounded-full p-1 bg-opacblack absolute right-1 top-1 hover:scale-105 hover:bg-opacblack3 hover:text-white"
 					@click="toggleImg"
@@ -20,10 +18,10 @@
 						></path>
 					</svg>
 				</span>
-				<img width="60" height="60" :src="currentTrackAlbumImage" />
+				<img width="56" height="56" :src="currentTrackAlbumImage" />
 			</div>
 			<div
-				class="trackInfo flex flex-col overflow-x-hidden shrink min-w-[20%] py-2 pl-1 pr-4"
+				class="trackInfo flex flex-col overflow-x-hidden flex-shrink min-w-[5rem] gap-y-1 pr-4"
 			>
 				<div class="flex shrink-0 w-fit relative z-0">
 					<router-link
@@ -55,17 +53,11 @@
 				<button
 					:class="{
 						greenHeart: currentTrackIsFav,
-						emptyHeart: !currentTrackIsFav,
+						'emptyHeart hover:text-white': !currentTrackIsFav,
 					}"
 					class="ml-3 cursor-default"
 				>
-					<svg
-						role="img"
-						height="16"
-						width="16"
-						viewBox="0 0 16 16"
-						class="hover:text-white"
-					>
+					<svg role="img" height="16" width="16" viewBox="0 0 16 16" class="">
 						<path
 							fill="currentColor"
 							d="M1.69 2A4.582 4.582 0 018 2.023 4.583 4.583 0 0111.88.817h.002a4.618 4.618 0 013.782 3.65v.003a4.543 4.543 0 01-1.011 3.84L9.35 14.629a1.765 1.765 0 01-2.093.464 1.762 1.762 0 01-.605-.463L1.348 8.309A4.582 4.582 0 011.689 2zm3.158.252A3.082 3.082 0 002.49 7.337l.005.005L7.8 13.664a.264.264 0 00.311.069.262.262 0 00.09-.069l5.312-6.33a3.043 3.043 0 00.68-2.573 3.118 3.118 0 00-2.551-2.463 3.079 3.079 0 00-2.612.816l-.007.007a1.501 1.501 0 01-2.045 0l-.009-.008a3.082 3.082 0 00-2.121-.861z"
@@ -143,7 +135,7 @@ export default {
 		content: '';
 		position: absolute;
 		z-index: 0;
-		width: 15px;
+		width: 10px;
 		height: 100%;
 		top: 0;
 		right: 0;
@@ -155,7 +147,7 @@ export default {
 		content: '';
 		position: absolute;
 		z-index: 10;
-		width: 5px;
+		width: 1px;
 		height: 100%;
 		top: 0;
 		left: 0;

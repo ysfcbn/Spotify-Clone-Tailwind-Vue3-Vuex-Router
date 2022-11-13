@@ -1,9 +1,12 @@
 <template>
 	<ul
-		class="z-[9999] absolute bg-dark2 top-[2.5rem] right-[1.65rem] p-[4px] h-fit w-[15rem] text-opacwhite3 text-sm whitespace-normal rounded cursor-default shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
+		class="option--container z-[9999] absolute bg-dark2 top-[2.5rem] right-[1rem] p-[4px] h-fit w-[15rem] text-opacwhite3 text-sm whitespace-normal rounded cursor-default shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
 	>
-		<li class="w-full p-[10px] hover:bg-dark3 border-b border-opacwhite">
-			<button class="w-full flex justify-start">
+		<li
+			@click="addToQueue((uri = uri))"
+			class="w-full p-[10px] hover:bg-dark3 border-b border-opacwhite"
+		>
+			<button class="w-full flex justify-start cursor-default">
 				<span class="cursor-default">Sıraya ekle</span>
 			</button>
 		</li>
@@ -36,8 +39,7 @@
 			>
 				<li class="w-full p-[10px] hover:bg-dark3">
 					<button class="cursor-default">
-						<span v-if="artistPage">{{ selectArtCardName }}</span>
-						<span v-else>{{ album.artist }}</span>
+						<span v-if="artistPage"></span>
 					</button>
 				</li>
 			</ul>
@@ -122,20 +124,21 @@
 <script>
 export default {
 	name: 'TrackOptions',
-	props: ['album', 'trackOptions', 'artistPage', 'selectArtCardName'],
+	props: ['artistPage', 'uri'],
 	data() {
 		return {
 			visible: false,
 			visible1: false,
 		};
 	},
-	mounted() {
-		if (this.artistPage)
-			console.log(this.selectArtCardName, 'Trackoption Mounted');
+	methods: {
+		async addToQueue(uri) {
+			await this.$store.dispatch('controller/addItemToQueue', uri);
+			await this.$store.dispatch('controller/userQueue');
+		},
 	},
-	beforeUnmount() {
-		if (this.album) console.log(this.album.artist, 'Trackoption unMounted');
-	},
+	mounted() {},
+	beforeUnmount() {},
 };
 </script>
 

@@ -2,7 +2,7 @@
 	<div
 		class="flex text-lightest justify-end items-center min-w-[29%] shrink-0 mx-4"
 	>
-		<div class="mr-4">
+		<div v-if="false" class="mr-4">
 			<button class="cursor-default">
 				<svg
 					class="hover:text-white"
