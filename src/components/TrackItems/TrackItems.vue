@@ -40,32 +40,45 @@
 			role="track-index"
 			class="flex w-full h-full items-center justify-center"
 		>
-			<slot name="trackIndex">
-				<div
-					class="relative flex text-right items-center justify-end pr-[14px] w-full"
+			<div
+				class="relative flex text-right items-center justify-end pr-[14px] w-full"
+			>
+				<span
+					:class="{ invisible: isPlaying, 'group-hover:visible': !isPlaying }"
+					class="text-white text-lg group-hover:invisible"
 				>
-					<span class="text-white text-lg group-hover:hidden">
-						{{ index + 1 }}</span
-					>
-					<button
-						@click="playTrack((uri = uri), $event)"
-						class="absolute right-3 cursor-default"
-					>
-						<svg role="img" height="16" width="16" viewBox="0 0 24 24">
-							<path
-								class="hidden group-hover:block"
-								fill="#FFFFFF"
-								d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
-							></path>
-							<path
-								class="hidden"
-								fill="#FFFFFF"
-								d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
-							></path>
-						</svg>
-					</button>
-				</div>
-			</slot>
+					{{ index + 1 }}</span
+				>
+				<button
+					@click="playTrack((uri = uri), $event)"
+					class="absolute right-3 cursor-default"
+				>
+					<svg role="img" height="16" width="16" viewBox="0 0 24 24">
+						<path
+							:class="{
+								invisible: isPlaying,
+								'group-hover:visible': !isPlaying,
+							}"
+							class="invisible"
+							fill="#FFFFFF"
+							d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
+						></path>
+						<path
+							:class="{
+								invisible: !isPlaying,
+								'group-hover:visible': isPlaying,
+							}"
+							class="invisible"
+							fill="#FFFFFF"
+							d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
+						></path>
+					</svg>
+					<Equalizer
+						v-if="isPlaying"
+						class="block group-hover:hidden"
+					></Equalizer>
+				</button>
+			</div>
 		</div>
 
 		<div class="flex justify-start items-center">
@@ -205,11 +218,12 @@
 
 <script>
 import TrackOptions from '../TrackItems/TrackOptions.vue';
+import Equalizer from '../Icons/Equalizer.vue';
 import axios from 'axios';
 
 export default {
 	name: 'PlaylistItems',
-	components: { TrackOptions },
+	components: { TrackOptions, Equalizer },
 	props: [
 		'index',
 		'artist',
@@ -233,8 +247,6 @@ export default {
 		'findFavTracks',
 		'addGreenHeartFavTracks',
 		'removeGreenHeartFavTracks',
-		'addGreenTextTrackName',
-		'removeGreenTextTrackName',
 		'findFavTracks2',
 		'addGreenHeartFavTracks2',
 		'removeGreenHeartFavTracks2',
@@ -271,6 +283,17 @@ export default {
 		currentPlayingTrackID() {
 			return this.$store.getters['controller/currentTrackID'];
 		},
+		currentPlayingUri() {
+			return this.$store.getters['controller/getCurrentlyPlayingTrack']?.item
+				?.uri;
+		},
+		currentTrackIsPlaying() {
+			return this.$store.getters['controller/getCurrentlyPlayingTrack']
+				?.is_playing;
+		},
+		isPlaying() {
+			return this.currentTrackIsPlaying && this.currentPlayingUri === this.uri;
+		},
 	},
 
 	methods: {
@@ -287,25 +310,19 @@ export default {
 			this.playingTrackID = e.target.closest('.track--container').id;
 			const trackUri = uri;
 
-			await this.$store.dispatch(
-				'controller/fetchCurrentlyPlayingTrack',
-				trackUri
-			);
+			await this.$store.dispatch('controller/fetchCurrentlyPlayingTrack');
 
-			if (this.currentPlayingTrackID === this.playingTrackID) {
-				await this.$store.dispatch('controller/pauseCurrentTrack');
-			} else
-				await this.$store.dispatch('controller/playSelectedTrack', trackUri);
-
-			let selectedTracksEl = [document.querySelector('.trackItems--container')];
-			selectedTracksEl = [...selectedTracksEl[0].children];
-
-			this.removeGreenTextTrackName(selectedTracksEl);
+			this.isPlaying
+				? await this.$store.dispatch('controller/pauseCurrentTrack')
+				: await this.$store.dispatch('controller/playSelectedTrack', trackUri);
 
 			const selectedPlayingTrackEl = [
 				document.getElementById(`${this.playingTrackID}`),
 			];
-			this.addGreenTextTrackName(selectedPlayingTrackEl[0]);
+			this.$store.dispatch(
+				'controller/addGreenTextTrackName',
+				selectedPlayingTrackEl[0]
+			);
 		},
 		async fetchFavTracks() {
 			await axios
@@ -493,7 +510,22 @@ export default {
 				.catch(err => console.log(err));
 		},
 	},
+	watch: {
+		playingTrackID(newVal, oldVal) {
+			if (newVal !== oldVal) {
+				console.log('ÇALIŞTIII!!!!!!!😊😊😊😊😊😊😊');
+				let selectedTracksEl = [
+					document.querySelector('.trackItems--container'),
+				];
+				selectedTracksEl = [...selectedTracksEl[0].children];
 
+				this.$store.dispatch(
+					'controller/removeGreenTextTrackName',
+					selectedTracksEl
+				);
+			}
+		},
+	},
 	mounted() {
 		document.addEventListener('click', this.close);
 	},

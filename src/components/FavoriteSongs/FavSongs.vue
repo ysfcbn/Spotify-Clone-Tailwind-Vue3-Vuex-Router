@@ -2,7 +2,7 @@
 	<section class="box-border">
 		<div
 			id="favoriteSongss"
-			class="bg-bgpurple p-5 max-h-[800px] min-h-[340px] w-full mt-[-66px] relative shadow-[2px_0px_5px_5px_rgba(0,0,0,0.4)] bg-gradient-to-b from-darkpurple via-purpl4 to-dark-1"
+			class="bg-bgpurple p-5 max-h-[800px] min-h-[340px] w-full mt-[-66px] relative shadow-[2px_0px_5px_5px_rgba(0,0,0,0.4)] bg-gradient-to-b from-bgpurple to-purple2"
 			style="height: 326px"
 		>
 			<div class="flex items-end justify-start h-full lg:ml-[1rem]">
@@ -51,7 +51,7 @@
 		</div>
 
 		<div
-			class="absolute w-full h-[212px] left-0 shrink-0 z-0 bg-gradient-to-b from-purple4 to-dark-1"
+			class="absolute w-full h-[212px] left-0 shrink-0 z-0 bg-gradient-to-b from-purple4/40 to-dark"
 		></div>
 
 		<div class="w-full h-[6.8rem] relative flex items-start py-[24px]">
@@ -88,7 +88,7 @@
 			class="playlistContainer relative h-full min-w-[450]"
 		>
 			<trackItemsHeader :margin="margin" :favoriteSongs="favoriteSongs" />
-			<div class="trackItems--container">
+			<div class="trackItems--container mt-2">
 				<TrackItems
 					v-for="({ track }, i) in favTracks"
 					:key="track.id"
@@ -98,8 +98,6 @@
 					:favoriteSongs="favoriteSongs"
 					:margin="margin"
 					:removeGreenHeartFavTracks="removeGreenHeartFavTracks"
-					:removeGreenTextTrackName="removeGreenTextTrackName"
-					:addGreenTextTrackName="addGreenTextTrackName"
 				>
 					<template #trackIndex> </template>
 					<template #trackImg>
@@ -196,43 +194,11 @@ export default {
 				})
 				.catch(err => console.log(err));
 		},
-		addGreenTextTrackName(item) {
-			console.log(item);
-			item.children[1].children[1].children[0].classList.add('text-green3');
-			item.children[0].children[0].children[0].classList.add('text-green3');
-			item.children[0].children[0].children[1].children[0].children[0].classList.remove(
-				'group-hover:block'
-			);
-			item.children[0].children[0].children[1].children[0].children[1].classList.add(
-				'group-hover:block'
-			);
-		},
-		removeGreenTextTrackName(item) {
-			item.forEach(track => {
-				track.children[1].children[1].children[0].classList.remove(
-					'text-green3'
-				);
-				track.children[0].children[0].children[0].classList.remove(
-					'text-green3'
-				);
-				track.children[0].children[0].children[1].children[0].children[0].classList.add(
-					'group-hover:block'
-				);
-				track.children[0].children[0].children[1].children[0].children[1].classList.remove(
-					'group-hover:block'
-				);
-			});
-		},
+
 		removeGreenHeartFavTracks(item) {
 			item.children[4].children[0].classList.remove('greenHeart');
 			item.children[4].children[0].classList.add('emptyHeart');
 			item.children[4].children[0].classList.add('animationEmptyHeart');
-			item.children[4].children[0].children[0].children[0].classList.add(
-				'hidden'
-			);
-			item.children[4].children[0].children[0].children[1].classList.remove(
-				'hidden'
-			);
 		},
 
 		uploadDate(date) {

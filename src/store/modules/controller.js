@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { stringify } from 'qs';
 
 const controllerModule = {
 	namespaced: true,
@@ -252,15 +253,26 @@ const controllerModule = {
 						Authorization: 'Bearer ' + getters.getToken,
 					},
 				}
-			)
-				.then(data => {
-					console.log(data);
-					if (data.status === 204) {
-						console.log('skipped to Next Track!');
-						dispatch('fetchCurrentlyPlayingTrack');
-					}
-				})
-				.catch(err => console.log(err));
+			).then(data => {
+				console.log(data);
+				if (data.status === 204) {
+					console.log('skipped to Next Track!');
+					let selectedTrackEl = [
+						document.querySelector('.trackItems--container'),
+					];
+					selectedTrackEl = [...selectedTrackEl[0].children];
+					dispatch('removeGreenTextTrackName', selectedTrackEl);
+					dispatch('fetchCurrentlyPlayingTrack')
+						.then(() => {
+							console.log(getters.currentTrackID);
+							let selectedPlayingTrackEl = [
+								document.getElementById(`${getters.currentTrackID}`),
+							];
+							dispatch('addGreenTextTrackName', selectedPlayingTrackEl[0]);
+						})
+						.catch(err => console.log(err));
+				}
+			});
 		},
 		async skipToPrevTrack({ getters, dispatch }) {
 			fetch(
@@ -278,7 +290,20 @@ const controllerModule = {
 					console.log(data);
 					if (data.status === 204) {
 						console.log('skipped to Previous Track!');
-						dispatch('fetchCurrentlyPlayingTrack');
+						let selectedTrackEl = [
+							document.querySelector('.trackItems--container'),
+						];
+						selectedTrackEl = [...selectedTrackEl[0].children];
+						dispatch('removeGreenTextTrackName', selectedTrackEl);
+						dispatch('fetchCurrentlyPlayingTrack')
+							.then(() => {
+								console.log(getters.currentTrackID);
+								let selectedPlayingTrackEl = [
+									document.getElementById(`${getters.currentTrackID}`),
+								];
+								dispatch('addGreenTextTrackName', selectedPlayingTrackEl[0]);
+							})
+							.catch(err => console.log(err));
 					}
 				})
 				.catch(err => console.log(err));
@@ -335,6 +360,22 @@ const controllerModule = {
 				.catch(err => console.log(err));
 		},
 
+		addGreenTextTrackName(_, item) {
+			console.log(item);
+			item.children[1].children[1].children[0].classList.add('text-green3');
+			item.children[0].children[0].children[0].classList.add('text-green3');
+		},
+		removeGreenTextTrackName(_, item) {
+			console.log('REMOVE ÇALIŞTIIIII✌✌✌✌✌✌');
+			item.forEach(track => {
+				track.children[1].children[1].children[0].classList.remove(
+					'text-green3'
+				);
+				track.children[0].children[0].children[0].classList.remove(
+					'text-green3'
+				);
+			});
+		},
 		showHeaderBtn({ commit }) {
 			commit('showHeaderBtn');
 		},

@@ -124,6 +124,9 @@ export default {
 		getCurrentTrack() {
 			return this.$store.getters['controller/getCurrentlyPlayingTrack'];
 		},
+		currentPlayingTrackID() {
+			return this.$store.getters['controller/currentTrackID'];
+		},
 		currentTrackUri() {
 			return this.getCurrentTrack?.context.uri;
 		},
