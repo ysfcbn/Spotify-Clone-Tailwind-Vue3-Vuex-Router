@@ -57,23 +57,28 @@
 		<div class="w-full h-[6.8rem] relative flex items-start py-[24px]">
 			<div class="w-full ml-[1.2rem] flex items-center lg:ml-[2rem]">
 				<button
+					@click="
+						playFavSongs(
+							(uri = {
+								uri: userFavSongsContextUri,
+								index: 0,
+								type: 'favSongs',
+							})
+						)
+					"
 					class="rounded-full bg-green3 p-[0.9rem] cursor-default hover:scale-104 hover:bg-[#1fdf64]"
 				>
 					<span>
 						<svg role="img" height="28" width="28" viewBox="0 0 24 24">
 							<path
+								v-if="!isPlayingFavSongsContextUri"
 								fill="currentColor"
 								d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
 							></path>
-						</svg>
-						<svg
-							role="img"
-							height="28"
-							width="28"
-							viewBox="0 0 24 24"
-							class="hidden"
-						>
+
 							<path
+								v-else
+								fill="currentColor"
 								d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
 							></path>
 						</svg>
@@ -93,11 +98,14 @@
 					v-for="({ track }, i) in favTracks"
 					:key="track.id"
 					:id="track.id"
-					:uri="track.uri"
+					:uri="userFavSongsContextUri"
+					:trackID="track.id"
+					:itemUri="track.uri"
 					:index="i"
 					:favoriteSongs="favoriteSongs"
 					:margin="margin"
 					:removeGreenHeartFavTracks="removeGreenHeartFavTracks"
+					@currentContextIndex="currentContextIndexVal"
 				>
 					<template #trackIndex> </template>
 					<template #trackImg>
@@ -166,6 +174,8 @@ export default {
 		return {
 			favoriteSongs: false,
 			albumOptions: false,
+			contextIndex: null,
+
 			episodeOptions: false,
 			options2: '',
 			favSongEl: null,
@@ -194,7 +204,24 @@ export default {
 				})
 				.catch(err => console.log(err));
 		},
-
+		currentContextIndexVal(val) {
+			this.contextIndex = val;
+		},
+		async playFavSongs(uri) {
+			console.log(uri);
+			if (this.isPlayingFavSongsContextUri) {
+				await this.$store.dispatch('controller/pauseCurrentTrack');
+			} else {
+				if (
+					this.getCurrentlyPlayingTrack?.item?.uri.split(':').slice(2)[0] ===
+					this.currentPlayingTrackID
+				) {
+					uri.index = this.contextIndex;
+					await this.$store.dispatch('controller/playSelectedContext', uri);
+				} else
+					await this.$store.dispatch('controller/playSelectedContext', uri);
+			}
+		},
 		removeGreenHeartFavTracks(item) {
 			item.children[4].children[0].classList.remove('greenHeart');
 			item.children[4].children[0].classList.add('emptyHeart');
@@ -281,6 +308,30 @@ export default {
 		currentUserID() {
 			return this.$store.getters.getCurrentUser?.id;
 		},
+		currentUserUri() {
+			return this.$store.getters.getCurrentUser?.uri;
+		},
+		userFavSongsContextUri() {
+			return `${this.currentUserUri}:collection`;
+		},
+
+		getCurrentlyPlayingTrack() {
+			return this.$store.getters['controller/getCurrentlyPlayingTrack'];
+		},
+		getCurrentlyPlayindTrackNumber() {
+			return this.getCurrentlyPlayingTrack?.item?.track_number;
+		},
+		currentPlayingTrackID() {
+			return this.$store.getters['controller/currentTrackID'];
+		},
+		isPlayingFavSongsContextUri() {
+			return (
+				this.getCurrentlyPlayingTrack?.context?.uri ===
+					this.userFavSongsContextUri &&
+				this.getCurrentlyPlayingTrack?.is_playing
+			);
+		},
+
 		favTracks() {
 			return this.$store.getters['favTracks/getTracks']?.items;
 		},

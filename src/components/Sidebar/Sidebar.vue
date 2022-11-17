@@ -384,7 +384,6 @@ export default {
 			)
 				.then(data => data.json())
 				.then(data => {
-					console.log(data.items);
 					this.$store.dispatch('playlists/userPlaylists', data.items);
 				})
 				.catch(err => console.log(err));
@@ -481,7 +480,6 @@ export default {
 	},
 	watch: {
 		trackImgDisplay(newVal, oldVal) {
-			console.log(newVal, oldVal);
 			newVal ? (this.dowloadAppHeight = 48) : (this.dowloadAppHeight = 312);
 		},
 	},
@@ -493,7 +491,6 @@ export default {
 			document.querySelector('#download--app').clientHeight;
 
 		//fetch favorite playlists
-		console.log(this.getToken);
 		await this.fetchPlaylists();
 	},
 };

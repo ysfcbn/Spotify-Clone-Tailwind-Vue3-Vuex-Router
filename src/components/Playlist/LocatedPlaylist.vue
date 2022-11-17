@@ -270,7 +270,6 @@ export default {
 					},
 				})
 				.then(({ data }) => {
-					console.log(data);
 					this.$store.dispatch('playlists/getPlaylist', data);
 				})
 				.catch(err => console.log(err));
@@ -290,7 +289,6 @@ export default {
 						}
 					)
 					.then(data => {
-						console.log(data);
 						if (data.status === 200) {
 							heartBtn.classList.add('animationEmptyHeart');
 							heartBtn.classList.remove('animationGreenHeart');
@@ -307,7 +305,6 @@ export default {
 									}
 								)
 								.then(({ data }) => {
-									console.log(data.items);
 									this.$store.dispatch('playlists/userPlaylists', data.items);
 								})
 								.catch(err => console.log(err));
@@ -335,7 +332,6 @@ export default {
 					}
 				)
 				.then(data => {
-					console.log(data);
 					if (data.status === 200) {
 						heartBtn.classList.add('animationGreenHeart');
 						heartBtn.classList.remove('animationEmptyHeart');
@@ -352,7 +348,6 @@ export default {
 								}
 							)
 							.then(({ data }) => {
-								console.log(data.items);
 								this.$store.dispatch('playlists/userPlaylists', data.items);
 							})
 							.catch(err => console.log(err));
@@ -526,22 +521,22 @@ export default {
 			return this.$store.getters['playlists/getPlaylist'];
 		},
 		playlistİmage() {
-			return this.currentPlaylist?.images[0]?.url;
+			return this.$store.getters['playlists/getPlaylist']?.images[0]?.url;
 		},
 		playlistName() {
-			return this.currentPlaylist.name;
+			return this.currentPlaylist?.name;
 		},
 		playlistDescription() {
-			return this.currentPlaylist.description;
+			return this.currentPlaylist?.description;
 		},
 		playlistOwner() {
-			return this.currentPlaylist.owner?.display_name;
+			return this.currentPlaylist?.owner?.display_name;
 		},
 		playlistOwnerID() {
-			return this.currentPlaylist.owner?.id;
+			return this.currentPlaylist?.owner?.id;
 		},
 		playlistFollowers() {
-			return this.currentPlaylist.followers?.total;
+			return this.currentPlaylist?.followers?.total;
 		},
 		isFavPlaylist() {
 			return this.$store.getters['playlists/getUserFavPlaylists'].filter(
@@ -554,7 +549,7 @@ export default {
 			return this.currentPlaylist?.tracks?.total;
 		},
 		allFavTracks() {
-			return this.$store.getters['favTracks/getTracks'].items;
+			return this.$store.getters['favTracks/getTracks']?.items;
 		},
 		getFavTracksonplaylist() {
 			return this.$store.getters['playlists/getfavTracksID'];

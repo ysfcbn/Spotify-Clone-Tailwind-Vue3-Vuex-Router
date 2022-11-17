@@ -509,7 +509,6 @@ export default {
 					},
 				})
 				.then(({ data }) => {
-					console.log(data);
 					this.$store.dispatch('currentUser', data);
 				})
 				.catch(err => console.log(err));
@@ -525,7 +524,6 @@ export default {
 					},
 				})
 				.then(({ data }) => {
-					console.log(data.items);
 					this.$store.dispatch('favTracks/getTracks', data);
 				})
 				.catch(err => console.log(err));
@@ -540,7 +538,6 @@ export default {
 					},
 				})
 				.then(({ data }) => {
-					console.log(data.artists);
 					this.$store.dispatch('artists/favArtists', data.artists.items);
 				})
 				.catch(err => console.log(err));
@@ -569,7 +566,6 @@ export default {
 					},
 				})
 				.then(({ data }) => {
-					console.log(data);
 					this.$store.dispatch('albums/favAlbums', data.items);
 				})
 				.catch(err => console.log(err));
@@ -584,7 +580,6 @@ export default {
 					},
 				})
 				.then(({ data }) => {
-					console.log(data);
 					this.$store.dispatch('episodes/favEpisodes', data);
 				})
 				.catch(err => console.log(err));
@@ -599,7 +594,6 @@ export default {
 					},
 				})
 				.then(({ data }) => {
-					console.log(data);
 					this.$store.dispatch('shows/favShows', data);
 				})
 				.catch(err => console.log(err));
@@ -614,28 +608,11 @@ export default {
 					},
 				})
 				.then(({ data }) => {
-					console.log(data);
 					this.$store.dispatch('playlists/severalPlaylists', data);
 				})
 				.catch(err => console.log(err));
 		},
-		async fetchSeveralPlaylists2() {
-			await axios
-				.get(
-					'https://api.spotify.com/v1/browse/featured-playlists?timestamp=2022-10-24T09:00:00',
-					{
-						headers: {
-							Accept: 'application/json',
-							'Content-Type': 'application/json',
-							Authorization: 'Bearer ' + (await this.getToken),
-						},
-					}
-				)
-				.then(({ data }) => {
-					console.log(data);
-				})
-				.catch(err => console.log(err));
-		},
+
 		async fetchBrowseCategories() {
 			await axios
 				.get('https://api.spotify.com/v1/browse/categories?limit=50', {
@@ -646,7 +623,6 @@ export default {
 					},
 				})
 				.then(({ data }) => {
-					console.log(data);
 					this.$store.dispatch('playlists/browseCategories', data);
 				})
 				.catch(err => console.log(err));
@@ -665,7 +641,6 @@ export default {
 						}
 					)
 					.then(({ data }) => {
-						console.log(data, categoryID[item].name);
 						data.playlists.items.length > 9
 							? (data.playlists.items.length = 9)
 							: data;
@@ -824,8 +799,6 @@ export default {
 			};
 
 			this.observer = new IntersectionObserver(entries => {
-				console.log(entries);
-
 				this.header.classList.toggle(
 					'home-not-auth--intersec-bg2',
 					entries[0].intersectionRatio <= 0.7
@@ -835,7 +808,6 @@ export default {
 					entries[0].intersectionRatio <= 0.4
 				);
 			}, this.options);
-			console.log(this.observer);
 			this.observer.observe(this.homeEl);
 		} else if (isAuth) {
 			this.homeEl = document.getElementById('home--last--listen');
