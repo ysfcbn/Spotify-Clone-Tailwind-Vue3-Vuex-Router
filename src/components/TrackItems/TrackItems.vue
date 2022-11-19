@@ -50,7 +50,9 @@
 					{{ index + 1 }}</span
 				>
 				<button
-					@click="playTrack((uris = { uri: uri, index: index }), $event)"
+					@click="
+						playTrack((uris = { uri: uri, index: index, id: null }), $event)
+					"
 					class="absolute right-3 cursor-default"
 				>
 					<svg role="img" height="16" width="16" viewBox="0 0 24 24">
@@ -209,6 +211,7 @@
 			v-if="trackOptions"
 			:trackOptions="trackOptions"
 			:uri="itemUri"
+			:index="index"
 			:artistPage="artistPage"
 			:selectArtCardName="selectArtCardName"
 		/>
@@ -223,7 +226,6 @@ import axios from 'axios';
 export default {
 	name: 'PlaylistItems',
 	components: { TrackOptions, Equalizer },
-	emits: ['currentContextIndex'],
 	props: [
 		'index',
 		'artist',
@@ -234,6 +236,7 @@ export default {
 		'uri',
 		'itemUri',
 		'trackID',
+		'contextType',
 		'artistPage',
 		'userPage',
 		'topTracks',
@@ -288,6 +291,9 @@ export default {
 		currentPlayingItemID() {
 			return this.getCurrentlyPlayingTrack?.item?.id;
 		},
+		currentPlayingContextType() {
+			return this.$store.getters['controller/currentContextType'];
+		},
 		currentTrackIsPlaying() {
 			return this.getCurrentlyPlayingTrack?.is_playing;
 		},
@@ -296,7 +302,9 @@ export default {
 		},
 		isPlaying() {
 			return (
-				this.currentTrackIsPlaying && this.currentPlayingItemID === this.trackID
+				this.currentTrackIsPlaying &&
+				this.currentPlayingContextType === this.contextType &&
+				this.currentPlayingItemID === this.trackID
 			);
 		},
 	},
@@ -316,7 +324,11 @@ export default {
 			if (this.isPlaying) {
 				await this.$store.dispatch('controller/pauseCurrentTrack');
 			} else {
-				this.$emit('currentContextIndex', contextUri.index);
+				await this.$store.dispatch(
+					'controller/currentTrackIndex',
+					contextUri.index
+				);
+				contextUri.id = this.playingTrackID;
 				await this.$store.dispatch(
 					'controller/playSelectedContext',
 					contextUri

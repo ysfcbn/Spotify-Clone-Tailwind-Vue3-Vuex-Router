@@ -3,7 +3,7 @@
 		class="option--container z-[9999] absolute bg-dark2 top-[2.5rem] right-[1rem] p-[4px] h-fit w-[15rem] text-opacwhite3 text-sm whitespace-normal rounded cursor-default shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
 	>
 		<li
-			@click="addToQueue((uri = uri))"
+			@click="addToQueue((uri = { uri: uri, index: index }))"
 			class="w-full p-[10px] hover:bg-dark3 border-b border-opacwhite"
 		>
 			<button class="w-full flex justify-start cursor-default">
@@ -124,7 +124,7 @@
 <script>
 export default {
 	name: 'TrackOptions',
-	props: ['artistPage', 'uri'],
+	props: ['artistPage', 'uri', 'index'],
 	data() {
 		return {
 			visible: false,
@@ -133,7 +133,9 @@ export default {
 	},
 	methods: {
 		async addToQueue(uri) {
-			await this.$store.dispatch('controller/addItemToQueue', uri);
+			await this.$store.dispatch('controller/addItemToQueue', uri.uri);
+			await this.$store.dispatch('controller/selectedIndex', uri.index);
+
 			await this.$store.dispatch('controller/userQueue');
 		},
 	},

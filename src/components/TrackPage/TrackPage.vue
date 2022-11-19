@@ -34,7 +34,7 @@
 								<router-link
 									:to="{
 										name: 'artist',
-										params: { id: `${currentTrack?.artists[0]?.id}` },
+										params: { id: `${currentArtistID}` },
 									}"
 									class="hover:underline cursor-pointer after:content-['•'] after:ml-1 after:inline-block"
 								>
@@ -60,17 +60,24 @@
 		>
 			<div class="w-full ml-[1.2rem] flex items-center lg:ml-[2rem]">
 				<button
+					@click="
+						playCurrentTrack(
+							(uri = { uri: currentTrackUri, id: currentTrackID })
+						)
+					"
 					class="rounded-full bg-green3 p-[0.9rem] cursor-default hover:scale-105"
 				>
 					<span>
 						<svg role="img" height="28" width="28" viewBox="0 0 24 24" class="">
 							<path
+								v-if="!isPlayingCurrentTrack"
 								fill="currentColor"
 								d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
 							></path>
 
 							<path
-								class="hidden"
+								v-else
+								fill="currentColor"
 								d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
 							></path>
 						</svg>
@@ -160,7 +167,7 @@
 						<router-link
 							:to="{
 								name: 'artist',
-								params: { id: currentTrack?.artists[0]?.id },
+								params: { id: currentArtistID },
 							}"
 							class="text-white/95 font-semibold cursor-ponter hover:underline"
 						>
@@ -187,12 +194,15 @@
 			</div>
 			<div
 				:class="{ 'h-[17.5rem]': !seeMore, 'h-full': seeMore }"
-				class="relative overflow-y-hidden wrapper"
+				class="trackItems--container relative overflow-y-hidden wrapper"
 			>
 				<TrackItems
 					v-for="(track, i) in popSongs"
 					:key="track.id"
 					:id="track.id"
+					:uri="currentArtistUri"
+					:itemUri="track.uri"
+					:trackID="track.id"
 					:index="i"
 					:TrackPage="TrackPage"
 					:margin="true"
@@ -325,7 +335,9 @@
 						</div>
 					</div>
 					<div class="w-full">
-						<div class="playlists2 h-fit w-full text-lightest">
+						<div
+							class="trackItems--container playlists2 h-fit w-full text-lightest"
+						>
 							<TrackItems
 								:class="track.id"
 								v-for="(track, i) in albumTracks"
@@ -423,6 +435,27 @@ export default {
 		currentTrack() {
 			return this.$store.getters['albums/getCurrentTrack'];
 		},
+		currentTrackUri() {
+			return this.currentTrack?.uri;
+		},
+		currentArtistID() {
+			return this.currentTrack?.artists[0]?.id;
+		},
+		currentTrackID() {
+			return this.currentTrack?.id;
+		},
+		currentArtistUri() {
+			return this.currentTrack?.artists[0]?.uri;
+		},
+		getCurrentlyPlayingTrack() {
+			return this.$store.getters['controller/getCurrentlyPlayingTrack'];
+		},
+		isPlayingCurrentTrack() {
+			return (
+				this.getCurrentlyPlayingTrack?.item.id === this.currentTrackID &&
+				this.getCurrentlyPlayingTrack?.is_playing
+			);
+		},
 		artistTopTracks() {
 			return this.$store.getters['artists/getTopTracks'];
 		},
@@ -508,6 +541,14 @@ export default {
 					this.$store.dispatch('albums/currentTrack', data);
 				})
 				.catch(err => console.log(err));
+		},
+		async playCurrentTrack(uri) {
+			console.log(uri);
+			if (this.isPlayingCurrentTrack) {
+				await this.$store.dispatch('controller/pauseCurrentTrack');
+			} else {
+				await this.$store.dispatch('controller/playSelectedTrack', uri);
+			}
 		},
 		async fetchArtistTopTracks() {
 			return await axios

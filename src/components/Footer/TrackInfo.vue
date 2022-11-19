@@ -2,9 +2,10 @@
 	<div class="flex ml-3 w-[29%] min-w-[13.3rem] flex-shrink mr-5">
 		<div
 			v-show="getCurrentTrack"
-			:class="`relative flex items-center justify-center ease-in duration-200 ${
-				!trackImgDisplay ? 'right-[5rem] ease-in duration-200' : 'right-[0rem]'
-			}`"
+			class="relative flex items-center justify-center ease-in duration-200"
+			:class="{
+				'right-[4.5rem] ease-in duration-200': !trackImgDisplay,
+			}"
 		>
 			<div class="group relative shrink-0 mr-3">
 				<span

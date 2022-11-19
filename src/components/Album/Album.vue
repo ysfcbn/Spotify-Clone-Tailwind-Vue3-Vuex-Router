@@ -78,7 +78,11 @@
 		<div class="w-full h-[6.8rem] relative flex items-start py-[24px]">
 			<div class="w-full ml-[1.2rem] flex items-center lg:ml-[2rem]">
 				<button
-					@click="playAlbum((uri = { uri: albumUri, index: 0 }))"
+					@click="
+						playAlbumContext(
+							(uri = { uri: albumUri, index: 0, type: contextType })
+						)
+					"
 					class="rounded-full bg-green3 p-[0.9rem] cursor-default hover:scale-104 hover:bg-[#1fdf64]"
 				>
 					<span>
@@ -162,6 +166,7 @@
 					:uri="albumUri"
 					:itemUri="item.uri"
 					:trackID="item.id"
+					:contextType="contextType"
 					:index="i"
 					:albumPage="albumPage"
 					:margin="margin"
@@ -313,6 +318,7 @@ export default {
 	data() {
 		return {
 			albumPage: true,
+			contextType: 'album',
 			appOptions: false,
 			margin: true,
 			options2: '',
@@ -344,13 +350,13 @@ export default {
 				})
 				.catch(err => console.log(err));
 		},
-		async playAlbum(uri) {
+		async playAlbumContext(uri) {
 			console.log(uri);
 			if (this.isPlayingAlbumContextUri) {
 				await this.$store.dispatch('controller/pauseCurrentTrack');
 			} else {
 				if (this.getCurrentlyPlayingTrack?.context?.uri === this.albumUri) {
-					uri.index = this.getCurrentlyPlayindTrackNumber - 1;
+					uri.index = this.currentPlayingTrackIndex;
 					await this.$store.dispatch('controller/playSelectedContext', uri);
 				} else
 					await this.$store.dispatch('controller/playSelectedContext', uri);
@@ -581,11 +587,11 @@ export default {
 		getCurrentlyPlayingTrack() {
 			return this.$store.getters['controller/getCurrentlyPlayingTrack'];
 		},
-		getCurrentlyPlayindTrackNumber() {
-			return this.getCurrentlyPlayingTrack?.item?.track_number;
+		currentTrackID() {
+			return this.getCurrentlyPlayingTrack?.item?.id;
 		},
-		currentPlayingTrackID() {
-			return this.$store.getters['controller/currentTrackID'];
+		currentPlayingTrackIndex() {
+			return this.$store.getters['controller/currentTrackIndex'];
 		},
 		isPlayingAlbumContextUri() {
 			return (
@@ -721,8 +727,17 @@ export default {
 		this.artistAlbums = await this.fetchArtistAlbums();
 		this.artistAlbums = this.artistAlbums.items.slice(0, 10);
 
-		console.log('albumPage Mounted');
 		this.albumPage = true;
+
+		const selectedPlayingTrackEl = [
+			document.getElementById(`${this.currentTrackID}`),
+		];
+		this.isPlayingAlbumContextUri
+			? this.$store.dispatch(
+					'controller/addGreenTextTrackName',
+					selectedPlayingTrackEl[0]
+			  )
+			: '';
 
 		this.findFavTracks();
 
@@ -784,6 +799,7 @@ export default {
 		this.$store.dispatch('controller/closeHeaderBtn');
 		this.$store.dispatch('albums/clearTracksID');
 		this.$store.dispatch('albums/clearAlbum');
+		this.$store.dispatch('controller/clearTrackIndex');
 	},
 };
 </script>

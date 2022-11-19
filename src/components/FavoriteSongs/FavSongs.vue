@@ -62,7 +62,7 @@
 							(uri = {
 								uri: userFavSongsContextUri,
 								index: 0,
-								type: 'favSongs',
+								type: contextType,
 							})
 						)
 					"
@@ -101,11 +101,11 @@
 					:uri="userFavSongsContextUri"
 					:trackID="track.id"
 					:itemUri="track.uri"
+					:contextType="contextType"
 					:index="i"
 					:favoriteSongs="favoriteSongs"
 					:margin="margin"
 					:removeGreenHeartFavTracks="removeGreenHeartFavTracks"
-					@currentContextIndex="currentContextIndexVal"
 				>
 					<template #trackIndex> </template>
 					<template #trackImg>
@@ -174,8 +174,7 @@ export default {
 		return {
 			favoriteSongs: false,
 			albumOptions: false,
-			contextIndex: null,
-
+			contextType: 'collection',
 			episodeOptions: false,
 			options2: '',
 			favSongEl: null,
@@ -204,19 +203,17 @@ export default {
 				})
 				.catch(err => console.log(err));
 		},
-		currentContextIndexVal(val) {
-			this.contextIndex = val;
-		},
+
 		async playFavSongs(uri) {
 			console.log(uri);
 			if (this.isPlayingFavSongsContextUri) {
 				await this.$store.dispatch('controller/pauseCurrentTrack');
 			} else {
 				if (
-					this.getCurrentlyPlayingTrack?.item?.uri.split(':').slice(2)[0] ===
-					this.currentPlayingTrackID
+					this.getCurrentlyPlayingTrack?.context?.uri ===
+					this.userFavSongsContextUri
 				) {
-					uri.index = this.contextIndex;
+					uri.index = this.currentPlayingTrackIndex;
 					await this.$store.dispatch('controller/playSelectedContext', uri);
 				} else
 					await this.$store.dispatch('controller/playSelectedContext', uri);
@@ -318,11 +315,11 @@ export default {
 		getCurrentlyPlayingTrack() {
 			return this.$store.getters['controller/getCurrentlyPlayingTrack'];
 		},
-		getCurrentlyPlayindTrackNumber() {
-			return this.getCurrentlyPlayingTrack?.item?.track_number;
+		currentTrackID() {
+			return this.getCurrentlyPlayingTrack?.item?.id;
 		},
-		currentPlayingTrackID() {
-			return this.$store.getters['controller/currentTrackID'];
+		currentPlayingTrackIndex() {
+			return this.$store.getters['controller/currentTrackIndex'];
 		},
 		isPlayingFavSongsContextUri() {
 			return (
@@ -398,8 +395,16 @@ export default {
 		this.favoriteSongs = true;
 		console.log('FavoriteSongs Mounted');
 
-		this.favTracks?.length ? '' : this.fetchFavTracks();
-
+		(await this.favTracks?.length) ? '' : this.fetchFavTracks();
+		const selectedPlayingTrackEl = [
+			document.getElementById(`${this.currentTrackID}`),
+		];
+		this.isPlayingFavSongsContextUri
+			? this.$store.dispatch(
+					'controller/addGreenTextTrackName',
+					selectedPlayingTrackEl[0]
+			  )
+			: '';
 		setTimeout(() => {
 			this.presentation = document.querySelector('.presentation');
 			this.body = document.body;

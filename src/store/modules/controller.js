@@ -26,6 +26,8 @@ const controllerModule = {
 		myDevice: null,
 		volumePercent: null,
 		currentTrackID: null,
+		currentContextType: null,
+		trackIndex: 0,
 		currentTrackIsFav: '',
 		userQueue: [],
 		recentlyPlayedTracks: null,
@@ -42,6 +44,24 @@ const controllerModule = {
 		},
 		currentTrackID(state, id) {
 			state.currentTrackID = id;
+		},
+		currentContextType(state, type) {
+			state.currentContextType = type;
+		},
+		currentTrackIndex(state, payload) {
+			state.trackIndex = payload;
+		},
+		selectedIndex(state, payload) {
+			state.trackIndex = payload;
+		},
+		increaseTrackIndex(state, payload) {
+			state.trackIndex += payload;
+		},
+		decreaseTrackIndex(state, payload) {
+			state.trackIndex ? (state.trackIndex -= payload) : '';
+		},
+		clearTrackIndex(state) {
+			state.trackIndex = 0;
 		},
 		currentlyPlayingTrack(state, payload) {
 			state.currentlyPlayingTrack = payload;
@@ -93,7 +113,7 @@ const controllerModule = {
 				method: 'PUT',
 				body: JSON.stringify(
 					{ device_ids: [await getters.deviceID] },
-					{ play: false }
+					{ play: true }
 				),
 				headers: {
 					Accept: 'application/json',
@@ -125,6 +145,7 @@ const controllerModule = {
 					console.log(data);
 					if (data) {
 						dispatch('currentlyPlayingTrack', data);
+						commit('currentContextType', data?.context?.type);
 						commit('currentTrackID', data.item.id);
 						dispatch('isFavTrack');
 						dispatch('userQueue');
@@ -136,6 +157,7 @@ const controllerModule = {
 		async currentlyPlayingTrack({ commit }, currentTrack) {
 			commit('currentlyPlayingTrack', await currentTrack);
 		},
+
 		async fetchPlaybackState({ dispatch, getters }) {
 			await axios
 				.get('https://api.spotify.com/v1/me/player', {
@@ -201,6 +223,36 @@ const controllerModule = {
 				})
 				.catch(err => console.log(err));
 		},
+		async playSelectedTrack({ getters, dispatch }, uri) {
+			await axios
+				.put(
+					`https://api.spotify.com/v1/me/player/play?device_id=${getters.deviceID}`,
+					{
+						uris: [uri.uri],
+						position_ms:
+							uri.id === getters.getCurrentlyPlayingTrack?.item.id
+								? getters.getCurrentlyPlayingTrack.progress_ms
+								: 0,
+					},
+					{
+						headers: {
+							Accept: 'application/json',
+							'Content-Type': 'application/json',
+							Authorization: 'Bearer ' + getters.getToken,
+						},
+					}
+				)
+				.then(data => {
+					if (data.status === 204) {
+						dispatch('fetchCurrentlyPlayingTrack')
+							.then(() => {
+								console.log(getters.currentTrackID);
+							})
+							.catch(err => console.log(err));
+					}
+				})
+				.catch(err => console.log(err));
+		},
 
 		async seekToPositionSelectedTrack({ getters }) {
 			await fetch(
@@ -222,50 +274,6 @@ const controllerModule = {
 				.catch(err => console.log(err));
 		},
 
-		async playSelectedTrack({ getters, dispatch }, contextUri) {
-			await axios
-				.put(
-					`https://api.spotify.com/v1/me/player/play?device_id=${getters.deviceID}`,
-					{
-						context_uri: contextUri.uri,
-						offset: { position: contextUri.index },
-						position_ms:
-							getters.getCurrentlyPlayingTrack?.item.track_number - 1 ===
-							contextUri.index
-								? getters.getCurrentlyPlayingTrack.progress_ms
-								: 0,
-					},
-					{
-						headers: {
-							Accept: 'application/json',
-							'Content-Type': 'application/json',
-							Authorization: 'Bearer ' + getters.getToken,
-						},
-					}
-				)
-				.then(data => {
-					if (data.status === 204) {
-						console.log(
-							`Selected ${contextUri.index}==> index numbered favSong started`
-						);
-						dispatch('fetchCurrentlyPlayingTrack')
-							.then(() => {
-								console.log(getters.currentTrackID);
-								console.log(
-									'context type=>',
-									getters.getCurrentlyPlayingTrack?.context?.type
-								);
-								let selectedPlayingTrackEl = [
-									document.getElementById(`${getters.currentTrackID}`),
-								];
-								dispatch('addGreenTextTrackName', selectedPlayingTrackEl[0]);
-							})
-							.catch(err => console.log(err));
-					}
-				})
-				.catch(err => console.log(err));
-		},
-
 		async playSelectedContext({ getters, dispatch }, contextUri) {
 			console.log(contextUri.index);
 			contextUri.index ? contextUri.index : (contextUri.index = 0);
@@ -274,12 +282,14 @@ const controllerModule = {
 					`https://api.spotify.com/v1/me/player/play?device_id=${getters.deviceID}`,
 					{
 						context_uri: contextUri.uri,
-						offset: { position: contextUri.index },
+						offset:
+							getters.getCurrentlyPlayingTrack?.context.type === 'artist'
+								? null
+								: { position: contextUri.index },
 						position_ms:
-							contextUri.type === 'favSongs'
+							contextUri.type === getters.getCurrentlyPlayingTrack?.context.type
 								? getters.getCurrentlyPlayingTrack.progress_ms
-								: getters.getCurrentlyPlayingTrack?.item.track_number - 1 ===
-								  contextUri.index
+								: contextUri.id === getters.getCurrentlyPlayingTrack?.item.id
 								? getters.getCurrentlyPlayingTrack.progress_ms
 								: 0,
 					},
@@ -330,6 +340,18 @@ const controllerModule = {
 				})
 				.catch(err => console.log(err));
 		},
+		async currentTrackIndex({ commit }, payload) {
+			commit('currentTrackIndex', payload);
+		},
+		async selectedIndex({ commit }, payload) {
+			commit('selectedIndex', payload);
+		},
+		increaseTrackIndex({ commit }) {
+			commit('increaseTrackIndex', 1);
+		},
+		clearTrackIndex({ commit }) {
+			commit('clearTrackIndex');
+		},
 		async skipToNextTrack({ getters, dispatch }) {
 			await fetch(
 				`https://api.spotify.com/v1/me/player/next?device_id=${getters.deviceID}`,
@@ -345,6 +367,7 @@ const controllerModule = {
 				console.log(data);
 				if (data.status === 204) {
 					console.log('skipped to Next Track!');
+					dispatch('selectedIndex');
 					let selectedTrackEl = [
 						document.querySelector('.trackItems--container'),
 					];
@@ -368,6 +391,9 @@ const controllerModule = {
 				}
 			});
 		},
+		decreaseTrackIndex({ commit }) {
+			commit('decreaseTrackIndex', 1);
+		},
 		async skipToPrevTrack({ getters, dispatch }) {
 			fetch(
 				`https://api.spotify.com/v1/me/player/previous?device_id=${getters.deviceID}`,
@@ -384,6 +410,7 @@ const controllerModule = {
 					console.log(data);
 					if (data.status === 204) {
 						console.log('skipped to Previous Track!');
+						dispatch('decreaseTrackIndex', 1);
 						let selectedTrackEl = [
 							document.querySelector('.trackItems--container'),
 						];
@@ -433,7 +460,7 @@ const controllerModule = {
 					console.log(data);
 					if (data.status === 204) {
 						console.log('!!!!!!!!item added to Queue!!!!!!!!!!!!');
-						dispatch('fetchCurrentlyPlayingTrack');
+						dispatch('userQueue');
 					}
 				})
 				.catch(err => console.log(err));
@@ -489,6 +516,12 @@ const controllerModule = {
 		},
 		currentTrackID(state) {
 			return state.currentTrackID;
+		},
+		currentTrackIndex(state) {
+			return state.trackIndex;
+		},
+		currentContextType(state) {
+			return state.currentContextType;
 		},
 		getVolumePercent(state) {
 			return state.volumePercent;

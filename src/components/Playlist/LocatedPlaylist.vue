@@ -83,17 +83,27 @@
 			<div class="w-full ml-[1.2rem] flex items-center lg:ml-[2rem]">
 				<button
 					v-if="totalPlaylistTracks"
+					@click="
+						playPlaylistContext(
+							(uri = {
+								uri: playlistUri,
+								index: 0,
+								type: contextType,
+							})
+						)
+					"
 					class="rounded-full bg-green3 p-[0.9rem] cursor-default hover:scale-105"
 				>
 					<span>
 						<svg role="img" height="28" width="28" viewBox="0 0 24 24" class="">
 							<path
+								v-if="!isPlayingPlaylistContextUri"
 								fill="currentColor"
 								d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
 							></path>
 
 							<path
-								class="hidden"
+								v-else
 								fill="currentColor"
 								d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
 							></path>
@@ -164,7 +174,10 @@
 					v-for="({ track }, i) in playlistTracksItems"
 					:key="track?.id"
 					:id="track?.id"
-					:uri="track.uri"
+					:uri="playlistUri"
+					:itemUri="track.uri"
+					:trackID="track.id"
+					:contextType="contextType"
 					:index="i"
 					:playlistPage="playlistPage"
 					:margin="margin"
@@ -248,6 +261,7 @@ export default {
 			owner: '',
 			appOptions: false,
 			playlistPage: true,
+			contextType: 'playlist',
 			margin: false,
 			options2: '',
 			observer2: null,
@@ -274,7 +288,18 @@ export default {
 				})
 				.catch(err => console.log(err));
 		},
-
+		async playPlaylistContext(uri) {
+			console.log(uri);
+			if (this.isPlayingPlaylistContextUri) {
+				await this.$store.dispatch('controller/pauseCurrentTrack');
+			} else {
+				if (this.getCurrentlyPlayingTrack?.context?.uri === this.playlistUri) {
+					uri.index = this.currentPlayingTrackIndex;
+					await this.$store.dispatch('controller/playSelectedContext', uri);
+				} else
+					await this.$store.dispatch('controller/playSelectedContext', uri);
+			}
+		},
 		async unFollowPlaylist() {
 			if (this.isFavPlaylist) {
 				await axios
@@ -545,6 +570,24 @@ export default {
 				? true
 				: false;
 		},
+		playlistUri() {
+			return this.currentPlaylist?.uri;
+		},
+		getCurrentlyPlayingTrack() {
+			return this.$store.getters['controller/getCurrentlyPlayingTrack'];
+		},
+		currentTrackID() {
+			return this.getCurrentlyPlayingTrack?.item?.id;
+		},
+		currentPlayingTrackIndex() {
+			return this.$store.getters['controller/currentTrackIndex'];
+		},
+		isPlayingPlaylistContextUri() {
+			return (
+				this.getCurrentlyPlayingTrack?.context?.uri === this.playlistUri &&
+				this.getCurrentlyPlayingTrack?.is_playing
+			);
+		},
 		totalPlaylistTracks() {
 			return this.currentPlaylist?.tracks?.total;
 		},
@@ -625,6 +668,16 @@ export default {
 		await this.getFavTracksonplaylist;
 		this.addGreenHeartFavTracks();
 
+		const selectedPlayingTrackEl = [
+			document.getElementById(`${this.currentTrackID}`),
+		];
+		this.isPlayingPlaylistContextUri
+			? this.$store.dispatch(
+					'controller/addGreenTextTrackName',
+					selectedPlayingTrackEl[0]
+			  )
+			: '';
+
 		this.header = document.getElementById('header');
 		this.playlistEl = document.getElementById('playlistPage');
 		this.playlistTracksItems.length
@@ -700,6 +753,7 @@ export default {
 	unmounted() {
 		this.$store.dispatch('controller/closeHeaderBtn');
 		this.$store.dispatch('playlists/clearTracksID');
+		this.$store.dispatch('controller/clearTrackIndex');
 	},
 };
 </script>
