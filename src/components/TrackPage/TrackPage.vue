@@ -202,7 +202,9 @@
 					:id="track.id"
 					:uri="currentArtistUri"
 					:itemUri="track.uri"
+					:artistTopTrackUris="artistTopTrackUris"
 					:trackID="track.id"
+					:contextType="'artist'"
 					:index="i"
 					:TrackPage="TrackPage"
 					:margin="true"
@@ -334,59 +336,61 @@
 							</div>
 						</div>
 					</div>
-					<div class="w-full">
-						<div
-							class="trackItems--container playlists2 h-fit w-full text-lightest"
+					<div
+						class="trackItems--container playlists2 h-fit w-full text-lightest"
+					>
+						<TrackItems
+							:class="track.id"
+							v-for="(track, i) in albumTracks"
+							:key="track.id"
+							:id="track.id"
+							:track="track"
+							:uri="currentAlbumUri"
+							:itemUri="track.uri"
+							:trackID="track.id"
+							:contextType="'album'"
+							:index="i"
+							:TrackPage2="TrackPage"
+							:TrackPage="TrackPage"
+							:margin="true"
+							:findFavTracks="findFavTracks"
+							:addGreenHeartFavTracks="addGreenHeartFavTracks"
+							:removeGreenHeartFavTracks="removeGreenHeartFavTracks"
+							:findFavTracks2="findFavTracks2"
+							:addGreenHeartFavTracks2="addGreenHeartFavTracks2"
+							:removeGreenHeartFavTracks2="removeGreenHeartFavTracks2"
 						>
-							<TrackItems
-								:class="track.id"
-								v-for="(track, i) in albumTracks"
-								:key="track.id"
-								:id="track.id"
-								:track="track"
-								:index="i"
-								:TrackPage2="TrackPage"
-								:TrackPage="TrackPage"
-								:margin="true"
-								:findFavTracks="findFavTracks"
-								:addGreenHeartFavTracks="addGreenHeartFavTracks"
-								:removeGreenHeartFavTracks="removeGreenHeartFavTracks"
-								:findFavTracks2="findFavTracks2"
-								:addGreenHeartFavTracks2="addGreenHeartFavTracks2"
-								:removeGreenHeartFavTracks2="removeGreenHeartFavTracks2"
+							<template v-slot:trackName
+								><span> {{ track.name }}</span></template
 							>
-								<template v-slot:trackName
-									><span> {{ track.name }}</span></template
+							<template v-slot:artist
+								><router-link
+									class="hover:underline"
+									v-for="artist in track.artists"
+									:key="artist.id"
+									:to="{ name: 'artist', params: { id: artist.id } }"
 								>
-								<template v-slot:artist
-									><router-link
-										class="hover:underline"
-										v-for="artist in track.artists"
-										:key="artist.id"
-										:to="{ name: 'artist', params: { id: artist.id } }"
-									>
-										{{
-											track.artists.length > 1
-												? artist.name ===
-												  track.artists[track.artists.length - 1].name
-													? artist.name
-													: artist.name + ', '
-												: artist.name
-										}}
-									</router-link></template
-								>
-								<template v-slot:duration>{{
-									trackDuration((duration = track.duration_ms))
-								}}</template>
-							</TrackItems>
-						</div>
+									{{
+										track.artists.length > 1
+											? artist.name ===
+											  track.artists[track.artists.length - 1].name
+												? artist.name
+												: artist.name + ', '
+											: artist.name
+									}}
+								</router-link></template
+							>
+							<template v-slot:duration>{{
+								trackDuration((duration = track.duration_ms))
+							}}</template>
+						</TrackItems>
 					</div>
 				</div>
-				<div class="mt-8">
-					<p class="text-[11px]" v-for="copy in copyrights" :key="copy.type">
-						{{ copy.text }}
-					</p>
-				</div>
+			</div>
+			<div class="mt-8">
+				<p class="text-[11px]" v-for="copy in copyrights" :key="copy.type">
+					{{ copy.text }}
+				</p>
 			</div>
 		</section>
 	</section>
@@ -438,6 +442,9 @@ export default {
 		currentTrackUri() {
 			return this.currentTrack?.uri;
 		},
+		currentAlbumUri() {
+			return this.currentTrack?.album?.uri;
+		},
 		currentArtistID() {
 			return this.currentTrack?.artists[0]?.id;
 		},
@@ -453,11 +460,15 @@ export default {
 		isPlayingCurrentTrack() {
 			return (
 				this.getCurrentlyPlayingTrack?.item.id === this.currentTrackID &&
+				!this.getCurrentlyPlayingTrack?.context &&
 				this.getCurrentlyPlayingTrack?.is_playing
 			);
 		},
 		artistTopTracks() {
 			return this.$store.getters['artists/getTopTracks'];
+		},
+		artistTopTrackUris() {
+			return this.artistTopTracks.map(item => item.uri);
 		},
 
 		trackArtistName() {
@@ -533,7 +544,7 @@ export default {
 					headers: {
 						Accept: 'application/json',
 						'Content-Type': 'application/json',
-						Authorization: 'Bearer ' + (await this.getToken),
+						Authorization: 'Bearer ' + this.getToken,
 					},
 				})
 				.then(({ data }) => {
@@ -560,11 +571,12 @@ export default {
 						headers: {
 							Accept: 'application/json',
 							'Content-Type': 'application/json',
-							Authorization: 'Bearer ' + (await this.getToken),
+							Authorization: 'Bearer ' + this.getToken,
 						},
 					}
 				)
 				.then(({ data }) => {
+					console.log(data);
 					console.log(data.tracks);
 					this.$store.dispatch('artists/topTracks', data.tracks);
 				})

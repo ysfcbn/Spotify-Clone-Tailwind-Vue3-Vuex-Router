@@ -44,14 +44,20 @@
 				class="relative flex text-right items-center justify-end pr-[14px] w-full"
 			>
 				<span
-					:class="{ invisible: isPlaying, 'group-hover:visible': !isPlaying }"
-					class="text-white text-lg group-hover:invisible"
+					:class="{
+						'invisible text-green3': isPlaying,
+						'group-hover:visible text-white': !isPlaying,
+					}"
+					class="text-lg group-hover:invisible"
 				>
 					{{ index + 1 }}</span
 				>
 				<button
 					@click="
-						playTrack((uris = { uri: uri, index: index, id: null }), $event)
+						playTrack(
+							(uris = { uri: uri, index: index, id: null, type: null }),
+							$event
+						)
 					"
 					class="absolute right-3 cursor-default"
 				>
@@ -105,6 +111,7 @@
 				<div
 					:class="{
 						'hover:underline': favoriteSongs || playlistPage,
+						'text-green3': isPlaying && currentTrackID === trackID,
 					}"
 					class="text-white font-semibold sm:max-w-[13rem] md:max-w-full truncate"
 				>
@@ -240,6 +247,7 @@ export default {
 		'artistPage',
 		'userPage',
 		'topTracks',
+		'artistTopTrackUris',
 		'selectArtCardName',
 		'diskografiPage',
 		'albumPage',
@@ -301,11 +309,10 @@ export default {
 			return this.$store.getters['controller/currentTrackID'];
 		},
 		isPlaying() {
-			return (
-				this.currentTrackIsPlaying &&
-				this.currentPlayingContextType === this.contextType &&
-				this.currentPlayingItemID === this.trackID
-			);
+			return this.currentTrackIsPlaying && this.contextType === 'artist'
+				? this.currentPlayingItemID === this.trackID
+				: this.currentPlayingContextType === this.contextType &&
+						this.currentPlayingItemID === this.trackID;
 		},
 	},
 
@@ -315,41 +322,39 @@ export default {
 			this.playingTrackID = e.target.closest('.track--container').id;
 			let playingTrackIndex = this.index;
 			let contextUri = uris;
+			let isArtistContext = contextUri.uri.split(':').slice(1)[0];
 
+			console.log('isArtistContext', isArtistContext);
 			console.log('contextUri', contextUri);
 			console.log('playingTrackIndex==>', playingTrackIndex);
-			await this.$store.dispatch('controller/fetchCurrentlyPlayingTrack');
 			console.log(this.isPlaying);
 
 			if (this.isPlaying) {
+				isArtistContext === 'artist'
+					? (contextUri.type = this.contextType)
+					: '';
 				await this.$store.dispatch('controller/pauseCurrentTrack');
 			} else {
-				await this.$store.dispatch(
-					'controller/currentTrackIndex',
-					contextUri.index
-				);
 				contextUri.id = this.playingTrackID;
-				await this.$store.dispatch(
-					'controller/playSelectedContext',
-					contextUri
-				);
+				if (isArtistContext === 'artist') {
+					contextUri.type = this.contextType;
+					contextUri.uri = this.artistTopTrackUris;
+					await this.$store.dispatch(
+						'controller/playArtitsTopTracks',
+						contextUri
+					);
+				} else {
+					contextUri.type = this.contextType;
+					await this.$store.dispatch(
+						'controller/currentTrackIndex',
+						contextUri.index
+					);
+					await this.$store.dispatch(
+						'controller/playSelectedContext',
+						contextUri
+					);
+				}
 			}
-
-			let selectedTracksEl = [document.querySelector('.trackItems--container')];
-			selectedTracksEl = [...selectedTracksEl[0].children];
-
-			this.$store.dispatch(
-				'controller/removeGreenTextTrackName',
-				selectedTracksEl
-			);
-
-			const selectedPlayingTrackEl = [
-				document.getElementById(`${this.playingTrackID}`),
-			];
-			this.$store.dispatch(
-				'controller/addGreenTextTrackName',
-				selectedPlayingTrackEl[0]
-			);
 		},
 		async fetchFavTracks() {
 			await axios
@@ -550,15 +555,6 @@ export default {
 		playingTrackID(newVal, oldVal) {
 			if (newVal !== oldVal) {
 				console.log('ÇALIŞTIII!!!!!!!😊😊😊😊😊😊😊');
-				let selectedTracksEl = [
-					document.querySelector('.trackItems--container'),
-				];
-				selectedTracksEl = [...selectedTracksEl[0].children];
-
-				this.$store.dispatch(
-					'controller/removeGreenTextTrackName',
-					selectedTracksEl
-				);
 			}
 		},
 	},

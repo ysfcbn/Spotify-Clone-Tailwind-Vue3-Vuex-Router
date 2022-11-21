@@ -253,7 +253,36 @@ const controllerModule = {
 				})
 				.catch(err => console.log(err));
 		},
-
+		async playArtitsTopTracks({ getters, dispatch }, uris) {
+			await axios
+				.put(
+					`https://api.spotify.com/v1/me/player/play?device_id=${getters.deviceID}`,
+					{
+						uris: [uris.uri[uris.index], ...uris.uri.slice(uris.index + 1)],
+						position_ms:
+							uris.id === getters.getCurrentlyPlayingTrack?.item.id
+								? getters.getCurrentlyPlayingTrack.progress_ms
+								: 0,
+					},
+					{
+						headers: {
+							Accept: 'application/json',
+							'Content-Type': 'application/json',
+							Authorization: 'Bearer ' + getters.getToken,
+						},
+					}
+				)
+				.then(data => {
+					if (data.status === 204) {
+						dispatch('fetchCurrentlyPlayingTrack')
+							.then(() => {
+								console.log(getters.currentTrackID);
+							})
+							.catch(err => console.log(err));
+					}
+				})
+				.catch(err => console.log(err));
+		},
 		async seekToPositionSelectedTrack({ getters }) {
 			await fetch(
 				`https://api.spotify.com/v1/me/player/seek?position_ms=${progress_ms}&device_id=${getters.deviceID}`,
@@ -276,18 +305,17 @@ const controllerModule = {
 
 		async playSelectedContext({ getters, dispatch }, contextUri) {
 			console.log(contextUri.index);
+			console.log(contextUri.type);
 			contextUri.index ? contextUri.index : (contextUri.index = 0);
 			await axios
 				.put(
 					`https://api.spotify.com/v1/me/player/play?device_id=${getters.deviceID}`,
 					{
 						context_uri: contextUri.uri,
-						offset:
-							getters.getCurrentlyPlayingTrack?.context.type === 'artist'
-								? null
-								: { position: contextUri.index },
+						offset: { position: contextUri.index },
 						position_ms:
-							contextUri.type === getters.getCurrentlyPlayingTrack?.context.type
+							contextUri.type ===
+							getters.getCurrentlyPlayingTrack?.context?.type
 								? getters.getCurrentlyPlayingTrack.progress_ms
 								: contextUri.id === getters.getCurrentlyPlayingTrack?.item.id
 								? getters.getCurrentlyPlayingTrack.progress_ms
@@ -312,10 +340,6 @@ const controllerModule = {
 									'context type=>',
 									getters.getCurrentlyPlayingTrack?.context?.type
 								);
-								let selectedPlayingTrackEl = [
-									document.getElementById(`${getters.currentTrackID}`),
-								];
-								dispatch('addGreenTextTrackName', selectedPlayingTrackEl[0]);
 							})
 							.catch(err => console.log(err));
 					}
@@ -363,33 +387,16 @@ const controllerModule = {
 						Authorization: 'Bearer ' + getters.getToken,
 					},
 				}
-			).then(data => {
-				console.log(data);
-				if (data.status === 204) {
-					console.log('skipped to Next Track!');
-					dispatch('selectedIndex');
-					let selectedTrackEl = [
-						document.querySelector('.trackItems--container'),
-					];
-					console.log(selectedTrackEl[0]);
-					if (selectedTrackEl[0]) {
-						selectedTrackEl = [...selectedTrackEl[0].children];
-						dispatch('removeGreenTextTrackName', selectedTrackEl);
-						dispatch('fetchCurrentlyPlayingTrack')
-							.then(() => {
-								console.log(getters.currentTrackID);
-								let selectedPlayingTrackEl = [
-									document.getElementById(`${getters.currentTrackID}`),
-								];
-								console.log(selectedPlayingTrackEl);
-								selectedPlayingTrackEl[0]
-									? dispatch('addGreenTextTrackName', selectedPlayingTrackEl[0])
-									: '';
-							})
-							.catch(err => console.log(err));
-					} else dispatch('fetchCurrentlyPlayingTrack');
-				}
-			});
+			)
+				.then(data => {
+					console.log(data);
+					if (data.status === 204) {
+						console.log('skipped to Next Track!');
+						dispatch('selectedIndex');
+						dispatch('fetchCurrentlyPlayingTrack');
+					}
+				})
+				.catch(err => console.log(err));
 		},
 		decreaseTrackIndex({ commit }) {
 			commit('decreaseTrackIndex', 1);
@@ -411,20 +418,7 @@ const controllerModule = {
 					if (data.status === 204) {
 						console.log('skipped to Previous Track!');
 						dispatch('decreaseTrackIndex', 1);
-						let selectedTrackEl = [
-							document.querySelector('.trackItems--container'),
-						];
-						selectedTrackEl = [...selectedTrackEl[0].children];
-						dispatch('removeGreenTextTrackName', selectedTrackEl);
-						dispatch('fetchCurrentlyPlayingTrack')
-							.then(() => {
-								console.log(getters.currentTrackID);
-								let selectedPlayingTrackEl = [
-									document.getElementById(`${getters.currentTrackID}`),
-								];
-								dispatch('addGreenTextTrackName', selectedPlayingTrackEl[0]);
-							})
-							.catch(err => console.log(err));
+						dispatch('fetchCurrentlyPlayingTrack');
 					}
 				})
 				.catch(err => console.log(err));
@@ -481,22 +475,6 @@ const controllerModule = {
 				.catch(err => console.log(err));
 		},
 
-		addGreenTextTrackName(_, item) {
-			console.log(item);
-			item.children[0].children[0].children[0].classList.add('text-green3');
-			item.children[1].children[1].children[0].classList.add('text-green3');
-		},
-		removeGreenTextTrackName(_, item) {
-			console.log('REMOVE ÇALIŞTIIIII✌✌✌✌✌✌');
-			item.forEach(track => {
-				track.children[0].children[0].children[0].classList.remove(
-					'text-green3'
-				);
-				track.children[1].children[1].children[0].classList.remove(
-					'text-green3'
-				);
-			});
-		},
 		showHeaderBtn({ commit }) {
 			commit('showHeaderBtn');
 		},
