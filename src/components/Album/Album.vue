@@ -729,16 +729,6 @@ export default {
 
     this.albumPage = true;
 
-    const selectedPlayingTrackEl = [
-      document.getElementById(`${this.currentTrackID}`),
-    ];
-    this.isPlayingAlbumContextUri
-      ? this.$store.dispatch(
-          "controller/addGreenTextTrackName",
-          selectedPlayingTrackEl[0]
-        )
-      : "";
-
     this.findFavTracks();
 
     await this.getFavTracksonalbum;
