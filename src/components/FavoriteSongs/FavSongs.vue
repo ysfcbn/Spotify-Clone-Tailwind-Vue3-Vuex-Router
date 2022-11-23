@@ -318,6 +318,7 @@ export default {
 		currentTrackID() {
 			return this.getCurrentlyPlayingTrack?.item?.id;
 		},
+
 		currentPlayingTrackIndex() {
 			return this.$store.getters['controller/currentTrackIndex'];
 		},

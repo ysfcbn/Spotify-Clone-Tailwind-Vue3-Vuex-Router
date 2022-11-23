@@ -28,6 +28,7 @@ const controllerModule = {
 		currentTrackID: null,
 		currentContextType: null,
 		trackIndex: 0,
+		selectedIndex: null,
 		currentTrackIsFav: '',
 		userQueue: [],
 		recentlyPlayedTracks: null,
@@ -53,6 +54,7 @@ const controllerModule = {
 		},
 		selectedIndex(state, payload) {
 			state.trackIndex = payload;
+			state.selectedIndex = payload;
 		},
 		increaseTrackIndex(state, payload) {
 			state.trackIndex += payload;
@@ -392,7 +394,7 @@ const controllerModule = {
 					console.log(data);
 					if (data.status === 204) {
 						console.log('skipped to Next Track!');
-						dispatch('selectedIndex');
+						dispatch('increaseTrackIndex');
 						dispatch('fetchCurrentlyPlayingTrack');
 					}
 				})
@@ -401,7 +403,7 @@ const controllerModule = {
 		decreaseTrackIndex({ commit }) {
 			commit('decreaseTrackIndex', 1);
 		},
-		async skipToPrevTrack({ getters, dispatch }) {
+		async skipToPrevTrack({ getters, dispatch, state }) {
 			fetch(
 				`https://api.spotify.com/v1/me/player/previous?device_id=${getters.deviceID}`,
 				{
@@ -417,7 +419,9 @@ const controllerModule = {
 					console.log(data);
 					if (data.status === 204) {
 						console.log('skipped to Previous Track!');
-						dispatch('decreaseTrackIndex', 1);
+						if (state.selectedIndex !== null) {
+							dispatch('selectedIndex');
+						} else dispatch('decreaseTrackIndex', 1);
 						dispatch('fetchCurrentlyPlayingTrack');
 					}
 				})
