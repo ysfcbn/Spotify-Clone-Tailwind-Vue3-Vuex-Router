@@ -61,7 +61,7 @@
 						playFavSongs(
 							(uri = {
 								uri: userFavSongsContextUri,
-								index: 0,
+								index: currentPlayingTrackIndex,
 								type: contextType,
 							})
 						)
@@ -209,14 +209,11 @@ export default {
 			if (this.isPlayingFavSongsContextUri) {
 				await this.$store.dispatch('controller/pauseCurrentTrack');
 			} else {
-				if (
-					this.getCurrentlyPlayingTrack?.context?.uri ===
-					this.userFavSongsContextUri
-				) {
-					uri.index = this.currentPlayingTrackIndex;
-					await this.$store.dispatch('controller/playSelectedContext', uri);
-				} else
-					await this.$store.dispatch('controller/playSelectedContext', uri);
+				console.log(this.currentPlayingTrackIndex);
+				uri.index = this.currentPlayingTrackIndex;
+				!this.currentPlayingTrackIndex
+					? await this.$store.dispatch('controller/playSelectedContext', uri)
+					: await this.$store.dispatch('controller/playCurrentTrack', uri);
 			}
 		},
 		removeGreenHeartFavTracks(item) {
@@ -308,6 +305,9 @@ export default {
 		currentUserUri() {
 			return this.$store.getters.getCurrentUser?.uri;
 		},
+		allFavTracks() {
+			return this.$store.getters['favTracks/getTracks'].items;
+		},
 		userFavSongsContextUri() {
 			return `${this.currentUserUri}:collection`;
 		},
@@ -318,9 +318,15 @@ export default {
 		currentTrackID() {
 			return this.getCurrentlyPlayingTrack?.item?.id;
 		},
-
+		findCurrentPlayingTrackIndex() {
+			return this.allFavTracks.indexOf(
+				this.allFavTracks.find(item => item.track.id === this.currentTrackID)
+			);
+		},
 		currentPlayingTrackIndex() {
-			return this.$store.getters['controller/currentTrackIndex'];
+			return this.findCurrentPlayingTrackIndex + 1
+				? this.findCurrentPlayingTrackIndex
+				: 0;
 		},
 		isPlayingFavSongsContextUri() {
 			return (
@@ -389,23 +395,26 @@ export default {
 				this.presentation ? this.observer2.observe(this.presentation) : '';
 			}
 		},
+		isPlayingFavSongsContextUri(newVal) {
+			if (newVal) {
+				this.$store.dispatch('controller/isPlayingHeaderBtn', newVal);
+			} else {
+				this.$store.dispatch('controller/isPlayingHeaderBtn', newVal);
+			}
+		},
 	},
 
 	async created() {
 		window.addEventListener('resize', this.resizeOption2);
 		this.favoriteSongs = true;
 		console.log('FavoriteSongs Mounted');
+		console.log(this.isPlayingFavSongsContextUri);
+		(await this.isPlayingFavSongsContextUri)
+			? this.$store.dispatch('controller/isPlayingHeaderBtn', true)
+			: this.$store.dispatch('controller/isPlayingHeaderBtn', false);
 
 		(await this.favTracks?.length) ? '' : this.fetchFavTracks();
-		const selectedPlayingTrackEl = [
-			document.getElementById(`${this.currentTrackID}`),
-		];
-		this.isPlayingFavSongsContextUri
-			? this.$store.dispatch(
-					'controller/addGreenTextTrackName',
-					selectedPlayingTrackEl[0]
-			  )
-			: '';
+
 		setTimeout(() => {
 			this.presentation = document.querySelector('.presentation');
 			this.body = document.body;
@@ -474,6 +483,7 @@ export default {
 	},
 	unmounted() {
 		this.$store.dispatch('controller/closeHeaderBtn');
+		this.$store.dispatch('controller/isPlayingHeaderBtn', null);
 	},
 };
 </script>

@@ -134,8 +134,6 @@ export default {
 	methods: {
 		async addToQueue(uri) {
 			await this.$store.dispatch('controller/addItemToQueue', uri.uri);
-			await this.$store.dispatch('controller/selectedIndex', uri.index);
-
 			await this.$store.dispatch('controller/userQueue');
 		},
 	},

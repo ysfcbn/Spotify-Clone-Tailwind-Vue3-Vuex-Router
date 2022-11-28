@@ -87,7 +87,7 @@
 						playPlaylistContext(
 							(uri = {
 								uri: playlistUri,
-								index: 0,
+								index: currentPlayingTrackIndex,
 								type: contextType,
 							})
 						)
@@ -115,13 +115,21 @@
 						v-if="totalPlaylistTracks"
 						@click="unFollowPlaylist"
 						id="heartBtn"
-						class="p-[0.9rem] w-[4rem] ml-4 mx-1 text-lightest cursor-default hover:text-white"
+						class="p-[0.9rem] w-[4rem] ml-4 mx-1 cursor-default"
 						:class="{
 							greenHeart: isFavPlaylist,
 							emptyHeart: !isFavPlaylist,
 						}"
 					>
-						<svg role="img" height="32" width="32" viewBox="0 0 24 24">
+						<svg
+							:class="{
+								'hover:text-white': !isFavPlaylist,
+							}"
+							role="img"
+							height="32"
+							width="32"
+							viewBox="0 0 24 24"
+						>
 							<path
 								fill="currentColor"
 								d="M5.21 1.57a6.757 6.757 0 016.708 1.545.124.124 0 00.165 0 6.741 6.741 0 015.715-1.78l.004.001a6.802 6.802 0 015.571 5.376v.003a6.689 6.689 0 01-1.49 5.655l-7.954 9.48a2.518 2.518 0 01-3.857 0L2.12 12.37A6.683 6.683 0 01.627 6.714 6.757 6.757 0 015.21 1.57zm3.12 1.803a4.757 4.757 0 00-5.74 3.725l-.001.002a4.684 4.684 0 001.049 3.969l.009.01 7.958 9.485a.518.518 0 00.79 0l7.968-9.495a4.688 4.688 0 001.049-3.965 4.803 4.803 0 00-3.931-3.794 4.74 4.74 0 00-4.023 1.256l-.008.008a2.123 2.123 0 01-2.9 0l-.007-.007a4.757 4.757 0 00-2.214-1.194z"
@@ -293,11 +301,10 @@ export default {
 			if (this.isPlayingPlaylistContextUri) {
 				await this.$store.dispatch('controller/pauseCurrentTrack');
 			} else {
-				if (this.getCurrentlyPlayingTrack?.context?.uri === this.playlistUri) {
-					uri.index = this.currentPlayingTrackIndex;
-					await this.$store.dispatch('controller/playSelectedContext', uri);
-				} else
-					await this.$store.dispatch('controller/playSelectedContext', uri);
+				uri.index = this.currentPlayingTrackIndex;
+				!this.currentPlayingTrackIndex
+					? await this.$store.dispatch('controller/playSelectedContext', uri)
+					: await this.$store.dispatch('controller/playCurrentTrack', uri);
 			}
 		},
 		async unFollowPlaylist() {
@@ -579,8 +586,19 @@ export default {
 		currentTrackID() {
 			return this.getCurrentlyPlayingTrack?.item?.id;
 		},
+		playlistTracks() {
+			return this.currentPlaylist?.tracks?.items;
+		},
+
+		findCurrentPlayingTrackIndex() {
+			return this.playlistTracks.indexOf(
+				this.playlistTracks.find(item => item.track.id === this.currentTrackID)
+			);
+		},
 		currentPlayingTrackIndex() {
-			return this.$store.getters['controller/currentTrackIndex'];
+			return this.findCurrentPlayingTrackIndex + 1
+				? this.findCurrentPlayingTrackIndex
+				: 0;
 		},
 		isPlayingPlaylistContextUri() {
 			return (
@@ -654,12 +672,23 @@ export default {
 				this.presentation ? this.observer2.observe(this.presentation) : '';
 			}
 		},
+		isPlayingPlaylistContextUri(newVal) {
+			if (newVal) {
+				this.$store.dispatch('controller/isPlayingHeaderBtn', newVal);
+			} else {
+				this.$store.dispatch('controller/isPlayingHeaderBtn', newVal);
+			}
+		},
 	},
 
 	async created() {
 		window.addEventListener('resize', this.resizeOption2);
 		this.playlistPage = true;
 		console.log('locatedPlaylist Mounted');
+		(await this.isPlayingPlaylistContextUri)
+			? this.$store.dispatch('controller/isPlayingHeaderBtn', true)
+			: this.$store.dispatch('controller/isPlayingHeaderBtn', false);
+
 		await this.fetchPlaylist();
 
 		this.owner = this.playlistOwner;
@@ -754,6 +783,7 @@ export default {
 		this.$store.dispatch('controller/closeHeaderBtn');
 		this.$store.dispatch('playlists/clearTracksID');
 		this.$store.dispatch('controller/clearTrackIndex');
+		this.$store.dispatch('controller/isPlayingHeaderBtn', null);
 	},
 };
 </script>

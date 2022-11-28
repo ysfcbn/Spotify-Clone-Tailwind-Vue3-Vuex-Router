@@ -40,27 +40,25 @@
 				<div class="flex items-center justify-between text-lightest w-[7.5rem]">
 					<div>
 						<button
+							@click="
+								playAlbumContext(
+									(uri = {
+										uri: data.uri,
+										index: currentPlayingTrackIndex,
+										type: contextType,
+									})
+								)
+							"
 							class="items-center bg-white rounded-full w-fit p-[8px] cursor-default hover:scale-110"
 						>
-							<svg
-								role="img"
-								height="14"
-								width="14"
-								viewBox="0 0 16 16"
-								class="hidden"
-							>
+							<svg role="img" height="14" width="14" viewBox="0 0 16 16">
 								<path
+									v-if="isPlayingAlbumContextUri"
 									fill="#000"
 									d="M2.7 1a.7.7 0 00-.7.7v12.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V1.7a.7.7 0 00-.7-.7H2.7zm8 0a.7.7 0 00-.7.7v12.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V1.7a.7.7 0 00-.7-.7h-2.6z"
-								></path></svg
-							><svg
-								role="img"
-								height="16"
-								width="16"
-								viewBox="0 0 16 16"
-								class=""
-							>
+								></path>
 								<path
+									v-else
 									fill="#000"
 									d="M3 1.713a.7.7 0 011.05-.607l10.89 6.288a.7.7 0 010 1.212L4.05 14.894A.7.7 0 013 14.288V1.713z"
 								></path>
@@ -137,6 +135,10 @@
 			:key="track.id"
 			:id="track.id"
 			:index="i"
+			:uri="data.uri"
+			:itemUri="track.uri"
+			:trackID="track.id"
+			:contextType="contextType"
 			:diskografiPage="diskografiPage"
 			:findFavTracks="findFavTracks"
 			:addGreenHeartFavTracks="addGreenHeartFavTracks"
@@ -186,6 +188,7 @@ export default {
 			headerHeight: document.getElementById('header').getBoundingClientRect()
 				.height,
 			bodyHeight: document.body.getBoundingClientRect().height,
+			contextType: 'album',
 			playlistTracks: [],
 		};
 	},
@@ -223,6 +226,32 @@ export default {
 				document.getElementById(`${item}`)
 			);
 		},
+		albumTrackItems() {
+			return this.playlistTracks[0]?.items;
+		},
+		getCurrentlyPlayingTrack() {
+			return this.$store.getters['controller/getCurrentlyPlayingTrack'];
+		},
+
+		currentTrackID() {
+			return this.getCurrentlyPlayingTrack?.item?.id;
+		},
+		findCurrentPlayingTrackIndex() {
+			return this.albumTrackItems.indexOf(
+				this.albumTrackItems.find(item => item.id === this.currentTrackID)
+			);
+		},
+		currentPlayingTrackIndex() {
+			return this.findCurrentPlayingTrackIndex + 1
+				? this.findCurrentPlayingTrackIndex
+				: 0;
+		},
+		isPlayingAlbumContextUri() {
+			return (
+				this.getCurrentlyPlayingTrack?.context?.uri === this.data.uri &&
+				this.getCurrentlyPlayingTrack?.is_playing
+			);
+		},
 	},
 
 	methods: {
@@ -249,13 +278,24 @@ export default {
 
 			return options;
 		},
+		async playAlbumContext(uri) {
+			console.log(uri);
+			if (this.isPlayingAlbumContextUri) {
+				await this.$store.dispatch('controller/pauseCurrentTrack');
+			} else {
+				uri.index = this.currentPlayingTrackIndex;
+				!this.currentPlayingTrackIndex
+					? await this.$store.dispatch('controller/playSelectedContext', uri)
+					: await this.$store.dispatch('controller/playCurrentTrack', uri);
+			}
+		},
 		async fetchPlaylistTracks(index, playlist) {
 			await axios
 				.get(`https://api.spotify.com/v1/albums/${playlist[index].id}/tracks`, {
 					headers: {
 						Accept: 'application/json',
 						'Content-Type': 'application/json',
-						Authorization: 'Bearer ' + (await this.getToken),
+						Authorization: 'Bearer ' + this.getToken,
 					},
 				})
 				.then(({ data }) => {
@@ -461,6 +501,7 @@ export default {
 		console.log('ListView Mounted');
 
 		console.log(this.playlistTracks);
+		console.log(this.data);
 		console.log(this.renderTypes[this.indx].id);
 		console.log(this.currentSectionAlbumsID);
 		console.log(this.allFavAlbums);

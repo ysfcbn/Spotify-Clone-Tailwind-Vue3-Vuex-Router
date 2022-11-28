@@ -162,6 +162,7 @@ export default {
 	created() {
 		this.diskografiPage = true;
 		console.log(this.artistPublications);
+		console.log(this.selectedType);
 		this.selectedType.forEach(item => this.currentSectionAlbums.push(item.id));
 		console.log(this.currentSectionAlbums);
 		this.$store.dispatch(

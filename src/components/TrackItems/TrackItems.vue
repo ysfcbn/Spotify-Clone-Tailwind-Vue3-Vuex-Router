@@ -359,10 +359,6 @@ export default {
 				} else {
 					contextUri.type = this.contextType;
 					await this.$store.dispatch(
-						'controller/currentTrackIndex',
-						contextUri.index
-					);
-					await this.$store.dispatch(
 						'controller/playSelectedContext',
 						contextUri
 					);

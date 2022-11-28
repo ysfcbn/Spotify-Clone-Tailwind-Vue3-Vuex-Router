@@ -27,11 +27,10 @@ const controllerModule = {
 		volumePercent: null,
 		currentTrackID: null,
 		currentContextType: null,
-		trackIndex: 0,
-		selectedIndex: null,
 		currentTrackIsFav: '',
 		userQueue: [],
 		recentlyPlayedTracks: null,
+		isPlayingHeaderBtn: null,
 	},
 	mutations: {
 		myDevice(state, payload) {
@@ -48,22 +47,6 @@ const controllerModule = {
 		},
 		currentContextType(state, type) {
 			state.currentContextType = type;
-		},
-		currentTrackIndex(state, payload) {
-			state.trackIndex = payload;
-		},
-		selectedIndex(state, payload) {
-			state.trackIndex = payload;
-			state.selectedIndex = payload;
-		},
-		increaseTrackIndex(state, payload) {
-			state.trackIndex += payload;
-		},
-		decreaseTrackIndex(state, payload) {
-			state.trackIndex ? (state.trackIndex -= payload) : '';
-		},
-		clearTrackIndex(state) {
-			state.trackIndex = 0;
 		},
 		currentlyPlayingTrack(state, payload) {
 			state.currentlyPlayingTrack = payload;
@@ -82,6 +65,9 @@ const controllerModule = {
 		},
 		recentlyPlayedTracks(state, payload) {
 			state.recentlyPlayedTracks = payload;
+		},
+		isPlayingHeaderBtn(state, payload) {
+			state.isPlayingHeaderBtn = payload;
 		},
 		showHeaderBtn(state) {
 			state.headerBtn = true;
@@ -366,19 +352,8 @@ const controllerModule = {
 				})
 				.catch(err => console.log(err));
 		},
-		async currentTrackIndex({ commit }, payload) {
-			commit('currentTrackIndex', payload);
-		},
-		async selectedIndex({ commit }, payload) {
-			commit('selectedIndex', payload);
-		},
-		increaseTrackIndex({ commit }) {
-			commit('increaseTrackIndex', 1);
-		},
-		clearTrackIndex({ commit }) {
-			commit('clearTrackIndex');
-		},
-		async skipToNextTrack({ getters, dispatch }) {
+
+		async skipToNextTrack({ getters, dispatch, rootGetters }) {
 			await fetch(
 				`https://api.spotify.com/v1/me/player/next?device_id=${getters.deviceID}`,
 				{
@@ -394,14 +369,10 @@ const controllerModule = {
 					console.log(data);
 					if (data.status === 204) {
 						console.log('skipped to Next Track!');
-						dispatch('increaseTrackIndex');
 						dispatch('fetchCurrentlyPlayingTrack');
 					}
 				})
 				.catch(err => console.log(err));
-		},
-		decreaseTrackIndex({ commit }) {
-			commit('decreaseTrackIndex', 1);
 		},
 		async skipToPrevTrack({ getters, dispatch, state }) {
 			fetch(
@@ -419,9 +390,6 @@ const controllerModule = {
 					console.log(data);
 					if (data.status === 204) {
 						console.log('skipped to Previous Track!');
-						if (state.selectedIndex !== null) {
-							dispatch('selectedIndex');
-						} else dispatch('decreaseTrackIndex', 1);
 						dispatch('fetchCurrentlyPlayingTrack');
 					}
 				})
@@ -478,7 +446,9 @@ const controllerModule = {
 				})
 				.catch(err => console.log(err));
 		},
-
+		isPlayingHeaderBtn({ commit }, isPlaying) {
+			commit('isPlayingHeaderBtn', isPlaying);
+		},
 		showHeaderBtn({ commit }) {
 			commit('showHeaderBtn');
 		},
@@ -499,9 +469,7 @@ const controllerModule = {
 		currentTrackID(state) {
 			return state.currentTrackID;
 		},
-		currentTrackIndex(state) {
-			return state.trackIndex;
-		},
+
 		currentContextType(state) {
 			return state.currentContextType;
 		},
@@ -519,6 +487,9 @@ const controllerModule = {
 		},
 		getCurrentTrackIsFav(state) {
 			return state.currentTrackIsFav;
+		},
+		isPlayingHeaderBtn(state) {
+			return state.isPlayingHeaderBtn;
 		},
 		getHeaderBtn(state) {
 			return state.headerBtn;
