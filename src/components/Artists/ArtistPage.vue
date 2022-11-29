@@ -64,7 +64,7 @@
                 playArtistTopTracks(
                   (uri = {
                     uri: artistTopTrackUris,
-                    index: 0,
+                    index: currentPlayingTrackIndex,
                     type: contextType,
                   })
                 )
@@ -461,6 +461,17 @@ export default {
     currentTrackID() {
       return this.getCurrentlyPlayingTrack?.item?.id;
     },
+
+    findCurrentPlayingTrackIndex() {
+      return this.artistTopTracks.indexOf(
+        this.artistTopTracks.find((item) => item.id === this.currentTrackID)
+      );
+    },
+    currentPlayingTrackIndex() {
+      return this.findCurrentPlayingTrackIndex + 1
+        ? this.findCurrentPlayingTrackIndex
+        : 0;
+    },
     isPlayingArtistTopTracks() {
       return (
         this.getCurrentlyPlayingTrack?.item.id === this.currentTrackID &&
@@ -468,6 +479,11 @@ export default {
         this.getCurrentlyPlayingTrack?.is_playing
       );
     },
+
+    isClickHeaderBtn() {
+      return this.$store.getters["controller/isClickHeaderBtn"];
+    },
+
     artistPublications() {
       return this.$store.getters["artists/getArtistPublications"];
     },
@@ -829,6 +845,24 @@ export default {
     },
     seeMoreFunc() {
       this.seeMore = !this.seeMore;
+    },
+  },
+  watch: {
+    isPlayingArtistTopTracks(newVal) {
+      if (newVal) {
+        this.$store.dispatch("controller/isPlayingHeaderBtn", newVal);
+      } else {
+        this.$store.dispatch("controller/isPlayingHeaderBtn", newVal);
+      }
+    },
+    async isClickHeaderBtn(newVal, oldVal) {
+      if (newVal !== oldVal) {
+        await this.playArtistTopTracks({
+          uri: this.currentArtistUri,
+          index: this.currentPlayingTrackIndex,
+          type: this.contextType,
+        });
+      }
     },
   },
   async created() {
