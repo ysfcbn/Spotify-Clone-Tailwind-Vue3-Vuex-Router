@@ -10,7 +10,7 @@
 				></div>
 				<div
 					v-else
-					:style="{ 'background-image': colors[1] }"
+					:style="{ 'background-image': colors[0] }"
 					id="colorTheme"
 					class="absolute w-full h-[312px] left-0 top-0 shrink-0 z-0"
 				></div>
@@ -33,11 +33,15 @@
 				class="h-full grid sm:gap-y-4 sm:gap-x-6 sm:grid-cols-2 xl:grid-cols-3 min-w-[440px] shrink-1 flex"
 			>
 				<LastListen
-					v-for="section in sections"
-					:key="section.id"
-					:section="section"
-					@mouseenter="enter(section.id)"
-					@mouseleave="leave(section.id)"
+					v-for="(item, i) in recentlyPlayed"
+					:key="item.track.id"
+					:id="item.track.id"
+					:item="item"
+					:itemUri="item.uri"
+					:contextType="item.context?.type"
+					:contextUri="item.context?.uri"
+					@mouseenter="enter(i)"
+					@mouseleave="leave(i)"
 				/>
 			</div>
 		</section>
@@ -131,6 +135,7 @@ import axios from 'axios';
 
 export default {
 	components: { LastListen, Card, Info },
+
 	data() {
 		return {
 			home: true,
@@ -456,48 +461,18 @@ export default {
 					id: 5,
 				},
 			],
-			sections: [
-				{
-					name: 'Beğenilen Şarkılar',
-					id: 1,
-					img: 'https://t.scdn.co/images/3099b3803ad9496896c43f22fe9be8c4.png',
-				},
-				{
-					name: 'Hans Zimmer',
-					id: 2,
-					img: 'https://i.scdn.co/image/ab67706f00000002c5737f55b7195addae20994f',
-				},
-				{
-					name: "Eminem: When I'm Gone",
-					id: 3,
-					img: ' https://i.scdn.co/image/ab67616d0000b273e7eb779a71e61702561a5e78',
-				},
-				{
-					name: 'LXST CXTURY',
-					id: 4,
-					img: 'https://i.scdn.co/image/ab6761610000e5eba6d9fc1ca342f2f9bdd783af',
-				},
-				{
-					name: 'INTERSTELLAR',
-					id: 5,
-					img: 'https://i.scdn.co/image/ab67616d0000b273ac29a65e7ffcfa6f9cb0d342',
-				},
-				{
-					name: 'DAY ONE - HANS ZİMMER(Interstellar)',
-					id: 6,
-					img: 'https://i.scdn.co/image/ab67706c0000da849ee7a095aa96164af96048ab',
-				},
-			],
+			recentlyPlayed: [],
 			colors: {
-				1: 'linear-gradient(to bottom,rgba(72, 32, 176,0.4),rgba(72, 32, 176,0))',
-				2: 'linear-gradient(to bottom,rgba(152,168, 176,0.4),rgba(152,168, 176,0))',
-				3: 'linear-gradient(to bottom,rgba(48, 48, 64,0.4),rgba(48, 48, 64,0))',
-				4: 'linear-gradient(to bottom,rgba(83, 83, 83,0.4),rgba(83, 83, 83,0))',
-				5: 'linear-gradient(to bottom,rgba(168, 208, 120, 0.4),rgba(168, 208, 120,0))',
-				6: 'linear-gradient(to bottom,rgba(184, 128, 120,0.4),rgba(184, 128, 120,0))',
+				0: 'linear-gradient(to bottom,rgba(72, 32, 176,0.4),rgba(72, 32, 176,0))',
+				1: 'linear-gradient(to bottom,rgba(152,168, 176,0.4),rgba(152,168, 176,0))',
+				2: 'linear-gradient(to bottom,rgba(48, 48, 64,0.4),rgba(48, 48, 64,0))',
+				3: 'linear-gradient(to bottom,rgba(83, 83, 83,0.4),rgba(83, 83, 83,0))',
+				4: 'linear-gradient(to bottom,rgba(168, 208, 120, 0.4),rgba(168, 208, 120,0))',
+				5: 'linear-gradient(to bottom,rgba(184, 128, 120,0.4),rgba(184, 128, 120,0))',
 			},
 		};
 	},
+
 	methods: {
 		async currentUser() {
 			await axios
@@ -627,6 +602,7 @@ export default {
 				})
 				.catch(err => console.log(err));
 		},
+
 		async fetchRandomPlaylists(categoryID) {
 			await this.randomIndexs?.forEach(item => {
 				axios
@@ -652,6 +628,17 @@ export default {
 					})
 					.catch(err => console.log(err));
 			});
+		},
+
+		async lastListenTracks() {
+			return await this.getRecentlyPlayedTracks.reduce((acc, item, i) => {
+				if (!acc[item.track.id]) {
+					if (this.recentlyPlayed.length < 6 && item.context)
+						this.recentlyPlayed.push(item);
+				}
+				acc[item.track.id] = i;
+				return acc;
+			}, {});
 		},
 
 		randomNumbers() {
@@ -709,12 +696,16 @@ export default {
 			}
 		},
 	},
+
 	computed: {
 		isAuth() {
 			return this.$store.getters.isAuth;
 		},
 		getToken() {
 			return this.$store.getters.accessToken;
+		},
+		getRecentlyPlayedTracks() {
+			return this.$store.getters['controller/getRecentlyPlayedTracks']?.items;
 		},
 		getSeveralPlaylists() {
 			return this.$store.getters['playlists/getseveralPlaylists'];
@@ -763,6 +754,7 @@ export default {
 			return this.$store.getters['playlists/getRandomSelectedPlaylistsTitle'];
 		},
 	},
+
 	watch: {
 		async isAuth(newVal) {
 			if (newVal) {
@@ -782,6 +774,7 @@ export default {
 			}
 		},
 	},
+
 	async created() {
 		console.log('Home Mounted');
 		this.home = true;
@@ -830,6 +823,10 @@ export default {
 			this.observer.observe(this.homeEl);
 		}
 		if (this.isAuth) {
+			await this.$store.dispatch('controller/fetchRecentlyPlayedTracks');
+			await this.getRecentlyPlayedTracks;
+			await this.lastListenTracks();
+			console.log(this.recentlyPlayed);
 			this.getCurrentUser ? '' : await this.currentUser();
 			this.getFavShows ? '' : await this.fetchFavShows();
 			this.severalPlaylists ? '' : await this.fetchSeveralPlaylists();
@@ -845,6 +842,7 @@ export default {
 			}
 		}
 	},
+
 	async beforeUnmount() {
 		console.log('Home unMounted');
 

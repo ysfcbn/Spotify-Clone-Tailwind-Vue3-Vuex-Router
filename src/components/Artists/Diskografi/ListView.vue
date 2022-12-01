@@ -40,6 +40,8 @@
 				<div class="flex items-center justify-between text-lightest w-[7.5rem]">
 					<div>
 						<button
+							@mousedown="leftClick = true"
+							@mouseup="leftClick = false"
 							@click="
 								playAlbumContext(
 									(uri = {
@@ -49,7 +51,11 @@
 									})
 								)
 							"
-							class="items-center bg-white rounded-full w-fit p-[8px] cursor-default hover:scale-110"
+							:class="{
+								'scale-[1] bg-white/50': leftClick,
+								'hover:scale-110 bg-white': !leftClick,
+							}"
+							class="items-center rounded-full w-fit p-[8px] cursor-default"
 						>
 							<svg role="img" height="14" width="14" viewBox="0 0 16 16">
 								<path
@@ -182,6 +188,8 @@ export default {
 		return {
 			options: '',
 			appOptions: false,
+			leftClick: false,
+
 			firstElement: false,
 			observer: null,
 			margin: true,

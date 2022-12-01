@@ -21,13 +21,21 @@
 					</svg>
 				</button>
 
-				<button @click="skipToPrevTrack" class="cursor-default">
+				<button
+					@mousedown="leftClick = true"
+					@mouseup="leftClick = false"
+					@click="skipToPrevTrack"
+					class="cursor-default"
+				>
 					<svg
 						role="img"
 						height="16"
 						width="16"
 						viewBox="0 0 16 16"
-						class="hover:text-white"
+						:class="{
+							'text-lightest': leftClick,
+							'hover:text-white': !leftClick,
+						}"
 					>
 						<path
 							fill="currentColor"
@@ -38,9 +46,15 @@
 			</div>
 
 			<button
+				@mousedown="leftClick = true"
+				@mouseup="leftClick = false"
 				@click="playCurrentTrack"
 				id="playBtn"
-				class="items-center bg-white rounded-full w-fit p-[10px] cursor-default hover:scale-110 text-dark"
+				class="items-center bg-white rounded-full w-fit p-[10px] cursor-default text-dark"
+				:class="{
+					'scale-[1]': leftClick,
+					'hover:scale-110': !leftClick,
+				}"
 			>
 				<svg
 					v-if="!isPlaying"
@@ -64,9 +78,17 @@
 			</button>
 
 			<div class="flex justify-between w-14 text-lightest ml-6">
-				<button @click="skipToNextTrack" class="cursor-default">
+				<button
+					@mousedown="leftClick = true"
+					@mouseup="leftClick = false"
+					@click="skipToNextTrack"
+					class="cursor-default"
+				>
 					<svg
-						class="hover:text-white"
+						:class="{
+							'text-lightest': leftClick,
+							'hover:text-white': !leftClick,
+						}"
 						role="img"
 						height="16"
 						width="16"
@@ -118,7 +140,9 @@ export default {
 	name: 'PlayController',
 	props: [],
 	data() {
-		return {};
+		return {
+			leftClick: false,
+		};
 	},
 	computed: {
 		getCurrentTrack() {
