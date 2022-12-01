@@ -436,9 +436,9 @@ const controllerModule = {
 				.catch(err => console.log(err));
 		},
 
-		async fetchRecentlyPlayedTracks({ getters, commit }) {
+		async fetchRecentlyPlayedTracks({ getters, commit, state }) {
 			await axios
-				.get(`https://api.spotify.com/v1/me/player/recently-played`, {
+				.get(`https://api.spotify.com/v1/me/player/recently-played?limit=50`, {
 					headers: {
 						Accept: 'application/json',
 						'Content-Type': 'application/json',

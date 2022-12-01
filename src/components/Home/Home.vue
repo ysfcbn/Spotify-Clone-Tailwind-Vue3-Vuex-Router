@@ -37,6 +37,7 @@
 					:key="item.track.id"
 					:id="item.track.id"
 					:item="item"
+					:index="i"
 					:itemUri="item.uri"
 					:contextType="item.context?.type"
 					:contextUri="item.context?.uri"
