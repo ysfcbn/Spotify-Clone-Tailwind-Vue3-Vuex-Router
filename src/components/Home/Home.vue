@@ -38,7 +38,6 @@
 					:id="item.track.id"
 					:item="item"
 					:index="i"
-					:itemUri="item.uri"
 					:contextType="item.context?.type"
 					:contextUri="item.context?.uri"
 					@mouseenter="enter(i)"
@@ -633,11 +632,15 @@ export default {
 
 		async lastListenTracks() {
 			return await this.getRecentlyPlayedTracks.reduce((acc, item, i) => {
-				if (!acc[item.track.id]) {
-					if (this.recentlyPlayed.length < 6 && item.context)
+				if (item.context && !acc[item.context.uri]) {
+					if (this.recentlyPlayed.length < 6) {
 						this.recentlyPlayed.push(item);
+					}
 				}
-				acc[item.track.id] = i;
+				if (item.context) {
+					acc[item.context.uri] = item.context.uri;
+				}
+
 				return acc;
 			}, {});
 		},

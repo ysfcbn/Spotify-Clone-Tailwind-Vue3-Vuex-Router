@@ -6,7 +6,7 @@
 		<div class="h-full shrink-0">
 			<img
 				class="mb:h-full object-cover rounded-l-sm"
-				:src="itemImages"
+				:src="contextImage"
 				alt="image"
 			/>
 		</div>
@@ -17,7 +17,8 @@
 				</h4>
 			</div>
 			<div
-				class="flex items-start mx-3 opacity-0 group-hover:opacity-100 transition ease-in duration-150 group-hover:block"
+				:class="{ 'opacity-0 ': !isPlayingContextUri }"
+				class="flex items-start mx-3 group-hover:opacity-100 transition ease-in duration-150"
 			>
 				<button
 					id="playBtn"
@@ -30,22 +31,20 @@
 							})
 						)
 					"
-					class="hidden p-3 ml-3 bg-green3 rounded-full cursor-default lg:group-hover:block hover:scale-105 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+					class="p-3 ml-3 bg-green3 sm:hidden lg:block rounded-full cursor-default hover:scale-105 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
 				>
-					<span>
-						<svg role="img" height="24" width="24" viewBox="0 0 24 24">
-							<path
-								v-if="!isPlayingContextUri"
-								fill="text-black"
-								d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
-							></path>
-							<path
-								v-else
-								fill="text-black"
-								d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
-							></path>
-						</svg>
-					</span>
+					<svg role="img" height="24" width="24" viewBox="0 0 24 24">
+						<path
+							v-if="!isPlayingContextUri"
+							fill="text-black"
+							d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
+						></path>
+						<path
+							v-else
+							fill="text-black"
+							d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
+						></path>
+					</svg>
 				</button>
 			</div>
 		</div>
@@ -53,29 +52,71 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
-	props: ['item', 'itemUri', 'contextType', 'contextUri', 'index'],
+	props: ['item', 'contextType', 'contextUri', 'index'],
 	data() {
-		return {};
+		return {
+			playlistImage: null,
+			playlistName: null,
+			artistImage: null,
+		};
 	},
 	methods: {
+		async fetchPlaylist() {
+			await axios
+				.get(`${this.item.context.href}`, {
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+						Authorization: 'Bearer ' + this.getToken,
+					},
+				})
+				.then(({ data }) => {
+					this.playlistImage = data.images[0].url;
+					this.playlistName = data.name;
+					console.log(data.images[0].url, data.name);
+					console.log(this.playlistImage);
+					console.log(this.playlistName);
+				})
+				.catch(err => console.log(err));
+		},
+		async fetchArtist() {
+			await axios
+				.get(`${this.item.context.href}`, {
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+						Authorization: 'Bearer ' + this.getToken,
+					},
+				})
+				.then(({ data }) => {
+					this.artistImage = data.images[1].url;
+					console.log(this.artistImage);
+				})
+				.catch(err => console.log(err));
+		},
 		openItem(_, e) {
-			if (!e.target.closest('.item--container')) {
-				let contextID = this.contextUri.split(':').slice(2);
-				this.$router.push({
-					name: `${this.contextType}`,
-					params: { id: `${contextID}` },
-				});
-			}
 			if (e.target.closest('#playBtn')?.id === 'playBtn') {
 				this.playContextUri({
 					uri: this.contextUri,
 					index: 0,
 					type: this.contextType,
 				});
+			} else if (e.target.closest('.item--container')) {
+				let contextID = this.contextUri.split(':').slice(2);
+				this.$router.push({
+					name: `${this.contextType}`,
+					params: { id: `${contextID}` },
+				});
 			}
 		},
 		async playContextUri(uri) {
+			console.log(
+				this.isPlayingContextUri,
+				'this.contextType ==>',
+				this.contextType
+			);
 			console.log(uri);
 			if (this.isPlayingContextUri) {
 				await this.$store.dispatch('controller/pauseCurrentTrack');
@@ -89,17 +130,26 @@ export default {
 		getToken() {
 			return this.$store.getters.accessToken;
 		},
+		contextTypeComp() {
+			return this.contextType;
+		},
+
 		contextName() {
 			return this.contextType === 'artist'
 				? this.item.track.artists[0].name
 				: this.contextType === 'album'
 				? this.item.track.album.name
-				: this.item.track.album.name;
+				: this.playlistName;
 		},
-		itemImages() {
+
+		contextImage() {
 			return this.contextType === 'album'
 				? this.item.track.album.images[1].url
-				: this.item.track.album.images[1].url;
+				: this.contextType === 'playlist'
+				? this.playlistImage
+				: this.contextType === 'artist'
+				? this.artistImage
+				: '';
 		},
 		currentTrackID() {
 			return this.getCurrentlyPlayingTrack?.item?.id;
@@ -111,12 +161,25 @@ export default {
 		isPlayingContextUri() {
 			return (
 				this.getCurrentlyPlayingTrack?.item.id === this.currentTrackID &&
-				this.getCurrentlyPlayingTrack?.context === this.contextType &&
+				this.getCurrentlyPlayingTrack?.context?.uri === this.contextUri &&
 				this.getCurrentlyPlayingTrack?.is_playing
 			);
 		},
 	},
-	async created() {},
+	watch: {
+		async contextTypeComp(newVal) {
+			if (newVal === 'playlist') {
+			}
+		},
+	},
+	async created() {
+		if (this.contextTypeComp === 'playlist') {
+			await this.fetchPlaylist();
+		} else if (this.contextTypeComp === 'artist') {
+			await this.fetchArtist();
+		}
+		console.log(this.contextTypeComp);
+	},
 };
 </script>
 

@@ -288,7 +288,7 @@ export default {
 	},
 	methods: {
 		async fetchPlaylist() {
-			return await axios
+			await axios
 				.get('https://api.spotify.com/v1/playlists/' + this.id, {
 					headers: {
 						Accept: 'application/json',
@@ -801,7 +801,6 @@ export default {
 	unmounted() {
 		this.$store.dispatch('controller/closeHeaderBtn');
 		this.$store.dispatch('playlists/clearTracksID');
-		this.$store.dispatch('controller/clearTrackIndex');
 		this.$store.dispatch('controller/isPlayingHeaderBtn', null);
 		this.$store.dispatch('controller/isClickHeaderBtn', null);
 	},

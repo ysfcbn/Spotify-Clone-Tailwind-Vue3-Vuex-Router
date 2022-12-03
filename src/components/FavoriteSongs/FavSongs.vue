@@ -216,9 +216,16 @@ export default {
 			} else {
 				console.log(this.currentPlayingTrackIndex);
 				uri.index = this.currentPlayingTrackIndex;
-				!this.currentPlayingTrackIndex
-					? await this.$store.dispatch('controller/playSelectedContext', uri)
-					: await this.$store.dispatch('controller/playCurrentTrack', uri);
+				if (
+					this.getCurrentlyPlayingTrack.context.type === 'collection' &&
+					!this.currentPlayingTrackIndex
+				) {
+					console.log(this.getCurrentlyPlayingTrack.context.type);
+					await this.$store.dispatch('controller/playCurrentTrack', uri);
+				} else {
+					uri.index = 0;
+					await this.$store.dispatch('controller/playSelectedContext', uri);
+				}
 			}
 		},
 		removeGreenHeartFavTracks(item) {
