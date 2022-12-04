@@ -183,7 +183,7 @@ export default {
             headers: {
               Accept: "application/json",
               "Content-Type": "application/json",
-              Authorization: "Bearer " + (await this.getToken),
+              Authorization: "Bearer " + this.getToken,
             },
           }
         )
