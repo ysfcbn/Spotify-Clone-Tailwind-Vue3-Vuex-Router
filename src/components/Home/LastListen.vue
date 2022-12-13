@@ -76,9 +76,6 @@ export default {
         .then(({ data }) => {
           this.playlistImage = data.images[0].url;
           this.playlistName = data.name;
-          console.log(data.images[0].url, data.name);
-          console.log(this.playlistImage);
-          console.log(this.playlistName);
         })
         .catch((err) => console.log(err));
     },
@@ -179,12 +176,7 @@ export default {
       );
     },
   },
-  watch: {
-    async contextTypeComp(newVal) {
-      if (newVal === "playlist") {
-      }
-    },
-  },
+
   async created() {
     if (this.contextTypeComp === "playlist") {
       await this.fetchPlaylist();
