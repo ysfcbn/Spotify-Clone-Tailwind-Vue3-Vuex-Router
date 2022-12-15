@@ -118,26 +118,34 @@
 							<slot name="playBtn" :data="data">
 								<button
 									@click="
-										playItems(
-											(uri = data?.context?.type
-												? data.context.uri
-												: severalPlaylist
-												? data?.uri
-												: data?.track?.uri),
+										playContextUri(
+											(uri = {
+												uri: data?.context?.type
+													? data.context.uri
+													: severalPlaylist
+													? data?.uri
+													: data?.track?.uri,
+												index: 0,
+												type: data?.context?.type ? data.context.type : null,
+											}),
 											$event
 										)
 									"
 									id="playBtn"
 									class="p-3 bg-green3 rounded-full cursor-default lg:group-hover:block hover:scale-110 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
 								>
-									<span>
-										<svg role="img" height="24" width="24" viewBox="0 0 24 24">
-											<path
-												fill="text-black"
-												d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
-											></path>
-										</svg>
-									</span>
+									<svg role="img" height="24" width="24" viewBox="0 0 24 24">
+										<path
+											v-if="!isPlayingContextUri && !isCardPlaying"
+											fill="text-black"
+											d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
+										></path>
+										<path
+											v-else
+											fill="text-black"
+											d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
+										></path>
+									</svg>
 								</button>
 							</slot>
 						</div>
@@ -182,7 +190,6 @@
 import axios from 'axios';
 export default {
 	name: 'Card',
-	emits: ['contextType'],
 	props: [
 		'currentData',
 		'artistPage',
@@ -205,6 +212,7 @@ export default {
 	data() {
 		return {
 			playlistID: '',
+			isCardPlaying: false,
 			playlistImage: null,
 			playlistDesc: null,
 			artistImage: null,
@@ -217,6 +225,25 @@ export default {
 		},
 		isCompExist() {
 			return this.$store.getters['discography/isCompExist'];
+		},
+		getCurrentlyPlayingTrack() {
+			return this.$store.getters['controller/getCurrentlyPlayingTrack'];
+		},
+		currentTrackID() {
+			return this.getCurrentlyPlayingTrack?.item?.id;
+		},
+		findCurrentPlayingTrackIndex() {
+			return this.playlistTracks.indexOf(
+				this.playlistTracks.find(item => item.track.id === this.currentTrackID)
+			);
+		},
+		currentPlayingTrackIndex() {
+			return this.findCurrentPlayingTrackIndex + 1
+				? this.findCurrentPlayingTrackIndex
+				: 0;
+		},
+		isPlayingContextUri() {
+			return this.getCurrentlyPlayingTrack?.is_playing;
 		},
 		// isDataPlaylist() {
 		// 	return this.data.context.type === 'playlist'
@@ -259,10 +286,15 @@ export default {
 		// },
 	},
 	methods: {
-		playItems(uri, e) {
-			console.log(uri, e.target.closest('.card--container').id);
+		async playContextUri(uri) {
+			console.log(uri);
+			if (this.isPlayingPlaylistContextUri) {
+				await this.$store.dispatch('controller/pauseCurrentTrack');
+			} else {
+				await this.$store.dispatch('controller/playSelectedContext', uri);
+			}
 		},
-		openCard(data, e) {
+		async openCard(data, e) {
 			const cardID = e.target.closest('.card--container').id;
 			const type = data?.context?.type;
 			const isShow = data?.type;
@@ -270,30 +302,43 @@ export default {
 			console.log(type);
 			if (e.target.closest('#playBtn')?.id === 'playBtn') {
 				console.log('toggle Play/Stop Users');
-			}
-			if (type) {
-				console.log('CARD CONTEXT TYPE!!!!!', type);
-				type === 'album'
-					? this.$router.push({ name: 'album', params: { id: cardID } })
-					: type === 'artist'
-					? this.$router.push({ name: 'artist', params: { id: cardID } })
-					: '';
-				if (type === 'playlist') {
-					this.playlistID = data.context.uri.split(':').slice(2);
-					console.log(this.playlistID);
-					this.$router.push({
-						name: 'playlist',
-						params: { id: `${this.playlistID}` },
-					});
-				}
-			} else if (this.artists) {
-				this.$router.push({ name: 'artist', params: { id: cardID } });
-			} else if (this.severalPlaylist) {
-				this.$router.push({ name: 'playlist', params: { id: cardID } });
-			} else if (this.shows) {
-				this.$router.push({ name: 'show', params: { id: cardID } });
+				console.log(this.isCardPlaying);
+				console.log(cardID);
+				await this.playContextUri();
+				console.log(
+					data?.context?.uri.split(':').slice(2),
+					cardID,
+					'dasdasdasdas'
+				);
+				data?.context?.uri.split(':').slice(2) === cardID
+					? (this.isCardPlaying = true)
+					: (this.isCardPlaying = false);
+				console.log(this.isCardPlaying, 'isCardPlaying2');
 			} else {
-				this.$router.push({ name: 'album', params: { id: cardID } });
+				if (type) {
+					console.log('CARD CONTEXT TYPE!!!!!', type);
+					type === 'album'
+						? this.$router.push({ name: 'album', params: { id: cardID } })
+						: type === 'artist'
+						? this.$router.push({ name: 'artist', params: { id: cardID } })
+						: '';
+					if (type === 'playlist') {
+						this.playlistID = data.context.uri.split(':').slice(2);
+						console.log(this.playlistID);
+						this.$router.push({
+							name: 'playlist',
+							params: { id: `${this.playlistID}` },
+						});
+					}
+				} else if (this.artists) {
+					this.$router.push({ name: 'artist', params: { id: cardID } });
+				} else if (!type) {
+					this.$router.push({ name: 'playlist', params: { id: cardID } });
+				} else if (this.shows) {
+					this.$router.push({ name: 'show', params: { id: cardID } });
+				} else {
+					this.$router.push({ name: 'album', params: { id: cardID } });
+				}
 			}
 		},
 		async fetchPlaylist(href) {

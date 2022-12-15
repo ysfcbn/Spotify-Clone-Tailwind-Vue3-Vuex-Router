@@ -30,6 +30,9 @@ const controllerModule = {
 		currentTrackIsFav: '',
 		userQueue: [],
 		recentlyPlayedTracks: null,
+		lastListenCards: null,
+		playlistIDs: [],
+		artistIDs: [],
 		isPlayingHeaderBtn: null,
 		isClickHeaderBtn: null,
 	},
@@ -66,6 +69,15 @@ const controllerModule = {
 		},
 		recentlyPlayedTracks(state, payload) {
 			state.recentlyPlayedTracks = payload;
+		},
+		lastListenCards(state, payload) {
+			state.lastListenCards = payload;
+		},
+		playlistIDs(state, payload) {
+			state.playlistIDs.push(payload);
+		},
+		artistIDs(state, payload) {
+			state.artistIDs.push(payload);
 		},
 		isPlayingHeaderBtn(state, payload) {
 			state.isPlayingHeaderBtn = payload;
@@ -451,7 +463,15 @@ const controllerModule = {
 				})
 				.catch(err => console.log(err));
 		},
-
+		lastListenCards({ commit }, payload) {
+			commit('lastListenCards', payload);
+		},
+		playlistIDs({ commit }, payload) {
+			commit('playlistIDs', payload);
+		},
+		artistIDs({ commit }, payload) {
+			commit('artistIDs', payload);
+		},
 		isPlayingHeaderBtn({ commit }, isPlaying) {
 			commit('isPlayingHeaderBtn', isPlaying);
 		},
@@ -475,6 +495,15 @@ const controllerModule = {
 		},
 		getRecentlyPlayedTracks(state) {
 			return state.recentlyPlayedTracks;
+		},
+		getLastListenCards(state) {
+			return state.lastListenCards;
+		},
+		getPlaylistIDs(state) {
+			return state.playlistIDs;
+		},
+		getArtistIDs(state) {
+			return state.artistIDs;
 		},
 		currentTrackID(state) {
 			return state.currentTrackID;

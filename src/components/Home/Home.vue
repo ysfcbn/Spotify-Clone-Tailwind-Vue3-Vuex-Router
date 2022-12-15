@@ -87,11 +87,7 @@
 			<template #firstTitle="{ data }">{{ data?.track?.album?.name }}</template>
 		</Card>
 
-		<Card
-			@click="openAlbum(msg, $event)"
-			:currentData="recommendationsTracks"
-			:albums="true"
-		>
+		<Card :currentData="recommendationsTracks" :albums="true">
 			<template #cardTitle>Bugün için tavsiye</template>
 
 			<template #imgContainer="{ data }">
@@ -109,11 +105,7 @@
 			</template>
 		</Card>
 
-		<Card
-			@click="openPlaylist(msg, $event)"
-			:currentData="severalPlaylists"
-			:severalPlaylist="true"
-		>
+		<Card :currentData="severalPlaylists" :severalPlaylist="true">
 			<template #cardTitle>Günlük müzik ihtiyacın</template>
 
 			<template #imgContainer="{ data }">
@@ -136,7 +128,6 @@
 			v-for="(item, i) in RandomSelectedPlaylists"
 			v-show="RandomSelectedPlaylists[i]?.playlists?.items.length"
 			:key="item"
-			@click="openPlaylist(msg, $event)"
 			:currentData="RandomSelectedPlaylists[i]?.playlists?.items"
 		>
 			<template #cardTitle>{{ getRandomSelectedPlaylistsTitle[i] }}</template>

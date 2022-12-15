@@ -480,7 +480,6 @@ export default {
 		},
 		isPlayingArtistTopTracks() {
 			return (
-				this.getCurrentlyPlayingTrack?.item.id === this.currentTrackID &&
 				!this.getCurrentlyPlayingTrack?.context &&
 				this.getCurrentlyPlayingTrack?.is_playing
 			);
