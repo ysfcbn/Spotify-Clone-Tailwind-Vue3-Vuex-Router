@@ -89,7 +89,6 @@
 
 		<Card :currentData="recommendationsTracks" :albums="true">
 			<template #cardTitle>Bugün için tavsiye</template>
-
 			<template #imgContainer="{ data }">
 				<div class="w-full relative mb-5">
 					<img
@@ -102,6 +101,48 @@
 			<template #firstTitle="{ data }">{{ data?.album?.name }}</template>
 			<template #secondTitle="{ data }"
 				><span>{{ data?.album?.type }}</span>
+			</template>
+			<template #playBtn="{ data }">
+				<div
+					:class="{
+						'opacity-100 translate-y-[-0.4rem]	':
+							data?.album?.uri === getCurrentlyPlayingTrack?.context.uri &&
+							getCurrentlyPlayingTrack?.is_playing,
+					}"
+					class="right-0 bottom-0 absolute flex items-center py-1 px-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
+				>
+					<button
+						@click="
+							playContextUri(
+								(uri = {
+									uri: data?.album?.uri,
+									index: currentPlayingTrackIndex,
+									type: data?.album?.type,
+								}),
+								(href = data?.album?.href)
+							)
+						"
+						id="playBtn"
+						class="p-3 bg-green3 rounded-full cursor-default lg:group-hover:block hover:scale-110 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+					>
+						<h1 class="text-white"></h1>
+						<svg role="img" height="24" width="24" viewBox="0 0 24 24">
+							<path
+								v-if="
+									data?.album.uri === getCurrentlyPlayingTrack?.context.uri &&
+									getCurrentlyPlayingTrack?.is_playing
+								"
+								fill="text-black"
+								d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
+							></path>
+							<path
+								v-else
+								fill="text-black"
+								d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
+							></path>
+						</svg>
+					</button>
+				</div>
 			</template>
 		</Card>
 
@@ -125,8 +166,8 @@
 				<div
 					:class="{
 						'opacity-100 translate-y-[-0.4rem]	':
-							data?.uri === getCurrentlyPlayingTrack.context.uri &&
-							getCurrentlyPlayingTrack.is_playing,
+							data?.uri === getCurrentlyPlayingTrack?.context?.uri &&
+							getCurrentlyPlayingTrack?.is_playing,
 					}"
 					class="right-0 bottom-0 absolute flex items-center py-1 px-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
 				>
@@ -135,9 +176,10 @@
 							playContextUri(
 								(uri = {
 									uri: data?.uri,
-									index: 0,
+									index: currentPlayingTrackIndex,
 									type: data?.type,
-								})
+								}),
+								(href = data?.href)
 							)
 						"
 						id="playBtn"
@@ -147,8 +189,8 @@
 						<svg role="img" height="24" width="24" viewBox="0 0 24 24">
 							<path
 								v-if="
-									data?.uri === getCurrentlyPlayingTrack.context.uri &&
-									getCurrentlyPlayingTrack.is_playing
+									data?.uri === getCurrentlyPlayingTrack?.context.uri &&
+									getCurrentlyPlayingTrack?.is_playing
 								"
 								fill="text-black"
 								d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
@@ -186,6 +228,48 @@
 			<template #secondTitle="{ data }"
 				><span>{{ data?.description }}</span>
 			</template>
+			<template #playBtn="{ data }">
+				<div
+					:class="{
+						'opacity-100 translate-y-[-0.4rem]	':
+							data?.uri === getCurrentlyPlayingTrack?.context.uri &&
+							getCurrentlyPlayingTrack?.is_playing,
+					}"
+					class="right-0 bottom-0 absolute flex items-center py-1 px-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
+				>
+					<button
+						@click="
+							playContextUri(
+								(uri = {
+									uri: data?.uri,
+									index: currentPlayingTrackIndex,
+									type: data?.type,
+								}),
+								(href = data?.href)
+							)
+						"
+						id="playBtn"
+						class="p-3 bg-green3 rounded-full cursor-default lg:group-hover:block hover:scale-110 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+					>
+						<h1 class="text-white"></h1>
+						<svg role="img" height="24" width="24" viewBox="0 0 24 24">
+							<path
+								v-if="
+									data?.uri === getCurrentlyPlayingTrack?.context.uri &&
+									getCurrentlyPlayingTrack?.is_playing
+								"
+								fill="text-black"
+								d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
+							></path>
+							<path
+								v-else
+								fill="text-black"
+								d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
+							></path>
+						</svg>
+					</button>
+				</div>
+			</template>
 		</Card>
 		<Info v-if="isAuth" />
 	</section>
@@ -210,6 +294,7 @@ export default {
 			playlistID: '',
 			randomIndexs: null,
 			recentlyPlayedCards: false,
+			typeOfSelectedSection: null,
 			totaldummydata: [],
 			dummydata: [
 				{
@@ -714,7 +799,36 @@ export default {
 			});
 		},
 
-		async playContextUri(uri) {
+		async fetchPlaylist(href) {
+			await axios
+				.get(href, {
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+						Authorization: 'Bearer ' + this.getToken,
+					},
+				})
+				.then(({ data }) => {
+					this.$store.dispatch('playlists/getPlaylist', data);
+				})
+				.catch(err => console.log(err));
+		},
+		async fetchAlbum(href) {
+			await axios
+				.get(href, {
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+						Authorization: 'Bearer ' + this.getToken,
+					},
+				})
+				.then(({ data }) => {
+					this.$store.dispatch('albums/getAlbum', data);
+				})
+				.catch(err => console.log(err));
+		},
+
+		async playContextUri(uri, href) {
 			console.log(uri);
 			if (
 				uri.uri === this.getCurrentlyPlayingTrack?.context?.uri &&
@@ -722,9 +836,20 @@ export default {
 			) {
 				await this.$store.dispatch('controller/pauseCurrentTrack');
 			} else {
+				if ((await uri.type) === 'playlist') {
+					this.typeOfSelectedSection = 'playlist';
+					await this.fetchPlaylist(href);
+				} else if ((await uri.type) === 'album') {
+					this.typeOfSelectedSection = 'album';
+					await this.fetchAlbum(href);
+				}
+
+				uri.index = this.currentPlayingTrackIndex;
+				console.log(uri);
 				await this.$store.dispatch('controller/playSelectedContext', uri);
 			}
 		},
+
 		async lastListenTracks() {
 			return await this.getRecentlyPlayedTracks.reduce((acc, item, i) => {
 				if (item.context && !acc[item.context.uri]) {
@@ -854,6 +979,33 @@ export default {
 		},
 		getCurrentlyPlayingTrack() {
 			return this.$store.getters['controller/getCurrentlyPlayingTrack'];
+		},
+		currentTrackID() {
+			return this.getCurrentlyPlayingTrack?.item?.id;
+		},
+		currentPlaylist() {
+			return this.$store.getters['playlists/getPlaylist']?.tracks?.items;
+		},
+		currentAlbum() {
+			return this.$store.getters['albums/getAlbum']?.tracks?.items;
+		},
+		findCurrentPlayingTrackIndex() {
+			return this.typeOfSelectedSection === 'playlist'
+				? this.currentPlaylist?.indexOf(
+						this.currentPlaylist?.find(
+							item => item.track.id === this.currentTrackID
+						)
+				  )
+				: this.typeOfSelectedSection === 'album'
+				? this.currentAlbum?.indexOf(
+						this.currentAlbum?.find(item => item.id === this.currentTrackID)
+				  )
+				: '';
+		},
+		currentPlayingTrackIndex() {
+			return this.findCurrentPlayingTrackIndex + 1
+				? this.findCurrentPlayingTrackIndex
+				: 0;
 		},
 		getCurrentUserTopArtists() {
 			return this.$store.getters['users/getCurUserTopArtists']?.items?.length;

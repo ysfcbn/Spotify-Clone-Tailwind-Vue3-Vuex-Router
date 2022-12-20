@@ -110,7 +110,7 @@
 								/>
 							</div>
 						</slot>
-						<slot name="playBtn" :data="data"></slot>
+						<slot name="playBtn" :data="data"> </slot>
 					</div>
 
 					<div class="flex items-middle flex-col justify-center">
@@ -224,24 +224,24 @@ export default {
 		getArtistIDs() {
 			return this.$store.getters['controller/getArtistIDs'];
 		},
-		getLastListenPlaylistContextIDs() {
-			if (this.recentlyPlayedCards) {
-				return this.getLastListenCards.map((item, i) => {
-					if (item.context && item.context.type === 'playlist') {
-						this.$store.dispatch('controller/playlistIDs', i);
-					}
-				});
-			}
-		},
-		getLastListenArtistContextIDs() {
-			if (this.recentlyPlayedCards) {
-				return this.getLastListenCards.map((item, i) => {
-					if (item.context && item.context.type === 'artist') {
-						this.$store.dispatch('controller/artistIDs', i);
-					}
-				});
-			}
-		},
+		// getLastListenPlaylistContextIDs() {
+		// 	if (this.recentlyPlayedCards) {
+		// 		return this.getLastListenCards.map((item, i) => {
+		// 			if (item.context && item.context.type === 'playlist') {
+		// 				this.$store.dispatch('controller/playlistIDs', i);
+		// 			}
+		// 		});
+		// 	}
+		// },
+		// getLastListenArtistContextIDs() {
+		// 	if (this.recentlyPlayedCards) {
+		// 		return this.getLastListenCards.map((item, i) => {
+		// 			if (item.context && item.context.type === 'artist') {
+		// 				this.$store.dispatch('controller/artistIDs', i);
+		// 			}
+		// 		});
+		// 	}
+		// },
 		// async contextImage() {
 		// 	return this.currentData[0]?.context?.type === 'playlist'
 		// 		? await this.fetchPlaylist(this.currentData[0].context.href)
@@ -342,11 +342,9 @@ export default {
 	},
 
 	async created() {
-		console.log(this.isDataPlaylist);
-		console.log(this.getLastListenCards);
-		console.log(this.getPlaylistIDs);
-		console.log(this.getArtistIDs);
 		console.log(this.currentData);
+		console.log(this.albums);
+		console.log(this.recentlyPlayedCards);
 
 		this.getLastListenPlaylistContextIDs;
 		this.getLastListenArtistContextIDs;
