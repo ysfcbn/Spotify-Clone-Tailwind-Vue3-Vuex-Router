@@ -264,7 +264,7 @@ const controllerModule = {
 					{
 						uris: [uris.uri[uris.index], ...uris.uri.slice(uris.index + 1)],
 						position_ms:
-							uris.type === 'artist'
+							uris.type === 'artist' && uris.artistID
 								? getters.getCurrentlyPlayingTrack.progress_ms
 								: uris.id === getters.getCurrentlyPlayingTrack?.item.id
 								? getters.getCurrentlyPlayingTrack.progress_ms
@@ -314,13 +314,14 @@ const controllerModule = {
 				.put(
 					`https://api.spotify.com/v1/me/player/play?device_id=${getters.deviceID}`,
 					{
-						context_uri: contextUri.uri,
-						offset: { position: contextUri.index },
+						context_uri: await contextUri.uri,
+						offset: { position: await contextUri.index },
 						position_ms:
-							contextUri.type ===
+							(await contextUri.type) ===
 							getters.getCurrentlyPlayingTrack?.context?.type
 								? getters.getCurrentlyPlayingTrack.progress_ms
-								: contextUri.id === getters.getCurrentlyPlayingTrack?.item.id
+								: (await contextUri.id) ===
+								  getters.getCurrentlyPlayingTrack?.item.id
 								? getters.getCurrentlyPlayingTrack.progress_ms
 								: 0,
 					},

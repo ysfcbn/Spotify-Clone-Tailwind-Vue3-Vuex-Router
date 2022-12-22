@@ -32,6 +32,7 @@
 								uri: artistTopTrackUris,
 								index: currentPlayingTrackIndex,
 								type: contextType,
+								artistID: findArtistsID,
 							})
 						)
 					"
@@ -151,7 +152,7 @@ export default {
 						headers: {
 							Accept: 'application/json',
 							'Content-Type': 'application/json',
-							Authorization: 'Bearer ' + (await this.getToken),
+							Authorization: 'Bearer ' + this.getToken,
 						},
 					}
 				)
@@ -256,8 +257,14 @@ export default {
 				? this.findCurrentPlayingTrackIndex
 				: 0;
 		},
+		findArtistsID() {
+			return this.getCurrentlyPlayingTrack?.item?.artists?.find(
+				item => item.id === this.id
+			);
+		},
 		isPlayingArtistTopTracks() {
 			return (
+				this.findArtistsID &&
 				!this.getCurrentlyPlayingTrack?.context &&
 				this.getCurrentlyPlayingTrack?.is_playing
 			);
