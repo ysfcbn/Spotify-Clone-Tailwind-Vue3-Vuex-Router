@@ -35,7 +35,6 @@
 				<LastListen
 					v-for="(item, i) in recentlyPlayed"
 					:key="item.track.id"
-					:id="item.track.id"
 					:item="item"
 					:index="i"
 					:contextType="item.context?.type"
@@ -46,6 +45,42 @@
 			</div>
 		</section>
 
+		<section class="mb-12 relative z-70">
+			<div class="flex justify-between h-[3.3rem]">
+				<div class="h-fit flex flex-col gap-1">
+					<h2
+						class="text-[1.5rem] text-white leading-7 tracking-tight hover:underline hover:text-underline-offset-8 cursor-pointer"
+						style="font-weight: 700"
+					>
+						Yakında Çalınanlar
+					</h2>
+				</div>
+				<div class="">
+					<h6
+						style="font-weight: 600"
+						class="h-full mb:text-[10px] md:text-[12px] text-lg leading-10 text-lightest hover:underline hover:text-white uppercase cursor-pointer pb-2 tracking-widest"
+					>
+						HEPSİNİ GÖR
+					</h6>
+				</div>
+			</div>
+
+			<div
+				class="auto-rows-auto grid-rows-1 gap-x-6 relative grid grid-cols-col180"
+			>
+				<RecentlyPlayedCard
+					v-for="(item, i) in recentlyPlayedCard"
+					:key="item.track.id"
+					:item="item"
+					:index="i"
+					:contextType="item?.context?.type ? item?.context?.type : 'album'"
+					:contextUri="
+						item?.context?.uri ? item?.context?.uri : item.track.album.uri
+					"
+				>
+				</RecentlyPlayedCard>
+			</div>
+		</section>
 		<Card :shows="true" :currentData="favShows">
 			<template #cardTitle>Programların</template>
 
@@ -82,11 +117,6 @@
 			</template>
 		</Card>
 
-		<Card :currentData="recentlyPlayedCard" :recentlyPlayedCards="true">
-			<template #cardTitle>Yakında Çalınanlar</template>
-			<template #firstTitle="{ data }">{{ data?.track?.album?.name }}</template>
-		</Card>
-
 		<Card :currentData="recommendationsTracks" :albums="true">
 			<template #cardTitle>Bugün için tavsiye</template>
 			<template #imgContainer="{ data }">
@@ -106,7 +136,7 @@
 				<div
 					:class="{
 						'opacity-100 translate-y-[-0.4rem]	':
-							data?.album?.uri === getCurrentlyPlayingTrack?.context.uri &&
+							data?.album?.uri === getCurrentlyPlayingTrack?.context?.uri &&
 							getCurrentlyPlayingTrack?.is_playing,
 					}"
 					class="right-0 bottom-0 absolute flex items-center py-1 px-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
@@ -129,7 +159,7 @@
 						<svg role="img" height="24" width="24" viewBox="0 0 24 24">
 							<path
 								v-if="
-									data?.album.uri === getCurrentlyPlayingTrack?.context.uri &&
+									data?.album?.uri === getCurrentlyPlayingTrack?.context?.uri &&
 									getCurrentlyPlayingTrack?.is_playing
 								"
 								fill="text-black"
@@ -189,7 +219,7 @@
 						<svg role="img" height="24" width="24" viewBox="0 0 24 24">
 							<path
 								v-if="
-									data?.uri === getCurrentlyPlayingTrack?.context.uri &&
+									data?.uri === getCurrentlyPlayingTrack?.context?.uri &&
 									getCurrentlyPlayingTrack?.is_playing
 								"
 								fill="text-black"
@@ -231,8 +261,8 @@
 			<template #playBtn="{ data }">
 				<div
 					:class="{
-						'opacity-100 translate-y-[-0.4rem]	':
-							data?.uri === getCurrentlyPlayingTrack?.context.uri &&
+						'opacity-100 translate-y-[-0.4rem]':
+							data?.uri === getCurrentlyPlayingTrack?.context?.uri &&
 							getCurrentlyPlayingTrack?.is_playing,
 					}"
 					class="right-0 bottom-0 absolute flex items-center py-1 px-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
@@ -255,7 +285,7 @@
 						<svg role="img" height="24" width="24" viewBox="0 0 24 24">
 							<path
 								v-if="
-									data?.uri === getCurrentlyPlayingTrack?.context.uri &&
+									data?.uri === getCurrentlyPlayingTrack?.context?.uri &&
 									getCurrentlyPlayingTrack?.is_playing
 								"
 								fill="text-black"
@@ -278,11 +308,12 @@
 <script>
 import LastListen from './LastListen.vue';
 import Card from '../Cards/Card.vue';
+import RecentlyPlayedCard from '../Cards/RecentlyPlayedCard.vue';
 import Info from '../SpotifyInfo/Info.vue';
 import axios from 'axios';
 
 export default {
-	components: { LastListen, Card, Info },
+	components: { LastListen, Card, Info, RecentlyPlayedCard },
 
 	data() {
 		return {
@@ -869,14 +900,15 @@ export default {
 				if (item.context && !acc[item.context.uri]) {
 					this.recentlyPlayedCard.push(item);
 				}
-				if (!item.context && !acc[item.track.uri]) {
+
+				if (!item.context && !acc[item.track.album.uri]) {
 					this.recentlyPlayedCard.push(item);
 				}
 				if (item.context) {
 					acc[item.context.uri] = item.context.uri;
 				}
 				if (!item.context) {
-					acc[item.track.uri] = item.track.uri;
+					acc[item.track.album.uri] = item.track.album.uri;
 				}
 				return acc;
 			}, {});
@@ -1094,17 +1126,17 @@ export default {
 		}
 		if (this.isAuth) {
 			await this.$store.dispatch('controller/fetchRecentlyPlayedTracks');
+			this.getCurrentUser ? '' : await this.currentUser();
 			await this.getRecentlyPlayedTracks;
 			await this.lastListenTracks();
 			await this.lastListenCards();
+			this.recentlyPlayed.length < 6
+				? this.recentlyPlayed.unshift(this.userFavSongsLastListenItem)
+				: '';
 			this.$store.dispatch(
 				'controller/lastListenCards',
 				this.recentlyPlayedCard
 			);
-			this.getCurrentUser ? '' : await this.currentUser();
-			this.recentlyPlayed.length < 6
-				? this.recentlyPlayed.unshift(this.userFavSongsLastListenItem)
-				: '';
 			this.recommendationsTracks ? '' : await this.fetchRecommendations();
 			this.getFavShows ? '' : await this.fetchFavShows();
 			this.severalPlaylists ? '' : await this.fetchSeveralPlaylists();

@@ -99,6 +99,7 @@
 						class="w-full relative"
 					>
 						<slot name="imgContainer" :data="data">
+							{{ contextType }}
 							<div class="w-full relative mb-5">
 								<img
 									:class="
@@ -154,6 +155,7 @@ export default {
 	name: 'Card',
 	props: [
 		'currentData',
+		'contextType',
 		'artistPage',
 		'userPage',
 		'shows',
@@ -188,28 +190,7 @@ export default {
 		isCompExist() {
 			return this.$store.getters['discography/isCompExist'];
 		},
-		getCurrentlyPlayingTrack() {
-			return this.$store.getters['controller/getCurrentlyPlayingTrack'];
-		},
-		currentTrackID() {
-			return this.getCurrentlyPlayingTrack?.item?.id;
-		},
-		findCurrentPlayingTrackIndex() {
-			return this.playlistTracks.indexOf(
-				this.playlistTracks.find(item => item.track.id === this.currentTrackID)
-			);
-		},
-		currentPlayingTrackIndex() {
-			return this.findCurrentPlayingTrackIndex + 1
-				? this.findCurrentPlayingTrackIndex
-				: 0;
-		},
-		isPlayingContextUri() {
-			return (
-				this.currentData?.uri === this.getCurrentlyPlayingTrack?.context?.uri &&
-				this.getCurrentlyPlayingTrack?.is_playing
-			);
-		},
+
 		// isDataPlaylist() {
 		// 	return this.data.context.type === 'playlist'
 		// 		? this.fetchPlaylist(this.data.context.href)
@@ -251,14 +232,6 @@ export default {
 		// },
 	},
 	methods: {
-		async playContextUri(uri) {
-			console.log(uri);
-			if (this.isPlayingPlaylistContextUri) {
-				await this.$store.dispatch('controller/pauseCurrentTrack');
-			} else {
-				await this.$store.dispatch('controller/playSelectedContext', uri);
-			}
-		},
 		async openCard(data, e) {
 			console.log(data);
 			const cardID = e.target.closest('.card--container').id;
@@ -274,7 +247,6 @@ export default {
 				console.log('toggle Play/Stop Users');
 				console.log(this.isCardPlaying);
 				console.log(cardID);
-				await this.playContextUri();
 				console.log(
 					data?.context?.uri.split(':').slice(2),
 					cardID,
