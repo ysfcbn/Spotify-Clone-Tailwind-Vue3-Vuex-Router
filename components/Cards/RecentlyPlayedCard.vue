@@ -32,16 +32,7 @@
 					class="right-0 bottom-0 absolute flex items-center py-1 px-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
 				>
 					<button
-						@click="
-							playArtistTopTracks(
-								(uri = {
-									uri: artistTopTrackUris,
-									index: currentPlayingTrackIndex,
-									type: contextType,
-									artistID: artistID,
-								})
-							)
-						"
+						@click="playArtistTopTracks"
 						id="playBtn"
 						class="p-3 bg-green3 rounded-full cursor-default lg:group-hover:block hover:scale-110 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
 					>
@@ -196,9 +187,8 @@ export default {
 				.catch(err => console.log(err));
 		},
 
-		async playArtistTopTracks(uri, uris) {
+		async playArtistTopTracks(uri) {
 			this.typeOfSelectedSection = 'artist';
-			uri.uri = uris;
 			console.log(uri.uri);
 			console.log(uri);
 			console.log(uri.index);
@@ -233,17 +223,24 @@ export default {
 		async openCard(data, e) {
 			console.log(data);
 			const cardID = e.target.closest('.card--container').id;
-
 			if (e.target.closest('#playBtn')?.id === 'playBtn') {
 				console.log('toggle Play/Stop Users');
-				console.log(this.isCardPlaying);
 				console.log(cardID);
-
 				if (this.contextType === 'artist') {
 					this.artistID = cardID;
 					await this.fetchArtistTopTracks(this.artistID);
-					await this.playArtistTopTracks(_, this.artistTopTrackUris);
-				} else await this.playContextUri();
+					await this.playArtistTopTracks({
+						uri: this.artistTopTrackUris,
+						index: this.currentPlayingTrackIndex,
+						type: this.contextType,
+						artistID: this.artistID,
+					});
+				} else
+					await this.playContextUri({
+						uri: this.contextUri,
+						index: 0,
+						type: this.contextType,
+					});
 			} else {
 				this.contextType === 'album'
 					? this.$router.push({ name: 'album', params: { id: cardID } })
@@ -256,10 +253,7 @@ export default {
 		},
 		async playContextUri(uri, href) {
 			console.log(uri);
-			if (
-				uri.uri === this.getCurrentlyPlayingTrack?.context?.uri &&
-				this.getCurrentlyPlayingTrack?.is_playing
-			) {
+			if (this.isPlayingContextUri) {
 				await this.$store.dispatch('controller/pauseCurrentTrack');
 			} else {
 				if ((await uri.type) === 'playlist') {

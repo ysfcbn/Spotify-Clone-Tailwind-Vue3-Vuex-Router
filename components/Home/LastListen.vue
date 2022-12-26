@@ -27,28 +27,19 @@
 			>
 				<button
 					id="playBtn"
-					@click="
-						playArtistTopTracks(
-							(uri = {
-								uri: artistTopTrackUris,
-								index: currentPlayingTrackIndex,
-								type: contextType,
-								artistID: findArtistsID,
-							})
-						)
-					"
+					@click="playArtistTopTracks"
 					class="p-3 ml-3 bg-green3 sm:hidden lg:block rounded-full cursor-default hover:scale-105 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
 				>
 					<svg role="img" height="24" width="24" viewBox="0 0 24 24">
 						<path
-							v-if="!isPlayingArtistTopTracks"
+							v-if="isPlayingArtistTopTracks"
 							fill="text-black"
-							d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
+							d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
 						></path>
 						<path
 							v-else
 							fill="text-black"
-							d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
+							d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
 						></path>
 					</svg>
 				</button>
@@ -100,6 +91,7 @@ export default {
 			playlistImage: null,
 			playlistName: null,
 			artistImage: null,
+			artistID: null,
 			collectionName: 'Beğenilen Şarkılar',
 		};
 	},
@@ -134,6 +126,7 @@ export default {
 				.catch(err => console.log(err));
 		},
 		async playArtistTopTracks(uri) {
+			console.log(this.isPlayingArtistTopTracks);
 			console.log(uri);
 			console.log(this.findCurrentPlayingTrackIndex);
 			if (this.isPlayingArtistTopTracks) {
@@ -165,13 +158,17 @@ export default {
 		},
 		async openItem(_, e) {
 			let type = this.contextType;
-			let contextID = this.contextUri.split(':').slice(2);
+			const contextID = this.contextUri.split(':').slice(2);
 			if (e.target.closest('#playBtn')?.id === 'playBtn') {
-				const artistID = this.contextUri.split(':').slice(2);
-
 				if (this.contextType === 'artist') {
-					await this.fetchArtistTopTracks(artistID);
-					await this.playArtistTopTracks();
+					this.artistID = contextID;
+					await this.fetchArtistTopTracks(this.artistID);
+					await this.playArtistTopTracks({
+						uri: this.artistTopTrackUris,
+						index: this.currentPlayingTrackIndex,
+						type: this.contextType,
+						artistID: this.artistID[0],
+					});
 				} else
 					this.playContextUri({
 						uri: this.contextUri,
@@ -192,11 +189,6 @@ export default {
 			}
 		},
 		async playContextUri(uri) {
-			console.log(
-				this.isPlayingContextUri,
-				'this.contextType ==>',
-				this.contextType
-			);
 			console.log(uri);
 			if (this.isPlayingContextUri) {
 				await this.$store.dispatch('controller/pauseCurrentTrack');
@@ -257,7 +249,7 @@ export default {
 		},
 
 		findCurrentPlayingTrackIndex() {
-			return this.artistTopTracks.indexOf(
+			this.artistTopTracks.indexOf(
 				this.artistTopTracks.find(item => item.id === this.currentTrackID)
 			);
 		},
@@ -267,9 +259,7 @@ export default {
 				: 0;
 		},
 		findArtistsID() {
-			return this.getCurrentlyPlayingTrack?.item?.artists?.find(
-				item => item.id === this.currentTrackID
-			);
+			this.getCurrentlyPlayingTrack?.item?.artists[0].id === this.artistID;
 		},
 		isPlayingArtistTopTracks() {
 			return (
