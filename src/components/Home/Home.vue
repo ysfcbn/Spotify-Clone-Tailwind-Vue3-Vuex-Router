@@ -45,42 +45,6 @@
 			</div>
 		</section>
 
-		<section class="mb-12 relative z-70">
-			<div class="flex justify-between h-[3.3rem]">
-				<div class="h-fit flex flex-col gap-1">
-					<h2
-						class="text-[1.5rem] text-white leading-7 tracking-tight hover:underline hover:text-underline-offset-8 cursor-pointer"
-						style="font-weight: 700"
-					>
-						Yakında Çalınanlar
-					</h2>
-				</div>
-				<div class="">
-					<h6
-						style="font-weight: 600"
-						class="h-full mb:text-[10px] md:text-[12px] text-lg leading-10 text-lightest hover:underline hover:text-white uppercase cursor-pointer pb-2 tracking-widest"
-					>
-						HEPSİNİ GÖR
-					</h6>
-				</div>
-			</div>
-
-			<div
-				class="auto-rows-auto grid-rows-1 gap-x-6 relative grid grid-cols-col180"
-			>
-				<RecentlyPlayedCard
-					v-for="(item, i) in recentlyPlayedCard"
-					:key="item.track.id"
-					:item="item"
-					:index="i"
-					:contextType="item?.context?.type ? item?.context?.type : 'album'"
-					:contextUri="
-						item?.context?.uri ? item?.context?.uri : item.track.album.uri
-					"
-				>
-				</RecentlyPlayedCard>
-			</div>
-		</section>
 		<Card :shows="true" :currentData="favShows">
 			<template #cardTitle>Programların</template>
 
@@ -116,6 +80,43 @@
 				><span>{{ data?.type }}</span>
 			</template>
 		</Card>
+
+		<section class="mb-12 relative z-70">
+			<div class="flex justify-between h-[3.3rem]">
+				<div class="h-fit flex flex-col gap-1">
+					<h2
+						class="text-[1.5rem] text-white leading-7 tracking-tight hover:underline hover:text-underline-offset-8 cursor-pointer"
+						style="font-weight: 700"
+					>
+						Yakında Çalınanlar
+					</h2>
+				</div>
+				<div class="">
+					<h6
+						style="font-weight: 600"
+						class="h-full mb:text-[10px] md:text-[12px] text-lg leading-10 text-lightest hover:underline hover:text-white uppercase cursor-pointer pb-2 tracking-widest"
+					>
+						HEPSİNİ GÖR
+					</h6>
+				</div>
+			</div>
+
+			<div
+				class="relative grid grid-cols-col180 auto-rows-0 overflow-hidden grid-rows-1 gap-x-6"
+			>
+				<RecentlyPlayedCard
+					v-for="(item, i) in recentlyPlayedCard"
+					:key="item.track.id"
+					:item="item"
+					:index="i"
+					:contextType="item?.context?.type ? item?.context?.type : 'album'"
+					:contextUri="
+						item?.context?.uri ? item?.context?.uri : item.track.album.uri
+					"
+				>
+				</RecentlyPlayedCard>
+			</div>
+		</section>
 
 		<Card :currentData="recommendationsTracks" :albums="true">
 			<template #cardTitle>Bugün için tavsiye</template>

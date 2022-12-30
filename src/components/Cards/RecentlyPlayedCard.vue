@@ -1,18 +1,13 @@
 <template>
 	<!-- Cards -->
+
 	<div
 		@click="openCard((data = item), $event)"
 		:id="contextID"
 		class="card--container group bg-dark1 hover:bg-opacwhite1 ease duration-300 w-full cursor-pointer rounded-md flex-1 p-4 relative"
 	>
 		<div class="h-full w-full relative">
-			<div
-				:class="{
-					'h-[65%] mb-[10%] w-full z-10': isArtistCard,
-					'mb-5': !isArtistCard,
-				}"
-				class="w-full relative"
-			>
+			<div class="w-full relative">
 				<div class="w-full relative mb-5">
 					<img
 						:class="{
@@ -96,9 +91,13 @@
 
 				<div class="text-md text-lightest w-full line-clamp-2 mt-1">
 					<span v-if="contextType === 'playlist'"> {{ playlistDesc }} </span>
-					<div>
+					<div v-if="contextType === 'artist'">
+						<span class="capitalize"> {{ contextType }} </span>
+					</div>
+					<div v-else>
 						<router-link
-							class="hover:underline"
+							id="artistName"
+							class="hover:underline after:content-[''] after:ml-1 after:inline-block"
 							v-for="artist in item?.track?.artists"
 							:key="artist?.id"
 							:to="{ name: 'artist', params: { id: `${artist.id}` } }"
@@ -108,7 +107,7 @@
 									? artist.name ===
 									  item.track.artists[item.track.artists.length - 1].name
 										? artist.name
-										: artist.name + ', '
+										: artist.name + ','
 									: artist.name
 							}}
 						</router-link>
@@ -221,6 +220,7 @@ export default {
 		async openCard(data, e) {
 			console.log(data);
 			const cardID = e.target.closest('.card--container').id;
+			if (e.target.closest('#artistName')?.id === 'artistName') return;
 			if (e.target.closest('#playBtn')?.id === 'playBtn') {
 				console.log('toggle Play/Stop Users');
 				console.log(cardID);

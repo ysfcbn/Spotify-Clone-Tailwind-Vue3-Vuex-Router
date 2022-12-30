@@ -755,11 +755,12 @@ export default {
 		},
 		async isClickHeaderBtn(newVal, oldVal) {
 			if (newVal !== oldVal) {
-				await this.playAlbumContext({
-					uri: this.albumUri,
-					index: this.currentPlayingTrackIndex,
-					type: this.contextType,
-				});
+				(await this.inline) -
+					block({
+						uri: this.albumUri,
+						index: this.currentPlayingTrackIndex,
+						type: this.contextType,
+					});
 			}
 		},
 	},

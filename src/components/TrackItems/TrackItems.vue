@@ -294,6 +294,9 @@ export default {
 		getFavTracksOnAlbum2() {
 			return this.$store.getters['albums/getfavTracksID2'];
 		},
+		getFavTracksOnArtistTopTracks() {
+			return this.$store.getters['artists/getfavTracksID'];
+		},
 		getCurrentlyPlayingTrack() {
 			return this.$store.getters['controller/getCurrentlyPlayingTrack'];
 		},
@@ -446,6 +449,14 @@ export default {
 						]
 					}`
 				);
+			if (this.artistPage)
+				return document.getElementById(
+					`${
+						this.getFavTracksOnArtistTopTracks[
+							`${this.getFavTracksOnArtistTopTracks.indexOf(trackID)}`
+						]
+					}`
+				);
 		},
 		selectedTrackEl2(trackID) {
 			return document.getElementsByClassName(
@@ -515,6 +526,7 @@ export default {
 									this.getFavTracksOnPlaylist.length ||
 									this.getFavTracksOnAlbum.length ||
 									this.getFavTracksOnAlbum2.length ||
+									this.getFavTracksOnArtistTopTracks.length ||
 									this.getUserTopFavTracks.length ||
 									this.getFavTracksDiscographyAlbum.length
 								) {
@@ -534,11 +546,13 @@ export default {
 									this.getFavTracksOnPlaylist.length ||
 									this.getFavTracksOnAlbum.length ||
 									this.getFavTracksOnAlbum2.length ||
+									this.getFavTracksOnArtistTopTracks.length ||
 									this.getUserTopFavTracks.length ||
 									this.getFavTracksDiscographyAlbum.length
 								) {
 									this.$store.dispatch('playlists/clearTracksID');
 									this.$store.dispatch('albums/clearTracksID');
+									this.$store.dispatch('artists/clearTracksID');
 									this.$store.dispatch('users/clearTracksID');
 									this.$store.dispatch('albums/clearTracksID2');
 									this.$store.dispatch('discography/clearTracksID');

@@ -58,6 +58,7 @@ const artistModule = {
 		async topTracks({ commit }, payload) {
 			commit('topTracks', await payload);
 		},
+
 		async artistPublications({ commit }, payload) {
 			commit('artistPublications', await payload);
 		},
