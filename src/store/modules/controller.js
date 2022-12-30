@@ -161,7 +161,6 @@ const controllerModule = {
 		async currentlyPlayingTrack({ commit }, currentTrack) {
 			commit('currentlyPlayingTrack', await currentTrack);
 		},
-
 		async fetchPlaybackState({ dispatch, getters }) {
 			await axios
 				.get('https://api.spotify.com/v1/me/player', {
@@ -264,9 +263,11 @@ const controllerModule = {
 					{
 						uris: [uris.uri[uris.index], ...uris.uri.slice(uris.index + 1)],
 						position_ms:
-							uris.type === 'artist' && uris.artistID
+							uris.type === 'artist' &&
+							uris.artistID ===
+								getters.getCurrentlyPlayingTrack?.item.artists[0].id
 								? getters.getCurrentlyPlayingTrack.progress_ms
-								: uris.id === getters.getCurrentlyPlayingTrack?.item.id
+								: (await uris.id) === getters.getCurrentlyPlayingTrack?.item.id
 								? getters.getCurrentlyPlayingTrack.progress_ms
 								: 0,
 					},
