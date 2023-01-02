@@ -319,7 +319,9 @@ const controllerModule = {
 						offset: { position: await contextUri.index },
 						position_ms:
 							(await contextUri.type) ===
-							getters.getCurrentlyPlayingTrack?.context?.type
+								getters.getCurrentlyPlayingTrack?.context?.type &&
+							(await contextUri.uri) ===
+								getters.getCurrentlyPlayingTrack?.context?.uri
 								? getters.getCurrentlyPlayingTrack.progress_ms
 								: (await contextUri.id) ===
 								  getters.getCurrentlyPlayingTrack?.item.id

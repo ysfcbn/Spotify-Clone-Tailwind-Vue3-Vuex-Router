@@ -102,7 +102,7 @@
 			</div>
 
 			<div
-				class="relative grid grid-cols-col180 auto-rows-0 overflow-hidden grid-rows-1 gap-x-6"
+				class="relative grid grid-cols-col180 auto-rows-0 overflow grid-rows-6 gap-x-6"
 			>
 				<RecentlyPlayedCard
 					v-for="(item, i) in recentlyPlayedCard"
@@ -1128,7 +1128,6 @@ export default {
 		if (this.isAuth) {
 			await this.$store.dispatch('controller/fetchRecentlyPlayedTracks');
 			this.getCurrentUser ? '' : await this.currentUser();
-			await this.getRecentlyPlayedTracks;
 			await this.lastListenTracks();
 			await this.lastListenCards();
 			this.recentlyPlayed.length < 6

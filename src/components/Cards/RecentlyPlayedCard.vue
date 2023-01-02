@@ -149,6 +149,7 @@ export default {
 					this.playlistImage = data.images[0].url;
 					this.playlistName = data.name;
 					this.playlistDesc = data.description;
+					this.$store.dispatch('playlists/getPlaylist', data);
 				})
 				.catch(err => console.log(err));
 		},
@@ -241,7 +242,7 @@ export default {
 					await this.playContextUri(
 						{
 							uri: this.contextUri,
-							index: 0,
+							index: this.currentPlayingTrackIndex,
 							type: this.contextType,
 						},
 						this.item?.context?.href
@@ -258,14 +259,15 @@ export default {
 		},
 		async playContextUri(uri, href) {
 			console.log(uri);
+			console.log(uri.type);
 			console.log(href);
 			console.log(this.item);
 			if (this.isPlayingContextUri) {
 				await this.$store.dispatch('controller/pauseCurrentTrack');
 			} else {
 				if ((await uri.type) === 'playlist') {
-					this.typeOfSelectedSection = 'playlist';
 					await this.fetchPlaylist(href);
+					this.typeOfSelectedSection = 'playlist';
 				} else if ((await uri.type) === 'album') {
 					this.typeOfSelectedSection = 'album';
 					console.log(href);
@@ -323,6 +325,12 @@ export default {
 			return this.$store.getters['artists/getCurrentArtist'];
 		},
 
+		currentAlbumTracks() {
+			return this.$store.getters['albums/getAlbum']?.tracks?.items;
+		},
+		currentPlaylist() {
+			return this.$store.getters['playlists/getPlaylist']?.tracks?.items;
+		},
 		artistTopTracks() {
 			return this.$store.getters['artists/getTopTracks'];
 		},
@@ -344,8 +352,10 @@ export default {
 						)
 				  )
 				: this.typeOfSelectedSection === 'album'
-				? this.currentAlbum?.indexOf(
-						this.currentAlbum?.find(item => item.id === this.currentTrackID)
+				? this.currentAlbumTracks?.indexOf(
+						this.currentAlbumTracks?.find(
+							item => item.id === this.currentTrackID
+						)
 				  )
 				: this.typeOfSelectedSection === 'artist'
 				? this.artistTopTracks.indexOf(

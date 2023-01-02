@@ -2,7 +2,7 @@
 	<div
 		:id="contextID"
 		@click="openItem(msg, $event)"
-		class="item--container group xl:h-[5rem] sm:h-[4rem] min-w-[200px] flex items-center transition-colors duration-300 justify-start bg-opacwhite1 hover:bg-opacwhite2 relative rounded-md cursor-pointer box-border"
+		class="item--container group xl:h-[5rem] sm:h-[4rem] min-w-[200px] flex items-center transition-colors duration-300 justify-start bg-opacwhite1 hover:bg-opacwhite2 relative rounded-md cursor-pointer box-border overflow-hidden"
 	>
 		<div class="h-full shrink-0">
 			<img
@@ -57,9 +57,10 @@
 						playContextUri(
 							(uri = {
 								uri: contextUri,
-								index: 0,
+								index: currentPlayingTrackIndex,
 								type: contextType,
-							})
+							}),
+							(href = item?.context?.href)
 						)
 					"
 					class="p-3 ml-3 bg-green3 sm:hidden lg:block rounded-full cursor-default hover:scale-105 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
@@ -96,9 +97,9 @@ export default {
 		};
 	},
 	methods: {
-		async fetchPlaylist() {
+		async fetchPlaylist(href = this.item.context.href) {
 			await axios
-				.get(`${this.item.context.href}`, {
+				.get(href, {
 					headers: {
 						Accept: 'application/json',
 						'Content-Type': 'application/json',
@@ -108,6 +109,22 @@ export default {
 				.then(({ data }) => {
 					this.playlistImage = data.images[0].url;
 					this.playlistName = data.name;
+					this.$store.dispatch('playlists/getPlaylist', data);
+				})
+				.catch(err => console.log(err));
+		},
+		async fetchAlbum(href) {
+			await axios
+				.get(href, {
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+						Authorization: 'Bearer ' + this.getToken,
+					},
+				})
+				.then(({ data }) => {
+					console.log(this.item);
+					this.$store.dispatch('albums/getAlbum', data);
 				})
 				.catch(err => console.log(err));
 		},
@@ -179,11 +196,14 @@ export default {
 						artistID: this.artistID,
 					});
 				} else
-					this.playContextUri({
-						uri: this.contextUri,
-						index: 0,
-						type: this.contextType,
-					});
+					this.playContextUri(
+						{
+							uri: this.contextUri,
+							index: this.currentPlayingTrackIndex,
+							type: this.contextType,
+						},
+						this.item?.context?.href
+					);
 			} else if (e.target.closest('.item--container')) {
 				console.log(contextID, type);
 				if (type === 'collection') {
@@ -197,12 +217,19 @@ export default {
 					});
 			}
 		},
-		async playContextUri(uri) {
+		async playContextUri(uri, href) {
 			console.log(uri);
 			if (this.isPlayingContextUri) {
 				await this.$store.dispatch('controller/pauseCurrentTrack');
 			} else {
-				uri.index = 0;
+				if ((await uri.type) === 'playlist') {
+					this.typeOfSelectedSection = 'playlist';
+					await this.fetchPlaylist(href);
+				} else if ((await uri.type) === 'album') {
+					this.typeOfSelectedSection = 'album';
+					await this.fetchAlbum(href);
+				}
+				uri.index = this.currentPlayingTrackIndex;
 				await this.$store.dispatch('controller/playSelectedContext', uri);
 			}
 		},
@@ -243,6 +270,12 @@ export default {
 				? this.item.track.image
 				: '';
 		},
+		currentAlbumTracks() {
+			return this.$store.getters['albums/getAlbum']?.tracks?.items;
+		},
+		currentPlaylist() {
+			return this.$store.getters['playlists/getPlaylist']?.tracks?.items;
+		},
 		currentArtist() {
 			return this.$store.getters['artists/getCurrentArtist'];
 		},
@@ -258,11 +291,33 @@ export default {
 		currentTrackID() {
 			return this.getCurrentlyPlayingTrack?.item?.id;
 		},
-
+		getFavTracks() {
+			return this.$store.getters['favTracks/getTracks']?.items;
+		},
 		findCurrentPlayingTrackIndex() {
-			return this.artistTopTracks.indexOf(
-				this.artistTopTracks.find(item => item.id === this.currentTrackID)
-			);
+			return this.contextType === 'playlist'
+				? this.currentPlaylist?.indexOf(
+						this.currentPlaylist?.find(
+							item => item.track.id === this.currentTrackID
+						)
+				  )
+				: this.contextType === 'album'
+				? this.currentAlbumTracks?.indexOf(
+						this.currentAlbumTracks?.find(
+							item => item.id === this.currentTrackID
+						)
+				  )
+				: this.contextType === 'artist'
+				? this.artistTopTracks.indexOf(
+						this.artistTopTracks.find(item => item.id === this.currentTrackID)
+				  )
+				: this.contextType === 'collection'
+				? this.getFavTracks.indexOf(
+						this.getFavTracks.find(
+							item => item.track.id === this.currentTrackID
+						)
+				  )
+				: '';
 		},
 		currentPlayingTrackIndex() {
 			return this.findCurrentPlayingTrackIndex + 1
