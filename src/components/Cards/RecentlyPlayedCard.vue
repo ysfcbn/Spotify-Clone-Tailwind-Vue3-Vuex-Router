@@ -261,7 +261,6 @@ export default {
 			console.log(uri);
 			console.log(uri.type);
 			console.log(href);
-			console.log(this.item);
 			if (this.isPlayingContextUri) {
 				await this.$store.dispatch('controller/pauseCurrentTrack');
 			} else {

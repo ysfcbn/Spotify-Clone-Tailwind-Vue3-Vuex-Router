@@ -71,7 +71,13 @@
 				v-show="data"
 				@click="openCard((data = data), $event)"
 				v-for="(data, i) in currentData"
-				:key="recentlyPlayedTracks ? data?.track?.album?.id : data?.id"
+				:key="
+					recentlyPlayedTracks
+						? data?.track?.album?.id
+						: dummyCards
+						? data[i]?.id
+						: data.id
+				"
 				:id="
 					shows
 						? data?.show.id
@@ -85,6 +91,8 @@
 						? data?.context?.uri.split(':').slice(2)
 						: recentlyPlayedTracks || recentlyPlayedCards
 						? data?.track?.album?.id
+						: dummyCards
+						? data[i]?.id
 						: data?.id
 				"
 				:style="{ 'z-index': currentData.length - i }"
@@ -99,7 +107,6 @@
 						class="w-full relative"
 					>
 						<slot name="imgContainer" :data="data">
-							{{ contextType }}
 							<div class="w-full relative mb-5">
 								<img
 									:class="
@@ -111,7 +118,30 @@
 								/>
 							</div>
 						</slot>
-						<slot name="playBtn" :data="data"> </slot>
+						<slot name="playBtn" :data="data">
+							<div
+								class="right-0 bottom-0 absolute flex items-center py-1 px-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
+							>
+								<button
+									id="playBtn"
+									class="p-3 bg-green3 rounded-full cursor-default lg:group-hover:block hover:scale-110 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+								>
+									<h1 class="text-white"></h1>
+									<svg role="img" height="24" width="24" viewBox="0 0 24 24">
+										<path
+											v-if="false"
+											fill="text-black"
+											d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
+										></path>
+										<path
+											v-else
+											fill="text-black"
+											d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
+										></path>
+									</svg>
+								</button>
+							</div>
+						</slot>
 					</div>
 
 					<div class="flex items-middle flex-col justify-center">
@@ -166,6 +196,7 @@ export default {
 		'artists',
 		'recentlyPlayedTracks',
 		'recentlyPlayedCards',
+		'dummyCards',
 		'severalPlaylist',
 		'compilations',
 		'togglePublications',
@@ -205,31 +236,6 @@ export default {
 		getArtistIDs() {
 			return this.$store.getters['controller/getArtistIDs'];
 		},
-		// getLastListenPlaylistContextIDs() {
-		// 	if (this.recentlyPlayedCards) {
-		// 		return this.getLastListenCards.map((item, i) => {
-		// 			if (item.context && item.context.type === 'playlist') {
-		// 				this.$store.dispatch('controller/playlistIDs', i);
-		// 			}
-		// 		});
-		// 	}
-		// },
-		// getLastListenArtistContextIDs() {
-		// 	if (this.recentlyPlayedCards) {
-		// 		return this.getLastListenCards.map((item, i) => {
-		// 			if (item.context && item.context.type === 'artist') {
-		// 				this.$store.dispatch('controller/artistIDs', i);
-		// 			}
-		// 		});
-		// 	}
-		// },
-		// async contextImage() {
-		// 	return this.currentData[0]?.context?.type === 'playlist'
-		// 		? await this.fetchPlaylist(this.currentData[0].context.href)
-		// 		: this.currentData[0]?.context?.type === 'artist'
-		// 		? await this.fetchArtist(this.currentData[0].context.href)
-		// 		: this.currentData[0]?.track?.album?.images[1].url;
-		// },
 	},
 	methods: {
 		async openCard(data, e) {
@@ -243,19 +249,7 @@ export default {
 			const isShow = data?.type;
 			console.log(isShow);
 			console.log(type);
-			if (e.target.closest('#playBtn')?.id === 'playBtn') {
-				console.log('toggle Play/Stop Users');
-				console.log(this.isCardPlaying);
-				console.log(cardID);
-				console.log(
-					data?.context?.uri.split(':').slice(2),
-					cardID,
-					'dasdasdasdas'
-				);
-				data?.context?.uri.split(':').slice(2) === cardID
-					? (this.isCardPlaying = true)
-					: (this.isCardPlaying = false);
-				console.log(this.isCardPlaying, 'isCardPlaying2');
+			if (!e.target.closest('#playBtn')?.id === 'playBtn') {
 			} else {
 				if (type) {
 					console.log('CARD CONTEXT TYPE!!!!!', type);

@@ -16,7 +16,7 @@
 				></div>
 			</div>
 		</Transition>
-		<div v-if="!isAuth" id="home" class="absolute top-0 h-[25rem] w-full"></div>
+
 		<section v-if="isAuth" class="relative z-10 main-home text-white mb-[2rem]">
 			<div class="mb-8">
 				<div>
@@ -44,265 +44,314 @@
 				/>
 			</div>
 		</section>
+		<div v-if="isAuth">
+			<Card :shows="true" :currentData="favShows">
+				<template #cardTitle>Programların</template>
 
-		<Card :shows="true" :currentData="favShows">
-			<template #cardTitle>Programların</template>
+				<template #imgContainer="{ data }">
+					<div class="w-full relative mb-5">
+						<img
+							class="h-full w-full object-cover rounded-md"
+							:src="data?.show?.images[0]?.url"
+							alt="image"
+						/>
+					</div>
+				</template>
+				<template #firstTitle="{ data }">{{ data.show.name }}</template>
+				<template #secondTitle="{ data }"
+					><span>{{ data.show.publisher }}</span>
+				</template>
+			</Card>
 
-			<template #imgContainer="{ data }">
-				<div class="w-full relative mb-5">
-					<img
-						class="h-full w-full object-cover rounded-md"
-						:src="data?.show?.images[0]?.url"
-						alt="image"
-					/>
+			<Card :currentData="currentUserTopArtists" :artists="true">
+				<template #cardTitle>En sevdiğin sanatçılar</template>
+
+				<template #imgContainer="{ data }">
+					<div class="w-full relative mb-6">
+						<img
+							class="h-full w-full object-cover rounded-full"
+							:src="data?.images[0]?.url"
+							alt="image"
+						/>
+					</div>
+				</template>
+				<template #firstTitle="{ data }">{{ data?.name }}</template>
+				<template #secondTitle="{ data }"
+					><span>{{ data?.type }}</span>
+				</template>
+			</Card>
+
+			<section class="mb-12 relative z-70">
+				<div class="flex justify-between h-[3.3rem]">
+					<div class="h-fit flex flex-col gap-1">
+						<h2
+							class="text-[1.5rem] text-white leading-7 tracking-tight hover:underline hover:text-underline-offset-8 cursor-pointer"
+							style="font-weight: 700"
+						>
+							Yakında Çalınanlar
+						</h2>
+					</div>
+					<div class="">
+						<h6
+							style="font-weight: 600"
+							class="h-full mb:text-[10px] md:text-[12px] text-lg leading-10 text-lightest hover:underline hover:text-white uppercase cursor-pointer pb-2 tracking-widest"
+						>
+							HEPSİNİ GÖR
+						</h6>
+					</div>
 				</div>
-			</template>
-			<template #firstTitle="{ data }">{{ data.show.name }}</template>
-			<template #secondTitle="{ data }"
-				><span>{{ data.show.publisher }}</span>
-			</template>
-		</Card>
 
-		<Card :currentData="currentUserTopArtists" :artists="true">
-			<template #cardTitle>En sevdiğin sanatçılar</template>
-
-			<template #imgContainer="{ data }">
-				<div class="w-full relative mb-6">
-					<img
-						class="h-full w-full object-cover rounded-full"
-						:src="data?.images[0]?.url"
-						alt="image"
-					/>
-				</div>
-			</template>
-			<template #firstTitle="{ data }">{{ data?.name }}</template>
-			<template #secondTitle="{ data }"
-				><span>{{ data?.type }}</span>
-			</template>
-		</Card>
-
-		<section class="mb-12 relative z-70">
-			<div class="flex justify-between h-[3.3rem]">
-				<div class="h-fit flex flex-col gap-1">
-					<h2
-						class="text-[1.5rem] text-white leading-7 tracking-tight hover:underline hover:text-underline-offset-8 cursor-pointer"
-						style="font-weight: 700"
+				<div
+					class="relative grid grid-cols-col180 auto-rows-0 overflow-hidden grid-rows-1 gap-x-6"
+				>
+					<RecentlyPlayedCard
+						v-for="(item, i) in recentlyPlayedCard"
+						:key="item.track.id"
+						:item="item"
+						:index="i"
+						:contextType="item?.context?.type ? item?.context?.type : 'album'"
+						:contextUri="
+							item?.context?.uri ? item?.context?.uri : item.track.album.uri
+						"
 					>
-						Yakında Çalınanlar
-					</h2>
+					</RecentlyPlayedCard>
 				</div>
-				<div class="">
-					<h6
-						style="font-weight: 600"
-						class="h-full mb:text-[10px] md:text-[12px] text-lg leading-10 text-lightest hover:underline hover:text-white uppercase cursor-pointer pb-2 tracking-widest"
-					>
-						HEPSİNİ GÖR
-					</h6>
-				</div>
-			</div>
+			</section>
 
-			<div
-				class="relative grid grid-cols-col180 auto-rows-0 overflow grid-rows-6 gap-x-6"
+			<Card :currentData="recommendationsTracks" :albums="true">
+				<template #cardTitle>Bugün için tavsiye</template>
+				<template #imgContainer="{ data }">
+					<div class="w-full relative mb-5">
+						<img
+							class="h-full w-full object-cover"
+							:src="data?.album?.images[0]?.url"
+							alt="image"
+						/>
+					</div>
+				</template>
+				<template #firstTitle="{ data }">{{ data?.album?.name }}</template>
+				<template #secondTitle="{ data }"
+					><span>{{ data?.album?.type }}</span>
+				</template>
+				<template #playBtn="{ data }">
+					<div
+						:class="{
+							'opacity-100 translate-y-[-0.4rem]	':
+								data?.album?.uri === getCurrentlyPlayingTrack?.context?.uri &&
+								getCurrentlyPlayingTrack?.is_playing,
+						}"
+						class="right-0 bottom-0 absolute flex items-center py-1 px-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
+					>
+						<button
+							@click="
+								playContextUri(
+									(uri = {
+										uri: data?.album?.uri,
+										index: currentPlayingTrackIndex,
+										type: data?.album?.type,
+									}),
+									(href = data?.album?.href)
+								)
+							"
+							id="playBtn"
+							class="p-3 bg-green3 rounded-full cursor-default lg:group-hover:block hover:scale-110 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+						>
+							<h1 class="text-white"></h1>
+							<svg role="img" height="24" width="24" viewBox="0 0 24 24">
+								<path
+									v-if="
+										data?.album?.uri ===
+											getCurrentlyPlayingTrack?.context?.uri &&
+										getCurrentlyPlayingTrack?.is_playing
+									"
+									fill="text-black"
+									d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
+								></path>
+								<path
+									v-else
+									fill="text-black"
+									d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
+								></path>
+							</svg>
+						</button>
+					</div>
+				</template>
+			</Card>
+
+			<Card :currentData="severalPlaylists" :severalPlaylist="true">
+				<template #cardTitle>Günlük müzik ihtiyacın</template>
+
+				<template #imgContainer="{ data }">
+					<div class="w-full relative mb-5">
+						<img
+							class="h-full w-full object-cover"
+							:src="data?.images[0]?.url"
+							alt="image"
+						/>
+					</div>
+				</template>
+				<template #firstTitle="{ data }">{{ data?.name }}</template>
+				<template #secondTitle="{ data }"
+					><span>{{ data?.description }}</span>
+				</template>
+				<template #playBtn="{ data }">
+					<div
+						:class="{
+							'opacity-100 translate-y-[-0.4rem]	':
+								data?.uri === getCurrentlyPlayingTrack?.context?.uri &&
+								getCurrentlyPlayingTrack?.is_playing,
+						}"
+						class="right-0 bottom-0 absolute flex items-center py-1 px-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
+					>
+						<button
+							@click="
+								playContextUri(
+									(uri = {
+										uri: data?.uri,
+										index: currentPlayingTrackIndex,
+										type: data?.type,
+									}),
+									(href = data?.href)
+								)
+							"
+							id="playBtn"
+							class="p-3 bg-green3 rounded-full cursor-default lg:group-hover:block hover:scale-110 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+						>
+							<h1 class="text-white"></h1>
+							<svg role="img" height="24" width="24" viewBox="0 0 24 24">
+								<path
+									v-if="
+										data?.uri === getCurrentlyPlayingTrack?.context?.uri &&
+										getCurrentlyPlayingTrack?.is_playing
+									"
+									fill="text-black"
+									d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
+								></path>
+								<path
+									v-else
+									fill="text-black"
+									d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
+								></path>
+							</svg>
+						</button>
+					</div>
+				</template>
+			</Card>
+
+			<Card
+				:severalPlaylist="true"
+				v-for="(item, i) in RandomSelectedPlaylists"
+				v-show="RandomSelectedPlaylists[i]?.playlists?.items.length"
+				:key="item"
+				:currentData="RandomSelectedPlaylists[i]?.playlists?.items"
 			>
-				<RecentlyPlayedCard
-					v-for="(item, i) in recentlyPlayedCard"
-					:key="item.track.id"
-					:item="item"
-					:index="i"
-					:contextType="item?.context?.type ? item?.context?.type : 'album'"
-					:contextUri="
-						item?.context?.uri ? item?.context?.uri : item.track.album.uri
-					"
-				>
-				</RecentlyPlayedCard>
-			</div>
-		</section>
+				<template #cardTitle>{{ getRandomSelectedPlaylistsTitle[i] }}</template>
 
-		<Card :currentData="recommendationsTracks" :albums="true">
-			<template #cardTitle>Bugün için tavsiye</template>
-			<template #imgContainer="{ data }">
-				<div class="w-full relative mb-5">
-					<img
-						class="h-full w-full object-cover"
-						:src="data?.album?.images[0]?.url"
-						alt="image"
-					/>
-				</div>
-			</template>
-			<template #firstTitle="{ data }">{{ data?.album?.name }}</template>
-			<template #secondTitle="{ data }"
-				><span>{{ data?.album?.type }}</span>
-			</template>
-			<template #playBtn="{ data }">
-				<div
-					:class="{
-						'opacity-100 translate-y-[-0.4rem]	':
-							data?.album?.uri === getCurrentlyPlayingTrack?.context?.uri &&
-							getCurrentlyPlayingTrack?.is_playing,
-					}"
-					class="right-0 bottom-0 absolute flex items-center py-1 px-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
-				>
-					<button
-						@click="
-							playContextUri(
-								(uri = {
-									uri: data?.album?.uri,
-									index: currentPlayingTrackIndex,
-									type: data?.album?.type,
-								}),
-								(href = data?.album?.href)
-							)
-						"
-						id="playBtn"
-						class="p-3 bg-green3 rounded-full cursor-default lg:group-hover:block hover:scale-110 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+				<template #imgContainer="{ data }">
+					<div class="w-full relative mb-5">
+						<img
+							class="h-full w-full object-cover"
+							:src="data?.images[0]?.url"
+							alt="image"
+						/>
+					</div>
+				</template>
+				<template #firstTitle="{ data }">{{ data?.name }}</template>
+				<template #secondTitle="{ data }"
+					><span>{{ data?.description }}</span>
+				</template>
+				<template #playBtn="{ data }">
+					<div
+						:class="{
+							'opacity-100 translate-y-[-0.4rem]':
+								data?.uri === getCurrentlyPlayingTrack?.context?.uri &&
+								getCurrentlyPlayingTrack?.is_playing,
+						}"
+						class="right-0 bottom-0 absolute flex items-center py-1 px-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
 					>
-						<h1 class="text-white"></h1>
-						<svg role="img" height="24" width="24" viewBox="0 0 24 24">
-							<path
-								v-if="
-									data?.album?.uri === getCurrentlyPlayingTrack?.context?.uri &&
-									getCurrentlyPlayingTrack?.is_playing
-								"
-								fill="text-black"
-								d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
-							></path>
-							<path
-								v-else
-								fill="text-black"
-								d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
-							></path>
-						</svg>
-					</button>
-				</div>
-			</template>
-		</Card>
-
-		<Card :currentData="severalPlaylists" :severalPlaylist="true">
-			<template #cardTitle>Günlük müzik ihtiyacın</template>
-
-			<template #imgContainer="{ data }">
-				<div class="w-full relative mb-5">
-					<img
-						class="h-full w-full object-cover"
-						:src="data?.images[0]?.url"
-						alt="image"
-					/>
-				</div>
-			</template>
-			<template #firstTitle="{ data }">{{ data?.name }}</template>
-			<template #secondTitle="{ data }"
-				><span>{{ data?.description }}</span>
-			</template>
-			<template #playBtn="{ data }">
-				<div
-					:class="{
-						'opacity-100 translate-y-[-0.4rem]	':
-							data?.uri === getCurrentlyPlayingTrack?.context?.uri &&
-							getCurrentlyPlayingTrack?.is_playing,
-					}"
-					class="right-0 bottom-0 absolute flex items-center py-1 px-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
-				>
-					<button
-						@click="
-							playContextUri(
-								(uri = {
-									uri: data?.uri,
-									index: currentPlayingTrackIndex,
-									type: data?.type,
-								}),
-								(href = data?.href)
-							)
-						"
-						id="playBtn"
-						class="p-3 bg-green3 rounded-full cursor-default lg:group-hover:block hover:scale-110 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+						<button
+							@click="
+								playContextUri(
+									(uri = {
+										uri: data?.uri,
+										index: currentPlayingTrackIndex,
+										type: data?.type,
+									}),
+									(href = data?.href)
+								)
+							"
+							id="playBtn"
+							class="p-3 bg-green3 rounded-full cursor-default lg:group-hover:block hover:scale-110 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+						>
+							<h1 class="text-white"></h1>
+							<svg role="img" height="24" width="24" viewBox="0 0 24 24">
+								<path
+									v-if="
+										data?.uri === getCurrentlyPlayingTrack?.context?.uri &&
+										getCurrentlyPlayingTrack?.is_playing
+									"
+									fill="text-black"
+									d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
+								></path>
+								<path
+									v-else
+									fill="text-black"
+									d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
+								></path>
+							</svg>
+						</button>
+					</div>
+				</template>
+			</Card>
+			<Info v-if="isAuth" />
+		</div>
+		<div v-if="!isAuth" id="home">
+			<Card
+				v-for="item in totaldummydata"
+				:key="item"
+				:currentData="item"
+				:dummyCards="true"
+			>
+				<template #cardTitle>{{ item[0].mainTitle }}</template>
+				<template #imgContainer="{ data }">
+					<div class="w-full relative mb-5">
+						<img
+							class="h-full w-full object-cover"
+							:src="data?.img"
+							alt="image"
+						/>
+					</div>
+				</template>
+				<template #firstTitle="{ data }">{{ data?.firstTitle }}</template>
+				<template #secondTitle="{ data }"
+					><span>{{ data?.secondTitle }}</span>
+				</template>
+				<template #playBtn>
+					<div
+						class="right-0 bottom-0 absolute flex items-center py-1 px-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
 					>
-						<h1 class="text-white"></h1>
-						<svg role="img" height="24" width="24" viewBox="0 0 24 24">
-							<path
-								v-if="
-									data?.uri === getCurrentlyPlayingTrack?.context?.uri &&
-									getCurrentlyPlayingTrack?.is_playing
-								"
-								fill="text-black"
-								d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
-							></path>
-							<path
-								v-else
-								fill="text-black"
-								d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
-							></path>
-						</svg>
-					</button>
-				</div>
-			</template>
-		</Card>
-
-		<Card
-			:severalPlaylist="true"
-			v-for="(item, i) in RandomSelectedPlaylists"
-			v-show="RandomSelectedPlaylists[i]?.playlists?.items.length"
-			:key="item"
-			:currentData="RandomSelectedPlaylists[i]?.playlists?.items"
-		>
-			<template #cardTitle>{{ getRandomSelectedPlaylistsTitle[i] }}</template>
-
-			<template #imgContainer="{ data }">
-				<div class="w-full relative mb-5">
-					<img
-						class="h-full w-full object-cover"
-						:src="data?.images[0]?.url"
-						alt="image"
-					/>
-				</div>
-			</template>
-			<template #firstTitle="{ data }">{{ data?.name }}</template>
-			<template #secondTitle="{ data }"
-				><span>{{ data?.description }}</span>
-			</template>
-			<template #playBtn="{ data }">
-				<div
-					:class="{
-						'opacity-100 translate-y-[-0.4rem]':
-							data?.uri === getCurrentlyPlayingTrack?.context?.uri &&
-							getCurrentlyPlayingTrack?.is_playing,
-					}"
-					class="right-0 bottom-0 absolute flex items-center py-1 px-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
-				>
-					<button
-						@click="
-							playContextUri(
-								(uri = {
-									uri: data?.uri,
-									index: currentPlayingTrackIndex,
-									type: data?.type,
-								}),
-								(href = data?.href)
-							)
-						"
-						id="playBtn"
-						class="p-3 bg-green3 rounded-full cursor-default lg:group-hover:block hover:scale-110 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
-					>
-						<h1 class="text-white"></h1>
-						<svg role="img" height="24" width="24" viewBox="0 0 24 24">
-							<path
-								v-if="
-									data?.uri === getCurrentlyPlayingTrack?.context?.uri &&
-									getCurrentlyPlayingTrack?.is_playing
-								"
-								fill="text-black"
-								d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
-							></path>
-							<path
-								v-else
-								fill="text-black"
-								d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
-							></path>
-						</svg>
-					</button>
-				</div>
-			</template>
-		</Card>
-		<Info v-if="isAuth" />
+						<button
+							id="playBtn"
+							class="p-3 bg-green3 rounded-full cursor-default lg:group-hover:block hover:scale-110 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+						>
+							<h1 class="text-white"></h1>
+							<svg role="img" height="24" width="24" viewBox="0 0 24 24">
+								<path
+									v-if="false"
+									fill="text-black"
+									d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
+								></path>
+								<path
+									v-else
+									fill="text-black"
+									d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
+								></path>
+							</svg>
+						</button>
+					</div>
+				</template>
+			</Card>
+		</div>
 	</section>
 </template>
 
@@ -1057,18 +1106,12 @@ export default {
 			return this.$store.getters['playlists/getRandomSelectedPlaylistsTitle'];
 		},
 	},
-
 	watch: {
-		async isAuth(newVal) {
-			if (newVal) {
-				this.totaldummydata = [];
+		isAuth(newVal) {
+			if (!newVal) {
 				this.totaldummydata = this.totaldummydata.concat(
 					[this.dummydata],
-					[this.dummydata2]
-				);
-			} else {
-				this.totaldummydata = [];
-				this.totaldummydata = this.totaldummydata.concat(
+					[this.dummydata2],
 					[this.dummydata3],
 					[this.dummydata4],
 					[this.dummydata5],
@@ -1077,10 +1120,10 @@ export default {
 			}
 		},
 	},
-
 	async created() {
 		console.log('Home Mounted');
 		this.home = true;
+		this.isAuth;
 		const isAuth = await this.isAuth;
 
 		this.colorTheme = document.getElementById('colorTheme');
@@ -1088,6 +1131,14 @@ export default {
 
 		if (!isAuth) {
 			this.homeEl = document.getElementById('home');
+			this.totaldummydata = this.totaldummydata.concat(
+				[this.dummydata],
+				[this.dummydata2],
+				[this.dummydata3],
+				[this.dummydata4],
+				[this.dummydata5],
+				[this.dummydata6]
+			);
 			this.options = {
 				root: null,
 				threshold: [0.4, 0.7],

@@ -20,18 +20,20 @@
 					class="col-span-2 group hover:bg-opacblack1 ease duration-200 w-full h-auto cursor-pointer rounded-md flex-1 p-5 relative leading-8 text-md text-white bg-gradient-to-br from-purple3 to-blue2"
 				>
 					<div
+						:class="{
+							'opacity-100 translate-y-[-0.4rem]': isPlayingFavSongsContextUri,
+						}"
 						class="z-10 absolute flex items-center opacity-0 group-hover:opacity-100 transition ease-in duration-200 right-1 bottom-1 p-3 group-hover:block group-hover:translate-y-[-0.5rem]"
 					>
 						<button
 							id="playBtn"
 							@click="
-								playContextUri(
+								playFavSongs(
 									(uri = {
 										uri: userFavSongsContextUri,
 										index: currentPlayingTrackIndex,
 										type: 'collection',
-									}),
-									(href = item?.context?.href)
+									})
 								)
 							"
 							class="p-3 bg-green3 rounded-full cursor-default lg:group-hover:block hover:scale-105 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
@@ -39,8 +41,15 @@
 							<span>
 								<svg role="img" height="24" width="24" viewBox="0 0 24 24">
 									<path
+										v-if="!isPlayingFavSongsContextUri"
 										fill="text-black"
 										d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
+									></path>
+
+									<path
+										v-else
+										fill="text-black"
+										d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
 									></path>
 								</svg>
 							</span>
@@ -141,7 +150,7 @@
 					v-for="playlist in getUserFavPlaylists"
 					:key="playlist.id"
 					:id="playlist.id"
-					@click="selectedPlaylist(msg, $event)"
+					@click="selectedPlaylist((playlist = playlist), $event)"
 					class="playlist--container bg-dark1 hover:bg-opacblack1 ease duration-200 w-full h-auto cursor-pointer rounded-md flex-1 p-4 relative group"
 				>
 					<div class="h-full">
@@ -174,20 +183,46 @@
 							</div>
 
 							<div
+								:class="{
+									'opacity-100 translate-y-[-0.4rem]':
+										getCurrentlyPlayingTrack?.is_playing &&
+										playlist.uri === getCurrentlyPlayingTrack?.context?.uri,
+								}"
 								class="absolute flex items-start right-0 bottom-0 py-1 px-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:block group-hover:translate-y-[-0.4rem]"
 							>
 								<button
+									v-if="playlist?.images[0]?.url"
 									id="playBtn"
+									@click="
+										playContextUri(
+											(uri = {
+												uri: playlist.uri,
+												index: 0,
+												type: 'playlist',
+											}),
+											(href = playlist.href)
+										)
+									"
 									class="p-3 bg-green3 rounded-full cursor-default lg:group-hover:block hover:scale-110 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
 								>
-									<span>
-										<svg role="img" height="24" width="24" viewBox="0 0 24 24">
-											<path
-												fill="text-black"
-												d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
-											></path>
-										</svg>
-									</span>
+									<svg role="img" height="24" width="24" viewBox="0 0 24 24">
+										<path
+											v-if="
+												!(
+													getCurrentlyPlayingTrack?.is_playing &&
+													playlist.uri ===
+														getCurrentlyPlayingTrack?.context?.uri
+												)
+											"
+											fill="text-black"
+											d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
+										></path>
+										<path
+											v-else
+											fill="text-black"
+											d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
+										></path>
+									</svg>
 								</button>
 							</div>
 						</div>
@@ -217,20 +252,20 @@
 
 <script>
 import Info from '../SpotifyInfo/Info.vue';
-
+import axios from 'axios';
 export default {
 	name: 'playlists',
 	components: { Info },
 	data() {
-		return { librarySec: false };
+		return { librarySec: false, typeOfSelectedSection: null };
 	},
 	methods: {
 		toggleFavSong(_, event) {
 			if (event.target.closest('#playBtn')?.id === 'playBtn') {
 				console.log('toggle Play/Stop Playlists');
 				this.playContextUri({
-					uri: userFavSongsContextUri,
-					index: 0,
+					uri: this.userFavSongsContextUri,
+					index: this.currentPlayingTrackIndex,
 					type: 'collection',
 				});
 			} else this.$router.push('/collection/tracks');
@@ -241,16 +276,85 @@ export default {
 				console.log('toggle Play/Stop Playlists');
 			} else this.$router.push('/collection/episodes');
 		},
-		selectedPlaylist(_, event) {
+		selectedPlaylist(playlist, event) {
 			if (event.target.closest('#playBtn')?.id === 'playBtn') {
 				console.log('toggle Play/Stop Playlists');
+				this.playContextUri(
+					{
+						uri: playlist.uri,
+						index: this.currentPlayingTrackIndex,
+						type: playlist.type,
+					},
+					playlist.href
+				);
 			} else {
-				const currentID = event.target.closest('.playlist--container').id;
-				this.$router.push({ name: 'playlist', params: { id: currentID } });
+				this.$router.push({ name: 'playlist', params: { id: playlist.id } });
+			}
+		},
+		async fetchPlaylist(href) {
+			await axios
+				.get(href, {
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+						Authorization: 'Bearer ' + this.getToken,
+					},
+				})
+				.then(({ data }) => {
+					this.$store.dispatch('playlists/getPlaylist', data);
+				})
+				.catch(err => console.log(err));
+		},
+		async playFavSongs(uri) {
+			console.log(uri);
+			if (this.isPlayingFavSongsContextUri) {
+				await this.$store.dispatch('controller/pauseCurrentTrack');
+			} else {
+				console.log(this.currentPlayingTrackIndex);
+				uri.index = this.currentPlayingTrackIndex;
+				if (
+					this.getCurrentlyPlayingTrack.context?.type === 'collection' &&
+					!this.currentPlayingTrackIndex
+				) {
+					console.log(this.getCurrentlyPlayingTrack.context?.type);
+					await this.$store.dispatch('controller/playCurrentTrack', uri);
+				} else {
+					uri.index = this.currentPlayingTrackIndex;
+					await this.$store.dispatch('controller/playSelectedContext', uri);
+				}
+			}
+		},
+		async playContextUri(uri, href) {
+			console.log(uri);
+			console.log(uri.type);
+			console.log(href);
+			if (
+				this.isPlayingContextUri &&
+				uri.uri === this.getCurrentlyPlayingTrack.context.uri
+			) {
+				await this.$store.dispatch('controller/pauseCurrentTrack');
+			} else {
+				if ((await uri.type) === 'playlist') {
+					await this.fetchPlaylist(href);
+					this.typeOfSelectedSection = 'playlist';
+				}
+				if ((await uri.type) === 'collection') {
+					this.typeOfSelectedSection = 'collection';
+				}
+				if ((await uri.type) === 'episodes') {
+					this.typeOfSelectedSection = 'episodes';
+				}
+
+				uri.index = this.currentPlayingTrackIndex;
+				console.log(uri);
+				await this.$store.dispatch('controller/playSelectedContext', uri);
 			}
 		},
 	},
 	computed: {
+		getToken() {
+			return this.$store.getters.accessToken;
+		},
 		getCurrentUser() {
 			return this.$store.getters.getCurrentUser;
 		},
@@ -261,6 +365,13 @@ export default {
 		userFavSongsContextUri() {
 			return `${this.currentUserUri}:collection`;
 		},
+		isPlayingFavSongsContextUri() {
+			return (
+				this.getCurrentlyPlayingTrack?.context?.uri ===
+					this.userFavSongsContextUri &&
+				this.getCurrentlyPlayingTrack?.is_playing
+			);
+		},
 		getCurrentlyPlayingTrack() {
 			return this.$store.getters['controller/getCurrentlyPlayingTrack'];
 		},
@@ -270,10 +381,16 @@ export default {
 		getFavTracks() {
 			return this.$store.getters['favTracks/getTracks']?.items;
 		},
+		currentPlaylistTracks() {
+			return this.$store.getters['playlists/getPlaylist']?.tracks?.items;
+		},
+		getCurrentPlaylistUri() {
+			return this.$store.getters['playlists/getPlaylist']?.uri;
+		},
 		findCurrentPlayingTrackIndex() {
 			return this.typeOfSelectedSection === 'playlist'
-				? this.currentPlaylist?.indexOf(
-						this.currentPlaylist?.find(
+				? this.currentPlaylistTracks?.indexOf(
+						this.currentPlaylistTracks?.find(
 							item => item.track.id === this.currentTrackID
 						)
 				  )
@@ -293,6 +410,9 @@ export default {
 			return this.findCurrentPlayingTrackIndex + 1
 				? this.findCurrentPlayingTrackIndex
 				: 0;
+		},
+		isPlayingContextUri() {
+			return this.getCurrentlyPlayingTrack?.is_playing;
 		},
 		getUserFavPlaylists() {
 			return this.$store.getters['playlists/getUserFavPlaylists'];
