@@ -799,7 +799,7 @@ export default {
 				: this.$store.dispatch('controller/showHeaderBtn');
 		}, this.options);
 
-		await this.observer.observe(this.albumsEl);
+		this.albumsEl ? this.observer.observe(this.albumsEl) : '';
 
 		this.options2 = {
 			root: document.body,
@@ -821,18 +821,19 @@ export default {
 			}
 		}, this.options2);
 
-		this.observer2.observe(this.presentation);
+		this.presentation ? this.observer2.observe(this.presentation) : '';
 	},
 
 	beforeUnmount() {
 		console.log('albumPage unMounted!');
+		this.albumPage = false;
 		window.removeEventListener('resize', this.resizeOption2);
+		if (!this.albumsEl) return;
 		this.observer.unobserve(this.albumsEl);
 		this.observer2.unobserve(this.presentation);
 		this.presentation.classList.remove('prebg');
 		this.header.classList.remove('fav-songs-intersec-bg1');
 		this.header.classList.remove('fav-songs-intersec-bg2');
-		this.albumPage = false;
 	},
 	unmounted() {
 		this.$store.dispatch('controller/closeHeaderBtn');

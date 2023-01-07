@@ -32,49 +32,12 @@ import Info from '../SpotifyInfo/Info.vue';
 export default {
 	name: 'FavArtists',
 	components: { artistItems, Info },
-	emits: ['selectedArtistName'],
 	data() {
 		return {
 			favArtists: true,
-			artistName: '',
-			artists: [
-				{
-					id: 1,
-					name: 'INNA',
-					type: 'Sanatçı',
-					monthlyListener: '8562540',
-					img: 'https://i.scdn.co/image/ab6761610000f178571bd5587850d252e8fc892d',
-				},
-				{
-					id: 2,
-					name: 'Ben Böhmer',
-					type: 'Sanatçı',
-					monthlyListener: '9762510',
-					img: 'https://i.scdn.co/image/ab67616100005174a8a48c12973f1621a9eea81d',
-				},
-				{
-					id: 3,
-					name: 'Jan Blomqvist',
-					type: 'Sanatçı',
-					monthlyListener: '5126545',
-					img: 'https://i.scdn.co/image/ab67616100005174f1853b674364d4b6c7638d14',
-				},
-				{
-					id: 4,
-					name: 'Hans Zimmer',
-					type: 'Sanatçı',
-					monthlyListener: '10658214',
-					img: 'https://i.scdn.co/image/ab67616100005174371632043a8c12bb7eeeaf9d',
-				},
-			],
 		};
 	},
-	methods: {
-		selectArtistName(name) {
-			this.artistName = name;
-			this.$emit('selectedArtistName', this.artistName);
-		},
-	},
+
 	computed: {
 		getFavArtists() {
 			return this.$store.getters['artists/getFavArtists'];

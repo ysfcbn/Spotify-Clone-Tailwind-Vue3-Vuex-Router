@@ -330,7 +330,7 @@ export default {
 			console.log(href);
 			if (
 				this.isPlayingContextUri &&
-				uri.uri === this.getCurrentlyPlayingTrack.context.uri
+				uri.uri === this.getCurrentlyPlayingTrack?.context?.uri
 			) {
 				await this.$store.dispatch('controller/pauseCurrentTrack');
 			} else {

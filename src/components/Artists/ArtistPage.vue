@@ -965,10 +965,11 @@ export default {
 	},
 
 	beforeUnmount() {
+		this.artistPage = false;
+		if (!this.artistEl) return;
 		this.observer.unobserve(this.artistEl);
 		this.header.classList.remove('fav-songs-intersec-bg1');
 		this.header.classList.remove('fav-songs-intersec-bg2');
-		this.artistPage = false;
 	},
 	unmounted() {
 		this.$store.dispatch('controller/closeHeaderBtn');
