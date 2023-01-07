@@ -187,8 +187,8 @@
           :key="track?.id"
           :id="track?.id"
           :uri="playlistUri"
-          :itemUri="track.uri"
-          :trackID="track.id"
+          :itemUri="track?.uri"
+          :trackID="track?.id"
           :contextType="contextType"
           :index="i"
           :playlistPage="playlistPage"
@@ -705,6 +705,7 @@ export default {
   async created() {
     window.addEventListener("resize", this.resizeOption2);
     this.playlistPage = true;
+    this.playlistTracksItems;
     console.log("locatedPlaylist Mounted");
     (await this.isPlayingPlaylistContextUri)
       ? this.$store.dispatch("controller/isPlayingHeaderBtn", true)
