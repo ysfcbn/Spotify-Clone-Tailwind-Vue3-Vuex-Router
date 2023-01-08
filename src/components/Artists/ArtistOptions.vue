@@ -25,7 +25,7 @@
 			>
 				<button class="cursor-default">
 					<span v-if="!follow" class="text-xs md:text-sm">Takip Et </span>
-					<span v-else class="text-xs md:text-sm">Takip Etmei Bırak </span>
+					<span v-else class="text-xs md:text-sm">Takip Etmeyi Bırak </span>
 				</button>
 			</li>
 			<li class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3">

@@ -50,6 +50,13 @@
 						class="flex flex-wrap items-center text-white w-full text-xs sm3:text-sm h-full font-semibold tracking-tight mt-2"
 					>
 						<div class="flex items-center shrink-0">
+							<div class="w-6 h-6 mr-2" v-if="playlistOwnerAvatar">
+								<img
+									class="rounded-full"
+									:src="playlistOwnerAvatar"
+									alt="user"
+								/>
+							</div>
 							<span
 								v-if="playlistOwner"
 								class="hover:underline text-base"
@@ -175,7 +182,7 @@
 		<!-- Playlist -->
 		<div
 			v-if="totalPlaylistTracks"
-			:class="{ 'mx-5': margin }"
+			:class="{ 'mx-5 z-0': margin }"
 			class="playlistContainer relative h-full min-w-[450]"
 		>
 			<TrackItemsHeader :margin="margin" :playlistPage="playlistPage" />
@@ -291,11 +298,26 @@ export default {
 					headers: {
 						Accept: 'application/json',
 						'Content-Type': 'application/json',
-						Authorization: 'Bearer ' + (await this.getToken),
+						Authorization: 'Bearer ' + this.getToken,
 					},
 				})
 				.then(({ data }) => {
 					this.$store.dispatch('playlists/getPlaylist', data);
+				})
+				.catch(err => console.log(err));
+		},
+		async fetchUser(href) {
+			await axios
+				.get(href, {
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+						Authorization: 'Bearer ' + this.getToken,
+					},
+				})
+				.then(({ data }) => {
+					console.log(data);
+					this.$store.dispatch('users/user', data);
 				})
 				.catch(err => console.log(err));
 		},
@@ -319,7 +341,7 @@ export default {
 							headers: {
 								Accept: 'application/json',
 								'Content-Type': 'application/json',
-								Authorization: 'Bearer ' + (await this.getToken),
+								Authorization: 'Bearer ' + this.getToken,
 							},
 						}
 					)
@@ -362,7 +384,7 @@ export default {
 						headers: {
 							Accept: 'application/json',
 							'Content-Type': 'application/json',
-							Authorization: 'Bearer ' + (await this.getToken),
+							Authorization: 'Bearer ' + this.getToken,
 						},
 					}
 				)
@@ -555,6 +577,9 @@ export default {
 		currentPlaylist() {
 			return this.$store.getters['playlists/getPlaylist'];
 		},
+		currentPlaylistOwnerHref() {
+			return this.$store.getters['playlists/getPlaylist']?.owner?.href;
+		},
 		playlistİmage() {
 			return this.$store.getters['playlists/getPlaylist']?.images[0]?.url;
 		},
@@ -564,12 +589,13 @@ export default {
 		playlistDescription() {
 			return this.currentPlaylist?.description;
 		},
+		playlistOwnerAvatar() {
+			return this.$store.getters['users/getUser']?.images[0]?.url;
+		},
 		playlistOwner() {
 			return this.currentPlaylist?.owner?.display_name;
 		},
-		isPlaylistOwnerSpotify() {
-			return this.this.currentPlaylist?.owner?.id === 'spotify';
-		},
+
 		playlistOwnerID() {
 			return this.currentPlaylist?.owner?.id;
 		},
@@ -699,6 +725,13 @@ export default {
 				});
 			}
 		},
+		margin(newVal, oldVal) {
+			newVal && this.appOptions
+				? (this.appOptions = true)
+				: oldVal && this.appOptions
+				? (this.appOptions = false)
+				: (this.appOptions = false);
+		},
 	},
 
 	async created() {
@@ -711,6 +744,7 @@ export default {
 			: this.$store.dispatch('controller/isPlayingHeaderBtn', false);
 
 		await this.fetchPlaylist();
+		await this.fetchUser(this.currentPlaylistOwnerHref);
 
 		this.owner = this.playlistOwner;
 

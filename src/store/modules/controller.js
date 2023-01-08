@@ -27,6 +27,7 @@ const controllerModule = {
 		volumePercent: null,
 		currentTrackID: null,
 		currentContextType: null,
+		isArtistContext: null,
 		currentTrackIsFav: '',
 		userQueue: [],
 		recentlyPlayedTracks: null,
@@ -50,6 +51,9 @@ const controllerModule = {
 		},
 		currentContextType(state, type) {
 			state.currentContextType = type;
+		},
+		isArtistContext(state, val) {
+			state.isArtistContext = val;
 		},
 		currentlyPlayingTrack(state, payload) {
 			state.currentlyPlayingTrack = payload;
@@ -250,7 +254,25 @@ const controllerModule = {
 				})
 				.catch(err => console.log(err));
 		},
-		async playArtitsTopTracks({ getters, dispatch }, uris) {
+		async pauseCurrentTrack({ getters, dispatch }) {
+			fetch(`https://api.spotify.com/v1/me/player/pause`, {
+				method: 'PUT',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+					Authorization: 'Bearer ' + getters.getToken,
+				},
+			})
+				.then(data => {
+					console.log(data);
+					if (data.status === 204) {
+						console.log('Playback paused');
+						dispatch('fetchCurrentlyPlayingTrack');
+					}
+				})
+				.catch(err => console.log(err));
+		},
+		async playArtitsTopTracks({ getters, commit, dispatch }, uris) {
 			await axios
 				.put(
 					`https://api.spotify.com/v1/me/player/play?device_id=${getters.deviceID}`,
@@ -278,33 +300,16 @@ const controllerModule = {
 						dispatch('fetchCurrentlyPlayingTrack')
 							.then(() => {
 								console.log(getters.currentTrackID);
+								uris.type === 'artist'
+									? commit('isArtistContext', true)
+									: commit('isArtistContext', false);
 							})
 							.catch(err => console.log(err));
 					}
 				})
 				.catch(err => console.log(err));
 		},
-		async seekToPositionSelectedTrack({ getters }) {
-			await fetch(
-				`https://api.spotify.com/v1/me/player/seek?position_ms=${progress_ms}&device_id=${getters.deviceID}`,
-				{
-					method: 'PUT',
-					headers: {
-						Accept: 'application/json',
-						'Content-Type': 'application/json',
-						Authorization: 'Bearer ' + getters.getToken,
-					},
-				}
-			)
-				.then(data => {
-					if (data.status === 204) {
-						console.log('Selected Track Seek To Position');
-					}
-				})
-				.catch(err => console.log(err));
-		},
-
-		async playSelectedContext({ getters, dispatch }, contextUri) {
+		async playSelectedContext({ getters, commit, dispatch }, contextUri) {
 			await axios
 				.put(
 					`https://api.spotify.com/v1/me/player/play?device_id=${getters.deviceID}`,
@@ -341,32 +346,34 @@ const controllerModule = {
 									'context type=>',
 									getters.getCurrentlyPlayingTrack?.context?.type
 								);
+								commit('isArtistContext', false);
 							})
 							.catch(err => console.log(err));
 					}
 				})
 				.catch(err => console.log(err));
 		},
-		async pauseCurrentTrack({ getters, dispatch }) {
-			fetch(`https://api.spotify.com/v1/me/player/pause`, {
-				method: 'PUT',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-					Authorization: 'Bearer ' + getters.getToken,
-				},
-			})
+
+		async seekToPositionSelectedTrack({ getters }) {
+			await fetch(
+				`https://api.spotify.com/v1/me/player/seek?position_ms=${progress_ms}&device_id=${getters.deviceID}`,
+				{
+					method: 'PUT',
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+						Authorization: 'Bearer ' + getters.getToken,
+					},
+				}
+			)
 				.then(data => {
-					console.log(data);
 					if (data.status === 204) {
-						console.log('Playback paused');
-						dispatch('fetchCurrentlyPlayingTrack');
+						console.log('Selected Track Seek To Position');
 					}
 				})
 				.catch(err => console.log(err));
 		},
-
-		async skipToNextTrack({ getters, dispatch, rootGetters }) {
+		async skipToNextTrack({ getters, dispatch }) {
 			await fetch(
 				`https://api.spotify.com/v1/me/player/next?device_id=${getters.deviceID}`,
 				{
@@ -387,7 +394,7 @@ const controllerModule = {
 				})
 				.catch(err => console.log(err));
 		},
-		async skipToPrevTrack({ getters, dispatch, state }) {
+		async skipToPrevTrack({ getters, dispatch }) {
 			fetch(
 				`https://api.spotify.com/v1/me/player/previous?device_id=${getters.deviceID}`,
 				{
@@ -446,7 +453,7 @@ const controllerModule = {
 				.catch(err => console.log(err));
 		},
 
-		async fetchRecentlyPlayedTracks({ getters, commit, state }) {
+		async fetchRecentlyPlayedTracks({ getters, commit }) {
 			await axios
 				.get(`https://api.spotify.com/v1/me/player/recently-played?limit=50`, {
 					headers: {
@@ -500,6 +507,10 @@ const controllerModule = {
 		currentContextType(state) {
 			return state.currentContextType;
 		},
+		isArtistContext(state) {
+			return state.isArtistContext;
+		},
+
 		getVolumePercent(state) {
 			return state.volumePercent;
 		},

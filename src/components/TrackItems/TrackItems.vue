@@ -247,8 +247,8 @@ export default {
 		'contextType',
 		'artistPage',
 		'userPage',
-		'topTracks',
 		'artistTopTrackUris',
+		'userTopTrackUris',
 		'selectArtCardName',
 		'diskografiPage',
 		'albumPage',
@@ -306,6 +306,9 @@ export default {
 		currentPlayingContextType() {
 			return this.$store.getters['controller/currentContextType'];
 		},
+		isArtistContext() {
+			return this.$store.getters['controller/isArtistContext'];
+		},
 		currentTrackIsPlaying() {
 			return this.getCurrentlyPlayingTrack?.is_playing;
 		},
@@ -316,17 +319,26 @@ export default {
 			return this.contextType === 'artist'
 				? this.currentTrackID === this.trackID &&
 						this.currentTrackIsPlaying &&
-						!this.currentPlayingContextType
+						!this.currentPlayingContextType &&
+						this.isArtistContext
+				: this.contextType === 'track'
+				? this.currentTrackID === this.trackID &&
+				  this.currentTrackIsPlaying &&
+				  !this.currentPlayingContextType &&
+				  !this.isArtistContext
 				: this.currentTrackIsPlaying &&
-						this.currentPlayingContextType === this.contextType &&
-						this.currentPlayingItemID === this.trackID;
+				  this.currentPlayingContextType === this.contextType &&
+				  this.currentPlayingItemID === this.trackID;
 		},
 		addTextGreen() {
 			return this.contextType === 'artist'
 				? this.currentTrackID === this.trackID &&
 						!this.currentPlayingContextType
+				: this.contextType === 'track'
+				? this.currentTrackID === this.trackID &&
+				  !this.currentPlayingContextType
 				: this.currentTrackID === this.trackID &&
-						this.contextType === this.currentPlayingContextType;
+				  this.contextType === this.currentPlayingContextType;
 		},
 	},
 
@@ -334,15 +346,8 @@ export default {
 		async playTrack(uris, e) {
 			console.log(uris);
 			this.playingTrackID = e.target.closest('.track--container').id;
-			let playingTrackIndex = this.index;
 			let contextUri = uris;
 			let isArtistContext = contextUri.uri.split(':').slice(1)[0];
-
-			console.log('contextType', this.contextType);
-			console.log('isArtistContext', isArtistContext);
-			console.log('contextUri', contextUri);
-			console.log('playingTrackIndex==>', playingTrackIndex);
-			console.log(this.isPlaying);
 
 			if (this.isPlaying) {
 				isArtistContext === 'artist'
@@ -355,6 +360,15 @@ export default {
 					contextUri.index = this.index;
 					contextUri.type = this.contextType;
 					contextUri.uri = this.artistTopTrackUris;
+					await this.$store.dispatch(
+						'controller/playArtitsTopTracks',
+						contextUri
+					);
+				}
+				if (this.userPage) {
+					contextUri.index = this.index;
+					contextUri.id = 'track';
+					contextUri.uri = this.userTopTrackUris;
 					await this.$store.dispatch(
 						'controller/playArtitsTopTracks',
 						contextUri

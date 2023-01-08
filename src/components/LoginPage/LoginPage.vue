@@ -137,12 +137,12 @@
 					<p class="text-black text-[20px]" style="font-weight: 700">
 						Hesabın yok mu?
 					</p>
+					<p class="text-black text-[20px]">975fd3eb76424ac49bd2a701a015fc89</p>
 					<button
 						class="cursor-default text-md text-gray border border-gray2 hover:border-dark rounded-full py-3 w-[28rem] tracking-widest font-semibold flex items-center justify-center uppercase"
 					>
 						spotify için kaydol
 					</button>
-					<p class="text-red text-xl">975fd3eb76424ac49bd2a701a015fc89</p>
 				</div>
 			</div>
 		</div>

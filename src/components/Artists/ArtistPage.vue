@@ -416,6 +416,7 @@ export default {
 	data() {
 		return {
 			artistPage: true,
+			isArtist: false,
 			type: 'all',
 			contextType: 'artist',
 			opac: '',
@@ -482,11 +483,15 @@ export default {
 		findArtistsID() {
 			return this.getCurrentlyPlayingTrack?.item?.artists[0]?.id === this.id;
 		},
+		isArtistContext() {
+			return this.$store.getters['controller/isArtistContext'];
+		},
 		isPlayingArtistTopTracks() {
 			return (
 				this.findArtistsID &&
 				!this.getCurrentlyPlayingTrack?.context &&
-				this.getCurrentlyPlayingTrack?.is_playing
+				this.getCurrentlyPlayingTrack?.is_playing &&
+				this.isArtistContext
 			);
 		},
 
@@ -548,6 +553,7 @@ export default {
 				.catch(err => console.log(err));
 		},
 		async playArtistTopTracks(uri) {
+			this.isArtist = true;
 			console.log(uri);
 			console.log(this.findCurrentPlayingTrackIndex);
 			if (this.isPlayingArtistTopTracks) {

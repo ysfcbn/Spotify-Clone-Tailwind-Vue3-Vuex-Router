@@ -4,7 +4,7 @@
 			'top-[18.4rem] left-[18.4rem] p-[4px] ': diskografiPage && firstElement,
 			'top-[11.3rem] left-[18.4rem] p-[4px] ': diskografiPage && !firstElement,
 		}"
-		class="app--option absolute bg-dark2 top-[4.8rem] left-[10.8rem] p-[4px] w-fit h-fit text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)] z-[9999]"
+		class="app--option absolute bg-dark2 top-[4.8rem] left-[10.8rem] p-[4px] w-fit h-fit text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
 	>
 		<li
 			class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 truncate"

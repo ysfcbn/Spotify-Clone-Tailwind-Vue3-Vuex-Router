@@ -85,7 +85,8 @@
 							'opacity-100 translate-y-[-0.4rem]':
 								getCurrentlyPlayingTrack?.item?.artists[0].id === data?.id &&
 								getCurrentlyPlayingTrack?.is_playing &&
-								!getCurrentlyPlayingTrack?.context,
+								!getCurrentlyPlayingTrack?.context &&
+								isArtistContext,
 						}"
 						class="bg-dark1 rounded-full right-0 bottom-0 absolute flex items-center my-1 mx-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
 					>
@@ -112,7 +113,8 @@
 										getCurrentlyPlayingTrack?.item?.artists[0].id ===
 											data?.id &&
 										getCurrentlyPlayingTrack?.is_playing &&
-										!getCurrentlyPlayingTrack?.context
+										!getCurrentlyPlayingTrack?.context &&
+										isArtistContext
 									"
 									fill="text-black"
 									d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
@@ -1193,9 +1195,6 @@ export default {
 		currentTrackID() {
 			return this.getCurrentlyPlayingTrack?.item?.id;
 		},
-		currentArtistID() {
-			return this.$store.getters['artist/getCurrentArtist']?.id;
-		},
 		currentPlaylist() {
 			return this.$store.getters['playlists/getPlaylist']?.tracks?.items;
 		},
@@ -1230,13 +1229,16 @@ export default {
 				? this.findCurrentPlayingTrackIndex
 				: 0;
 		},
-
+		isArtistContext() {
+			return this.$store.getters['controller/isArtistContext'];
+		},
 		isPlayingArtistTopTracks() {
 			return (
 				this.getCurrentlyPlayingTrack?.item?.artists[0].id ===
 					this.clickedArtist &&
 				!this.getCurrentlyPlayingTrack?.context &&
-				this.getCurrentlyPlayingTrack?.is_playing
+				this.getCurrentlyPlayingTrack?.is_playing &&
+				this.isArtistContext
 			);
 		},
 		getCurrentUserTopArtists() {
