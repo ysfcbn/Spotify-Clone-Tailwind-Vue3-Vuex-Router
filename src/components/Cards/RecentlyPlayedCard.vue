@@ -271,23 +271,22 @@ export default {
       }
     },
     async playContextUri(uri, href) {
-      console.log(uri);
-      console.log(uri.type);
-      console.log(href);
       if (this.isPlayingContextUri) {
         await this.$store.dispatch("controller/pauseCurrentTrack");
       } else {
         if ((await uri.type) === "playlist") {
           await this.fetchPlaylist(href);
           this.typeOfSelectedSection = "playlist";
+          uri.id =
+            this.currentPlaylist[this.currentPlayingTrackIndex]?.track.id;
         } else if ((await uri.type) === "album") {
           this.typeOfSelectedSection = "album";
           console.log(href);
           if (!this.item.context) {
             await this.fetchAlbum(this.item.track.album.href);
           } else await this.fetchAlbum(href);
+          uri.id = this.currentAlbumTracks[this.currentPlayingTrackIndex]?.id;
         }
-
         uri.index = this.currentPlayingTrackIndex;
         console.log(uri);
         await this.$store.dispatch("controller/playSelectedContext", uri);

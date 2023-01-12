@@ -86,6 +86,7 @@
 								uri: albumUri,
 								index: currentPlayingTrackIndex,
 								type: contextType,
+								id: currentTrackID,
 							})
 						)
 					"
@@ -759,6 +760,7 @@ export default {
 					uri: this.albumUri,
 					index: this.currentPlayingTrackIndex,
 					type: this.contextType,
+					id: this.currentTrackID,
 				});
 			}
 		},
@@ -834,13 +836,13 @@ export default {
 		this.presentation.classList.remove('prebg');
 		this.header.classList.remove('fav-songs-intersec-bg1');
 		this.header.classList.remove('fav-songs-intersec-bg2');
+		this.$store.dispatch('controller/isClickHeaderBtn', null);
 	},
 	unmounted() {
 		this.$store.dispatch('controller/closeHeaderBtn');
 		this.$store.dispatch('albums/clearTracksID');
 		this.$store.dispatch('albums/clearAlbum');
 		this.$store.dispatch('controller/isPlayingHeaderBtn', null);
-		this.$store.dispatch('controller/isClickHeaderBtn', null);
 	},
 };
 </script>

@@ -281,9 +281,12 @@ const controllerModule = {
 						position_ms:
 							uris.type === 'artist' &&
 							uris.artistID ===
-								getters.getCurrentlyPlayingTrack?.item.artists[0].id
+								getters.getCurrentlyPlayingTrack?.item.artists[0].id &&
+							!getters.getCurrentlyPlayingTrack?.context
 								? getters.getCurrentlyPlayingTrack.progress_ms
-								: (await uris.id) === getters.getCurrentlyPlayingTrack?.item.id
+								: ((await uris.artistID) ===
+										getters.getCurrentlyPlayingTrack?.item.id &&
+										(await uris.type)) === 'artist'
 								? getters.getCurrentlyPlayingTrack.progress_ms
 								: 0,
 					},
@@ -320,10 +323,14 @@ const controllerModule = {
 							(await contextUri.type) ===
 								getters.getCurrentlyPlayingTrack?.context?.type &&
 							(await contextUri.uri) ===
-								getters.getCurrentlyPlayingTrack?.context?.uri
+								getters.getCurrentlyPlayingTrack?.context?.uri &&
+							(await contextUri.id) ===
+								getters.getCurrentlyPlayingTrack?.item.id
 								? getters.getCurrentlyPlayingTrack.progress_ms
 								: (await contextUri.id) ===
-								  getters.getCurrentlyPlayingTrack?.item.id
+										getters.getCurrentlyPlayingTrack?.item.id &&
+								  (await contextUri.type) ===
+										getters.getCurrentlyPlayingTrack?.context?.type
 								? getters.getCurrentlyPlayingTrack.progress_ms
 								: 0,
 					},
@@ -475,7 +482,7 @@ const controllerModule = {
 		isPlayingHeaderBtn({ commit }, isPlaying) {
 			commit('isPlayingHeaderBtn', isPlaying);
 		},
-		isClickHeaderBtn({ commit }, playResume) {
+		isClickHeaderBtn({ commit, dispatch }, playResume) {
 			commit('isClickHeaderBtn', playResume);
 		},
 

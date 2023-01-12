@@ -130,7 +130,9 @@
 					></span>
 				</span>
 			</div>
-			<div class="text-[11px] ml-2">02:45</div>
+			<div class="text-[11px] ml-2">
+				{{ trackDurationFunc((duration = trackDuration)) }}
+			</div>
 		</div>
 	</div>
 </template>
@@ -145,17 +147,20 @@ export default {
 		};
 	},
 	computed: {
-		getCurrentTrack() {
+		getCurrentlyPlayingTrack() {
 			return this.$store.getters['controller/getCurrentlyPlayingTrack'];
 		},
 		currentPlayingTrackID() {
 			return this.$store.getters['controller/currentTrackID'];
 		},
 		currentTrackUri() {
-			return this.getCurrentTrack?.context.uri;
+			return this.getCurrentlyPlayingTrack?.context.uri;
 		},
 		isPlaying() {
-			return this.getCurrentTrack?.is_playing;
+			return this.getCurrentlyPlayingTrack?.is_playing;
+		},
+		trackDuration() {
+			return this.getCurrentlyPlayingTrack?.item.duration_ms;
 		},
 	},
 	methods: {
@@ -170,6 +175,12 @@ export default {
 		},
 		async skipToPrevTrack() {
 			await this.$store.dispatch('controller/skipToPrevTrack');
+		},
+		trackDurationFunc(duration) {
+			const minutes = Math.floor(duration / 60000);
+			const seconds = Math.floor((duration % 60000) / 1000);
+			const result = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+			return result;
 		},
 	},
 };
