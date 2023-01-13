@@ -57,6 +57,7 @@
 					class="z-40 absolute bg-dark2 top-[5.2rem] left-[11.4rem] p-[4px] h-fit w-[13.8rem] text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
 				>
 					<li
+						@click="copyArtistURL"
 						class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-opacwhite"
 					>
 						<button class="cursor-default">
@@ -86,7 +87,7 @@
 <script>
 export default {
 	name: 'ArtistOptions',
-	props: ['follow', 'addRemoveArtist'],
+	props: ['follow', 'addRemoveArtist', 'artistURL'],
 	data() {
 		return {
 			artistOptions: false,
@@ -96,6 +97,9 @@ export default {
 	methods: {
 		toggleOptions() {
 			this.artistOptions = !this.artistOptions;
+		},
+		copyArtistURL() {
+			console.log(this.artistURL);
 		},
 		paylasDropDown() {
 			this.paylasDropDown = true;

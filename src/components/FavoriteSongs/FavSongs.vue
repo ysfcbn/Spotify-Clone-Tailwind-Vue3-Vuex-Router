@@ -104,6 +104,7 @@
 					:key="track.id"
 					:id="track.id"
 					:uri="userFavSongsContextUri"
+					:track="track"
 					:trackID="track.id"
 					:itemUri="track.uri"
 					:contextType="contextType"

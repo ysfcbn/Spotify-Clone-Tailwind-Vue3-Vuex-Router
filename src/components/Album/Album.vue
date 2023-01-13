@@ -182,6 +182,7 @@
 					:id="item.id"
 					:uri="albumUri"
 					:itemUri="item.uri"
+					:track="item"
 					:trackID="item.id"
 					:contextType="contextType"
 					:index="i"

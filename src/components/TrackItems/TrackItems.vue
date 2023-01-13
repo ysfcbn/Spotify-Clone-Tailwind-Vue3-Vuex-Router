@@ -1,8 +1,9 @@
 <template>
 	<div
 		role="row"
-		class="track--container group grid grid-rows-0 border border-transparent relative h-[56px] hover:bg-light relative shrink px-1 rounded-md gap-3"
+		class="track--container group grid grid-rows-0 border border-transparent h-[56px] hover:bg-light shrink px-1 rounded-md gap-3"
 		:class="{
+			relative: !artistPage,
 			activeTrack: trackOptions,
 			activeTrack: active,
 			'lg:pl-[2rem]':
@@ -220,8 +221,9 @@
 			:trackOptions="trackOptions"
 			:uri="itemUri"
 			:index="index"
+			:track="track"
 			:artistPage="artistPage"
-			:selectArtCardName="selectArtCardName"
+			@closeTrackOption="closeTrackOptionFunc(val)"
 		/>
 	</div>
 </template>
@@ -243,13 +245,13 @@ export default {
 		'favoriteSongs',
 		'uri',
 		'itemUri',
+		'track',
 		'trackID',
 		'contextType',
 		'artistPage',
 		'userPage',
 		'artistTopTrackUris',
 		'userTopTrackUris',
-		'selectArtCardName',
 		'diskografiPage',
 		'albumPage',
 		'singlePage',
@@ -580,6 +582,9 @@ export default {
 		},
 		toggleTrackOptions() {
 			this.trackOptions = !this.trackOptions;
+		},
+		closeTrackOptionFunc(val) {
+			this.trackOptions = val;
 		},
 		close(e) {
 			if (!this.$el.contains(e.target)) {

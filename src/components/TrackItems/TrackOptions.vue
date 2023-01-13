@@ -1,6 +1,10 @@
 <template>
 	<ul
-		class="option--container z-[9999] absolute bg-dark2 top-[2.5rem] right-[1rem] p-[4px] h-fit w-[15rem] text-opacwhite3 text-sm whitespace-normal rounded cursor-default shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
+		:class="{
+			'top-[2.5rem] right-[1rem]': !artistPage,
+			'bottom-[-7rem] right-[2rem]': artistPage,
+		}"
+		class="option--container z-[9999] absolute bg-dark2 p-[4px] h-fit w-[15rem] text-opacwhite3 text-sm whitespace-normal rounded cursor-default shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
 	>
 		<li
 			@click="addToQueue((uri = { uri: uri, index: index }))"
@@ -37,9 +41,16 @@
 				v-if="visible"
 				class="z-[9999] absolute bg-dark2 top-[5.3rem] left-[-9.8rem] p-[4px] h-fit w-[10rem] text-opacwhite3 text-sm whitespace-normal rounded cursor-default shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
 			>
-				<li class="w-full p-[10px] hover:bg-dark3">
+				<li
+					v-for="artist in track.artists"
+					:key="artist.id"
+					class="w-full p-[10px] hover:bg-dark3"
+					@click="openArtist(artist.id)"
+				>
 					<button class="cursor-default">
-						<span v-if="artistPage"></span>
+						<span>
+							{{ artist.name }}
+						</span>
 					</button>
 				</li>
 			</ul>
@@ -63,7 +74,7 @@
 			class="w-full p-[10px] hover:bg-dark3 border-b border-opacwhite flex justify-between"
 		>
 			<button class="cursor-default">
-				<span>Çalma listesine ekler</span>
+				<span>Çalma listesine ekle</span>
 			</button>
 			<span
 				><svg
@@ -124,7 +135,8 @@
 <script>
 export default {
 	name: 'TrackOptions',
-	props: ['artistPage', 'uri', 'index'],
+	props: ['artistPage', 'uri', 'index', 'track'],
+	emits: ['closeTrackOption'],
 	data() {
 		return {
 			visible: false,
@@ -134,7 +146,10 @@ export default {
 	methods: {
 		async addToQueue(uri) {
 			await this.$store.dispatch('controller/addItemToQueue', uri.uri);
-			await this.$store.dispatch('controller/userQueue');
+			this.$emit('closeTrackOption', false);
+		},
+		openArtist(artistID) {
+			this.$router.push({ name: 'artist', params: { id: artistID } });
 		},
 	},
 	mounted() {},
