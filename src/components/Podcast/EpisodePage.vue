@@ -221,7 +221,7 @@
 				</div>
 			</div>
 
-			<div class="mt-[7rem]">
+			<div v-if="false" class="mt-[7rem]">
 				<h2
 					class="text-white text-2xl tracking-tighter my-8"
 					style="font-weight: 700"

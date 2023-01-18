@@ -118,15 +118,38 @@
 		</div>
 		<!-- track bar -->
 		<div
-			class="flex items-center justify-around text-lightest text-sm min-w-[17rem] mb-2"
+			class="flex items-center justify-around text-lightest text-sm min-w-[17rem]"
 		>
 			<div class="text-[11px] mr-2">01:00</div>
-			<div class="group h-1 w-full bg-lightest/40 rounded-full relative">
+			<div v-if="isStarwarsAlbum" class="w-[5.2rem] h-full z-20 flex-none">
+				<button
+					@click="changeBladeIcon"
+					class="cursor-default"
+					id="saber"
+					:style="{
+						'--saberImg': `url(${starWarsBarIcons[`${index}`].url})`,
+					}"
+				></button>
+			</div>
+			<div
+				:class="{ 'h-[8px]': isStarwarsAlbum, 'h-1': !isStarwarsAlbum }"
+				class="group w-full bg-lightest/40 rounded-full relative"
+			>
 				<span
-					class="absolute bg-white w-[15%] h-1 absolute rounded-full group-hover:bg-green3"
+					id="progress--bar"
+					:style="styleObject"
+					:class="{
+						'h-[8px]': isStarwarsAlbum,
+						'h-1 bg-white': !isStarwarsAlbum,
+					}"
+					class="absolute w-[55%] absolute rounded-full group-hover:bg-green3"
 				>
 					<span
-						class="hidden group-hover:block bg-white w-[13px] h-[13px] absolute rounded-full top-[-5px] right-[-8px]"
+						:class="{
+							'top-[-2px]': isStarwarsAlbum,
+							'top-[-4px]': !isStarwarsAlbum,
+						}"
+						class="group-hover:block bg-white absolute w-[12px] h-[12px] rounded-full right-[-5px]"
 					></span>
 				</span>
 			</div>
@@ -144,6 +167,51 @@ export default {
 	data() {
 		return {
 			leftClick: false,
+			index: 0,
+			starWarsBarIcons: [
+				{
+					id: 0,
+					url: 'https://open.spotifycdn.com/cdn/images/sw_saber_anakin.46a12813.png',
+					edgeColor: 'rgb(55, 132, 214)',
+					blurColor: '#2e77d0',
+				},
+				{
+					id: 1,
+					url: 'https://open.spotifycdn.com/cdn/images/sw_saber_luke.170f9698.png',
+					edgeColor: 'rgb(135, 220, 90)',
+					blurColor: '#1ed760',
+				},
+				{
+					id: 2,
+					url: 'https://open.spotifycdn.com/cdn/images/sw_saber_vader.78296917.png',
+					edgeColor: 'rgb(229, 17, 21)',
+					blurColor: '#cd1a2b',
+				},
+				{
+					id: 3,
+					url: 'https://open.spotifycdn.com/cdn/images/sw_saber_rey.b4a2ccc1.png',
+					edgeColor: 'rgb(249, 164, 11)',
+					blurColor: ' rgb(253, 175, 33)',
+				},
+				{
+					id: 4,
+					url: 'https://open.spotifycdn.com/cdn/images/sw_saber_leia.47a0ef84.png',
+					edgeColor: 'rgb(55, 132, 214)',
+					blurColor: '#2e77d0',
+				},
+				{
+					id: 5,
+					url: 'https://open.spotifycdn.com/cdn/images/sw_saber_mace.de90025a.png',
+					edgeColor: 'rgb(90, 22, 167)',
+					blurColor: 'rgb(172, 57, 193)',
+				},
+				{
+					id: 6,
+					url: 'https://open.spotifycdn.com/cdn/images/sw_saber_ahsoka1.dd3102a7.png',
+					edgeColor: 'rgb(255,255,255)',
+					blurColor: 'rgb(255,255,255)',
+				},
+			],
 		};
 	},
 	computed: {
@@ -161,6 +229,21 @@ export default {
 		},
 		trackDuration() {
 			return this.getCurrentlyPlayingTrack?.item.duration_ms;
+		},
+		isStarwarsAlbum() {
+			return (
+				this.getCurrentlyPlayingTrack?.item?.name.includes('Star Wars') ||
+				this.getCurrentlyPlayingTrack?.item?.album.name.includes('Star Wars')
+			);
+		},
+		styleObject() {
+			return {
+				'--saberColor': this.isStarwarsAlbum
+					? this.starWarsBarIcons[this.index].blurColor
+					: '',
+				'--background-color': !this.isStarwarsAlbum ? '#ffffff' : '',
+				'--background-color-hover': !this.isStarwarsAlbum ? '#1FDF64' : '',
+			};
 		},
 	},
 	methods: {
@@ -182,8 +265,60 @@ export default {
 			const result = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
 			return result;
 		},
+		changeBladeIcon() {
+			this.index !== 6 ? (this.index = this.index + 1) : (this.index = 0);
+		},
 	},
 };
 </script>
 
-<style></style>
+<style>
+#saber {
+	background-size: contain;
+	background-image: var(--saberImg);
+	background-position: 100%;
+	background-repeat: no-repeat;
+	width: 5.5rem;
+	height: 2rem;
+	display: block;
+	top: 56%;
+	position: absolute;
+}
+#progress--bar {
+	background: linear-gradient(
+		to bottom,
+		var(--saberColor),
+		#fff 50%,
+		var(--saberColor)
+	);
+	box-shadow: 0px 0px 12px 1px var(--saberColor);
+	background-color: var(--background-color);
+}
+#progress--bar:hover {
+	background-color: var(--background-color-hover);
+	animation: blink 0.1s linear infinite;
+}
+@keyframes blink {
+	0% {
+		box-shadow: 0px 0px 12px 6px var(--saberColor);
+	}
+	15% {
+		box-shadow: 0px 0px 19px 1px var(--saberColor);
+	}
+	30% {
+		box-shadow: 0px 0px 12px 6px var(--saberColor);
+	}
+	60% {
+		box-shadow: 0px 0px 19px 1px var(--saberColor);
+	}
+	75% {
+		box-shadow: 0px 0px 12px 6px var(--saberColor);
+	}
+	90% {
+		box-shadow: 0px 0px 19px 1px var(--saberColor);
+	}
+	100% {
+		box-shadow: 0px 0px 12px 6px var(--saberColor);
+	}
+}
+</style>

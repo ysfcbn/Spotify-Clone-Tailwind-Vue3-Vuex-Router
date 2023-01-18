@@ -125,7 +125,7 @@
 					:index="nextEpisodeIndex"
 					:episode="nextEpisode"
 					:podcastShowPage="podcastShowPage"
-					:nextEpisode="true"
+					:isNextEpisode="true"
 					:checkUserFavEpisode="checkUserFavEpisode"
 				/>
 			</div>
@@ -235,7 +235,7 @@ export default {
 				? ''
 				: this.$router.push({
 						name: 'episode',
-						params: { id: `${this.nextEpisode.id}` },
+						params: { id: `${this.nextEpisode?.id}` },
 				  });
 		},
 		async fetchFavShows() {
