@@ -96,7 +96,7 @@
 						playPlaylistContext(
 							(uri = {
 								uri: playlistUri,
-								index: currentPlayingTrackIndex,
+								index: 0,
 								type: contextType,
 								id: currentTrackID,
 							})
@@ -351,6 +351,10 @@ export default {
 						if (data.status === 200) {
 							heartBtn.classList.add('animationEmptyHeart');
 							heartBtn.classList.remove('animationGreenHeart');
+							this.$store.dispatch('controller/modalInfoType', {
+								type: 'playlist',
+								status: false,
+							});
 							axios
 								.get(
 									'https://api.spotify.com/v1/me/playlists' +
@@ -369,7 +373,13 @@ export default {
 								.catch(err => console.log(err));
 						}
 					})
-					.catch(err => console.log(err));
+					.catch(err => {
+						console.log(err);
+						this.$store.dispatch('controller/modalInfoType', {
+							type: 'error',
+							status: true,
+						});
+					});
 			} else {
 				await this.FollowPlaylist();
 			}
@@ -394,6 +404,10 @@ export default {
 					if (data.status === 200) {
 						heartBtn.classList.add('animationGreenHeart');
 						heartBtn.classList.remove('animationEmptyHeart');
+						this.$store.dispatch('controller/modalInfoType', {
+							type: 'playlist',
+							status: true,
+						});
 						axios
 							.get(
 								'https://api.spotify.com/v1/me/playlists' +
@@ -412,7 +426,13 @@ export default {
 							.catch(err => console.log(err));
 					}
 				})
-				.catch(err => console.log(err));
+				.catch(err => {
+					console.log(err);
+					this.$store.dispatch('controller/modalInfoType', {
+						type: 'error',
+						status: true,
+					});
+				});
 		},
 
 		findFavTracks() {

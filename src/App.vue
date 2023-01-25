@@ -1,24 +1,28 @@
 <template>
 	<router-view v-if="isLoginPage" name="loginPage"></router-view>
+
 	<div
 		v-if="!isLoginPage"
 		class="body bg-dark overflow-y-hidden box-content flex"
 		style="font-family: 'proxima-nova', sans-serif Arial"
 	>
+		<AppInfoModal></AppInfoModal>
+
 		<!-- side nav -->
 		<Sidebar
 			class="max-w-[18rem]"
 			:trackImgDisplay="trackImgDisplay"
 			:toggleImg="toggleImg"
 		/>
+
 		<!-- main content -->
 		<div
 			class="main-view-container w-full min-w-[530px] overflow-y-auto overflow-x-hidden z-0 relative"
 		>
 			<!-- header -->
 			<Header name="header" />
-			<router-view v-slot="{ Component }" class="mb-[2rem]">
-				<component :is="Component" :key="$route.path"></component>
+			<router-view v-slot="{ Component }">
+				<component :is="Component" :key="$route.path"> </component>
 			</router-view>
 		</div>
 	</div>
@@ -37,6 +41,7 @@ import Header from './components/Header/Header.vue';
 import Sidebar from './components/Sidebar/Sidebar.vue';
 import Footer from './components/Footer/Footer.vue';
 import LoginPage from './components/LoginPage/LoginPage.vue';
+import AppInfoModal from './components/Modal/AppInfoModal.vue';
 
 export default {
 	components: {
@@ -44,6 +49,7 @@ export default {
 		Sidebar,
 		Footer,
 		LoginPage,
+		AppInfoModal,
 	},
 	data() {
 		return {

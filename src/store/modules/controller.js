@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { stringify } from 'qs';
 
 const controllerModule = {
 	namespaced: true,
@@ -25,6 +24,7 @@ const controllerModule = {
 		device_id: null,
 		myDevice: null,
 		volumePercent: null,
+		playerProgress: '0%',
 		currentTrackID: null,
 		currentContextType: null,
 		isArtistContext: null,
@@ -32,7 +32,7 @@ const controllerModule = {
 		userQueue: [],
 		recentlyPlayedTracks: null,
 		lastListenCards: null,
-
+		modalInfoType: null,
 		isPlayingHeaderBtn: null,
 		isClickHeaderBtn: null,
 	},
@@ -42,6 +42,9 @@ const controllerModule = {
 		},
 		volumePercent(state, payload) {
 			state.volumePercent = payload;
+		},
+		playerPercent(state, payload) {
+			state.playerProgress = payload;
 		},
 		deviceID(state, id) {
 			state.device_id = id;
@@ -84,6 +87,9 @@ const controllerModule = {
 			state.isClickHeaderBtn = payload;
 		},
 
+		modalInfoType(state, type) {
+			state.modalInfoType = type;
+		},
 		showHeaderBtn(state) {
 			state.headerBtn = true;
 		},
@@ -131,7 +137,7 @@ const controllerModule = {
 				})
 				.catch(err => console.log(err));
 		},
-		async fetchCurrentlyPlayingTrack({ commit, dispatch, getters }) {
+		async fetchCurrentlyPlayingTrack({ commit, dispatch, getters, state }) {
 			await axios
 				.get(
 					`https://api.spotify.com/v1/me/player/currently-playing?device_id=${getters.deviceID}`,
@@ -152,6 +158,10 @@ const controllerModule = {
 						dispatch('isFavTrack');
 						dispatch('userQueue');
 						commit('currentTrackAlbumImage', data.item.album.images[0].url);
+						commit(
+							'playerPercent',
+							Math.floor((data.progress_ms / data.item.duration_ms) * 100) + '%'
+						);
 					}
 				})
 				.catch(err => console.log(err));
@@ -361,7 +371,7 @@ const controllerModule = {
 				.catch(err => console.log(err));
 		},
 
-		async seekToPositionSelectedTrack({ getters }) {
+		async seekToPositionSelectedTrack({ getters, state }) {
 			await fetch(
 				`https://api.spotify.com/v1/me/player/seek?position_ms=${progress_ms}&device_id=${getters.deviceID}`,
 				{
@@ -380,6 +390,7 @@ const controllerModule = {
 				})
 				.catch(err => console.log(err));
 		},
+
 		async skipToNextTrack({ getters, dispatch }) {
 			await fetch(
 				`https://api.spotify.com/v1/me/player/next?device_id=${getters.deviceID}`,
@@ -454,6 +465,10 @@ const controllerModule = {
 					console.log(data);
 					if (data.status === 204) {
 						console.log('!!!!!!!!item added to Queue!!!!!!!!!!!!');
+						dispatch('modalInfoType', {
+							type: 'queue',
+							status: true,
+						});
 						dispatch('userQueue');
 					}
 				})
@@ -474,6 +489,10 @@ const controllerModule = {
 					commit('recentlyPlayedTracks', data);
 				})
 				.catch(err => console.log(err));
+		},
+
+		modalInfoType({ commit }, type) {
+			commit('modalInfoType', type);
 		},
 		lastListenCards({ commit }, payload) {
 			commit('lastListenCards', payload);
@@ -518,6 +537,9 @@ const controllerModule = {
 			return state.isArtistContext;
 		},
 
+		getPlayerProgress(state) {
+			return state.playerProgress;
+		},
 		getVolumePercent(state) {
 			return state.volumePercent;
 		},
@@ -538,6 +560,9 @@ const controllerModule = {
 		},
 		isClickHeaderBtn(state) {
 			return state.isClickHeaderBtn;
+		},
+		getModalInfoType(state) {
+			return state.modalInfoType;
 		},
 		getHeaderBtn(state) {
 			return state.headerBtn;

@@ -120,7 +120,9 @@
 		<div
 			class="flex items-center justify-around text-lightest text-sm min-w-[17rem]"
 		>
-			<div class="text-[11px] mr-2">01:00</div>
+			<div class="text-[11px] mr-2 w-[1.5rem]">
+				{{ trackDurationFunc((duration = trackSeek)) }}
+			</div>
 			<div v-if="isStarwarsAlbum" class="w-[5.2rem] h-full z-20 flex-none">
 				<button
 					@click="changeBladeIcon"
@@ -142,14 +144,14 @@
 						'h-[8px]': isStarwarsAlbum,
 						'h-1 bg-white': !isStarwarsAlbum,
 					}"
-					class="absolute w-[55%] absolute rounded-full group-hover:bg-green3"
+					class="absolute absolute rounded-full group-hover:bg-green3"
 				>
 					<span
 						:class="{
 							'top-[-2px]': isStarwarsAlbum,
 							'top-[-4px]': !isStarwarsAlbum,
 						}"
-						class="group-hover:block bg-white absolute w-[12px] h-[12px] rounded-full right-[-5px]"
+						class="block invisible group-hover:visible bg-white absolute w-[12px] h-[12px] rounded-full right-[-5px]"
 					></span>
 				</span>
 			</div>
@@ -230,11 +232,17 @@ export default {
 		trackDuration() {
 			return this.getCurrentlyPlayingTrack?.item.duration_ms;
 		},
+		trackSeek() {
+			return this.getCurrentlyPlayingTrack?.progress_ms;
+		},
 		isStarwarsAlbum() {
 			return (
 				this.getCurrentlyPlayingTrack?.item?.name.includes('Star Wars') ||
 				this.getCurrentlyPlayingTrack?.item?.album.name.includes('Star Wars')
 			);
+		},
+		playerProgress() {
+			return this.$store.getters['controller/getPlayerProgress'];
 		},
 		styleObject() {
 			return {
@@ -243,6 +251,7 @@ export default {
 					: '',
 				'--background-color': !this.isStarwarsAlbum ? '#ffffff' : '',
 				'--background-color-hover': !this.isStarwarsAlbum ? '#1FDF64' : '',
+				width: this.playerProgress,
 			};
 		},
 	},

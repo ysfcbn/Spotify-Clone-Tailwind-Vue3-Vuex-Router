@@ -7,10 +7,10 @@
 		>
 			<div class="flex items-end justify-start h-full lg:ml-[1rem]">
 				<div
-					class="flex sm:w-[192px] sm:min-w-[192px] xl:h-[232px] xl:w-[232px] xl:min-w-[232px] shadow-[0_8px_40px_10px_rgba(0,0,0,0.6)] rounded-[12px]"
+					class="flex mb:w-[192px] mb:min-w-[192px] xl:h-[232px] xl:w-[232px] xl:min-w-[232px] shadow-[0_8px_40px_10px_rgba(0,0,0,0.6)] rounded-[12px]"
 				>
 					<img
-						class="object-cover h-full w-full"
+						class="object-cover mb:h-full w-full"
 						src="https://t.scdn.co/images/3099b3803ad9496896c43f22fe9be8c4.png"
 						alt="fav"
 					/>
@@ -63,7 +63,7 @@
 						playFavSongs(
 							(uri = {
 								uri: userFavSongsContextUri,
-								index: currentPlayingTrackIndex,
+								index: 0,
 								type: contextType,
 								id: currentTrackID,
 							})
@@ -332,9 +332,13 @@ export default {
 			return this.getCurrentlyPlayingTrack?.item?.id;
 		},
 		findCurrentPlayingTrackIndex() {
-			return this.allFavTracks.indexOf(
-				this.allFavTracks.find(item => item.track.id === this.currentTrackID)
-			);
+			return this.getCurrentlyPlayingTrack.context.type === 'collection'
+				? this.allFavTracks.indexOf(
+						this.allFavTracks.find(
+							item => item.track.id === this.currentTrackID
+						)
+				  )
+				: 0;
 		},
 		currentPlayingTrackIndex() {
 			return this.findCurrentPlayingTrackIndex + 1

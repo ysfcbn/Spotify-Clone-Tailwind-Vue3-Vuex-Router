@@ -22,10 +22,10 @@
 				artistPage ||
 				diskografiPage ||
 				playlistPage,
-			'lg:grid-cols-colProfile sm:grid-cols-colPresm': userPage,
-			'sm:grid-cols-colPreDisco': diskografiPage || albumPage || singlePage,
-			'sm:grid-cols-colArtPop': artistPage || TrackPage || TrackPage2,
-			'sm:grid-cols-colPresm md2:grid-cols-colPremd lg2:grid-cols-colPre':
+			'lg:grid-cols-colProfile mb:grid-cols-colPresm': userPage,
+			'mb:grid-cols-colPreDisco': diskografiPage || albumPage || singlePage,
+			'mb:grid-cols-colArtPop': artistPage || TrackPage || TrackPage2,
+			'mb:grid-cols-colPresm md2:grid-cols-colPremd lg2:grid-cols-colPre':
 				!diskografiPage &&
 				!albumPage &&
 				!singlePage &&
@@ -108,7 +108,7 @@
 						!TrackPage &&
 						!TrackPage2,
 				}"
-				class="font-normal text-base truncate"
+				class="font-normal mb:text-sm sm3:text-[15px] truncate"
 			>
 				<div
 					:class="{
@@ -121,7 +121,7 @@
 				</div>
 
 				<div
-					class="text-xs sm3:text-sm group-hover:text-white sm:max-w-[13rem] md:max-w-full truncate cursor-default"
+					class="text-xs sm3:text-[13px] group-hover:text-white sm:max-w-[13rem] md:max-w-full truncate pt-1 cursor-default"
 					:class="{
 						'text-white': active,
 						'text-lightest ': !active,
@@ -192,7 +192,7 @@
 			</button>
 
 			<div
-				class="text-sm sm3:text-[16px] mx-[1rem] text-lightest w-[4rem] flex justify-end text-center cursor-default"
+				class="text-[13px] sm3:text-[14px] mx-[1rem] text-lightest w-[4rem] flex justify-end text-center cursor-default"
 			>
 				<slot name="duration"></slot>
 			</div>
@@ -495,29 +495,33 @@ export default {
 				.then(data => {
 					console.log(data.status);
 					if (data.status === 200)
-						this.fetchFavTracks()
-							.then(() => {
-								this.playlistPage
-									? this.$store.dispatch('playlists/clearTracksID')
-									: this.albumPage || this.TrackPage
-									? this.$store.dispatch('albums/clearTracksID') &
-									  this.$store.dispatch('albums/clearTracksID2')
-									: this.userPage
-									? this.$store.dispatch('users/clearTracksID')
-									: this.artistPage
-									? this.$store.dispatch('artists/clearTracksID')
-									: this.diskografiPage
-									? this.$store.dispatch('discography/clearTracksID')
-									: '';
-								this.findFavTracks();
-								this.TrackPage ? this.findFavTracks2() : '';
-							})
-							.then(() => {
-								const trackItem = document.getElementById(trackID);
-								const trackItem2 = document.getElementsByClassName(trackID);
-								this.addGreenHeartFavTracks(trackItem);
-								this.TrackPage ? this.addGreenHeartFavTracks2(trackItem2) : '';
-							});
+						this.$store.dispatch('controller/modalInfoType', {
+							type: 'favSong',
+							status: true,
+						});
+					this.fetchFavTracks()
+						.then(() => {
+							this.playlistPage
+								? this.$store.dispatch('playlists/clearTracksID')
+								: this.albumPage || this.TrackPage
+								? this.$store.dispatch('albums/clearTracksID') &
+								  this.$store.dispatch('albums/clearTracksID2')
+								: this.userPage
+								? this.$store.dispatch('users/clearTracksID')
+								: this.artistPage
+								? this.$store.dispatch('artists/clearTracksID')
+								: this.diskografiPage
+								? this.$store.dispatch('discography/clearTracksID')
+								: '';
+							this.findFavTracks();
+							this.TrackPage ? this.findFavTracks2() : '';
+						})
+						.then(() => {
+							const trackItem = document.getElementById(trackID);
+							const trackItem2 = document.getElementsByClassName(trackID);
+							this.addGreenHeartFavTracks(trackItem);
+							this.TrackPage ? this.addGreenHeartFavTracks2(trackItem2) : '';
+						});
 				})
 				.catch(err => console.log(err));
 		},
@@ -533,6 +537,10 @@ export default {
 				.then(data => {
 					console.log(data);
 					if (data.status === 200) {
+						this.$store.dispatch('controller/modalInfoType', {
+							type: 'favSong',
+							status: false,
+						});
 						if (this.favoriteSongs) {
 							this.removeGreenHeartFavTracks(this.selectedTrackEl(trackID));
 						}

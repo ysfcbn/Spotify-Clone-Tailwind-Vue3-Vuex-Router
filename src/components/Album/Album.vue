@@ -7,10 +7,10 @@
 		>
 			<div class="relative flex items-end justify-start h-full lg:ml-[1rem]">
 				<div
-					class="flex sm:w-[192px] sm:min-w-[192px] xl:h-[232px] xl:w-[232px] xl:min-w-[232px] shadow-[0_8px_40px_10px_rgba(0,0,0,0.6)] rounded-[12px]"
+					class="flex mb:w-[192px] mb:min-w-[192px] xl:h-[232px] xl:w-[232px] xl:min-w-[232px] shadow-[0_8px_40px_10px_rgba(0,0,0,0.6)] rounded-[12px]"
 				>
 					<img
-						class="object-cover h-full w-full"
+						class="object-cover mb:h-full w-full"
 						:src="albumImage"
 						alt="albums"
 					/>
@@ -193,7 +193,7 @@
 					:removeGreenHeartFavTracks="removeGreenHeartFavTracks"
 				>
 					<template v-slot:trackName
-						><div class="cursor-default">
+						><div class="cursor-default truncate">
 							{{ item.name }}
 						</div></template
 					>
@@ -278,13 +278,13 @@
 										class="right-0 bottom-0 p-2 absolute flex items-center py-1 px-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
 									>
 										<button
-											class="p-3 bg-green3 rounded-full cursor-default lg:group-hover:block hover:scale-110 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+											class="p-3 bg-green3 rounded-full cursor-default lg:group-hover:block hover:scale-106 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
 										>
 											<span>
 												<svg
 													role="img"
-													height="24"
-													width="24"
+													height="20"
+													width="20"
 													viewBox="0 0 24 24"
 												>
 													<path
@@ -431,6 +431,10 @@ export default {
 						if (data.status === 200) {
 							heartBtn.classList.add('animationEmptyHeart');
 							heartBtn.classList.remove('animationGreenHeart');
+							this.$store.dispatch('controller/modalInfoType', {
+								type: 'album',
+								status: false,
+							});
 							this.fetchFavAlbums();
 						}
 					})
@@ -454,6 +458,10 @@ export default {
 					if (data.status === 200) {
 						heartBtn.classList.add('animationGreenHeart');
 						heartBtn.classList.remove('animationEmptyHeart');
+						this.$store.dispatch('controller/modalInfoType', {
+							type: 'album',
+							status: true,
+						});
 						this.fetchFavAlbums();
 					}
 				})

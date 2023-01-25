@@ -10,11 +10,11 @@
 		<div :class="{ 'mx-5': !margin }">
 			<div
 				:class="{
-					'sm:grid-cols-colPreDisco': albumPage || diskografiPage,
-					'sm:grid-cols-colPresm md2:grid-cols-colPremd lg2:grid-cols-colPre':
+					'mb:grid-cols-colPreDisco': albumPage || diskografiPage,
+					'mb:grid-cols-colPresm md2:grid-cols-colPremd lg2:grid-cols-colPre':
 						favoriteSongs || playlistPage,
 				}"
-				class="grid text-lightest text-xs sm3:text-sm items-center min-w-[300px] gap-2"
+				class="grid text-lightest mb:text-xs sm3:text-[13px] items-center min-w-[300px] gap-2"
 			>
 				<div class="text-lg flex justify-start items-end h-full w-full">#</div>
 				<div>BAŞLIK</div>
@@ -26,9 +26,9 @@
 				</div>
 				<div
 					:class="{
-						'justify-end sm:pr-12 md2:pr-[3rem]': albumPage,
-						'justify-center sm:pl-[10px]': favoriteSongs || playlistPage,
-						'justify-end sm:pr-[3rem] ': diskografiPage,
+						'justify-end mb:pr-12 md2:pr-[3rem]': albumPage,
+						'justify-center mb:pl-[10px]': favoriteSongs || playlistPage,
+						'justify-end mb:pr-[3rem] ': diskografiPage,
 					}"
 					class="flex items-center w-full h-full"
 				>

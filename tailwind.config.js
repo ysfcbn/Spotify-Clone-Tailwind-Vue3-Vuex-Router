@@ -99,7 +99,7 @@ module.exports = {
 			gridTemplateColumns: {
 				colMain: 'repeat(5,minmax(min-content,max-content))',
 				rowMain: 'repeat(5,minmax(0.5fr,1fr))',
-				col180: 'repeat(auto-fill,minmax(180px, 0.5fr))',
+				col180: 'repeat(auto-fill,minmax(150px, 0.5fr))',
 				info: 'repeat(auto-fill,minmax(137px, 197px))',
 				col100: 'repeat(auto-fill,minmax(160px, 1fr))',
 				colArt: 'repeat(auto-fill,minmax(180px, 0.4fr))',
@@ -133,6 +133,7 @@ module.exports = {
 			},
 			scale: {
 				104: '1.04',
+				106: '1.06',
 			},
 			lineClamp: {
 				7: '7',
