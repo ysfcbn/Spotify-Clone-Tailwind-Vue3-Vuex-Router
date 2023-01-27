@@ -81,13 +81,14 @@
 					@mousedown="leftClick = true"
 					@mouseup="leftClick = false"
 					@click="
-						playAlbumContext(
+						playCurrentAlbumContext(
 							(uri = {
 								uri: albumUri,
 								index: currentPlayingTrackIndex,
 								type: contextType,
 								id: currentTrackID,
-							})
+							}),
+							(href = $route.params.id)
 						)
 					"
 					:class="{
@@ -236,81 +237,76 @@
 			v-if="artistAlbums.length"
 			class="sm:pl-5 lg:p-5 lg:ml-[1rem] mt-10"
 		>
-			<div class="relative">
-				<div class="flex justify-between items-stretch h-[2.8rem]">
-					<div class="h-fit flex-end">
-						<h2
-							class="text-[1.5rem] text-white leading-7 tracking-tight hover:underline hover:text-underline-offset-8 font-semibold cursor-pointer"
-						>
-							Daha fazla {{ albumArtistName[0].name }}
-						</h2>
-					</div>
-					<div class="self-center">
-						<h6
-							@click="toggleDiskografiPage"
-							class="h-full mb:text-xs sm3:text-sm font-semibold leading-10 text-lightest hover:underline underline-offset-2 uppercase cursor-pointer"
-						>
-							DİSKOGRAFİYE BAK
-						</h6>
-					</div>
-				</div>
+			<!-- Cards -->
+			<Card :currentData="artistAlbums">
+				<template #cardTitle>
+					Daha fazla {{ albumArtistName[0].name }}</template
+				>
+				<template #seeMore>DİSKOGRAFİYE BAK</template>
 
-				<!-- Cards -->
-				<div class="my-5">
-					<div
-						class="relative grid grid-cols-col100 gap-x-6 grid-rows-1 auto-rows-0 overflow-hidden"
-					>
-						<div
-							@click="openAlbum(_, $event)"
-							v-for="(album, i) in artistAlbums"
-							:key="album.id"
-							:id="album.id"
-							class="albumCard bg-dark1 hover:bg-opacblack1 ease duration-300 w-full h-auto cursor-pointer rounded-md flex-1 isolate p-4 relative"
-						>
-							<div class="h-full group">
-								<div class="w-full mb-2 relative">
-									<img
-										class="h-full w-full object-cover"
-										:src="album.images[1].url"
-										alt=""
-									/>
-									<div
-										class="right-0 bottom-0 p-2 absolute flex items-center py-1 px-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
-									>
-										<button
-											class="p-3 bg-green3 rounded-full cursor-default lg:group-hover:block hover:scale-106 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
-										>
-											<span>
-												<svg
-													role="img"
-													height="20"
-													width="20"
-													viewBox="0 0 24 24"
-												>
-													<path
-														fill="text-black"
-														d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
-													></path>
-												</svg>
-											</span>
-										</button>
-									</div>
-								</div>
-								<div class="flex items-middle flex-col justify-center">
-									<div
-										class="text-white max-w-full truncate mb-2 font-semibold"
-									>
-										{{ album.name }}
-									</div>
-									<div class="text-sm text-lightest w-full">
-										{{ cartAlbumYear(i) }}
-									</div>
-								</div>
-							</div>
-						</div>
+				<template #imgContainer="{ data }">
+					<div class="w-full relative mb-5">
+						<img
+							class="h-full w-full object-cover"
+							:src="data?.images[0]?.url"
+							alt="image"
+						/>
 					</div>
-				</div>
-			</div>
+				</template>
+				<template #firstTitle="{ data }">{{ data?.name }}</template>
+				<template #secondTitle="{ data }"
+					><span class="capitalize">{{ data?.type }}</span>
+				</template>
+				<template #playBtn="{ data }">
+					<div
+						:class="{
+							'opacity-100 translate-y-[-0.4rem]	':
+								data?.uri === getCurrentlyPlayingTrack?.context?.uri &&
+								getCurrentlyPlayingTrack?.is_playing,
+						}"
+						class="bg-dark1 rounded-full right-0 bottom-0 absolute flex items-center mx-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
+					>
+						<button
+							@click="
+								playAlbumContextUri(
+									(uri = {
+										uri: data?.uri,
+										index: currentPlayingTrackIndex,
+										type: data?.type,
+									}),
+									(href = data?.href)
+								)
+							"
+							@mousedown="leftClick = true"
+							@mouseup="leftClick = false"
+							id="playBtn"
+							:class="{
+								' bg-green3/80 scale-80': leftClick,
+								'hover:scale-106 bg-green3/95 hover:bg-green3': !leftClick,
+							}"
+							class="p-3 rounded-full cursor-default shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+						>
+							<h1 class="text-white"></h1>
+							<svg role="img" height="20" width="20" viewBox="0 0 24 24">
+								<path
+									v-if="
+										data?.uri === getCurrentlyPlayingTrack?.context?.uri &&
+										getCurrentlyPlayingTrack?.is_playing
+									"
+									fill="text-black"
+									d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
+								></path>
+								<path
+									v-else
+									fill="text-black"
+									d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
+								></path>
+							</svg>
+						</button>
+					</div>
+				</template>
+			</Card>
+
 			<Info />
 		</section>
 	</section>
@@ -320,11 +316,12 @@
 import TrackItems from '../TrackItems/TrackItems.vue';
 import TrackItemsHeader from '../TrackItems/TrackItemsHeader.vue';
 import AppOptions from '../AppOptions/AppOptions.vue';
+import Card from '../Cards/Card.vue';
 import Info from '../SpotifyInfo/Info.vue';
 import axios from 'axios';
 
 export default {
-	components: { TrackItems, TrackItemsHeader, Info, AppOptions },
+	components: { TrackItems, TrackItemsHeader, Info, AppOptions, Card },
 	emits: ['selectedArtistName', 'toggleHeaderBtn', 'visToggleHeaderBtn'],
 	props: {
 		id: {
@@ -337,6 +334,7 @@ export default {
 		return {
 			albumPage: true,
 			contextType: 'album',
+			typeOfSelectedSection: null,
 			appOptions: false,
 			leftClick: false,
 			margin: true,
@@ -354,9 +352,9 @@ export default {
 		};
 	},
 	methods: {
-		async fetchAlbum() {
+		async fetchAlbum(href = this.$route.params.id) {
 			return await axios
-				.get('https://api.spotify.com/v1/albums/' + this.$route.params.id, {
+				.get('https://api.spotify.com/v1/albums/' + href, {
 					headers: {
 						Accept: 'application/json',
 						'Content-Type': 'application/json',
@@ -369,15 +367,32 @@ export default {
 				})
 				.catch(err => console.log(err));
 		},
-		async playAlbumContext(uri) {
+		async playCurrentAlbumContext(uri, href) {
 			console.log(uri);
 			if (this.isPlayingAlbumContextUri) {
 				await this.$store.dispatch('controller/pauseCurrentTrack');
 			} else {
 				uri.index = this.currentPlayingTrackIndex;
+				await this.fetchAlbum(href);
+				uri.id = this.currentAlbumTracks[this.currentPlayingTrackIndex]?.id;
 				!this.currentPlayingTrackIndex
 					? await this.$store.dispatch('controller/playSelectedContext', uri)
 					: await this.$store.dispatch('controller/playCurrentTrack', uri);
+			}
+		},
+		async playAlbumContextUri(uri, href) {
+			console.log(uri);
+			if (
+				uri.uri === this.getCurrentlyPlayingTrack?.context?.uri &&
+				this.getCurrentlyPlayingTrack?.is_playing
+			) {
+				await this.$store.dispatch('controller/pauseCurrentTrack');
+			} else {
+				await this.fetchAlbum(href);
+				uri.index = this.currentPlayingTrackIndex;
+				uri.id = this.currentAlbumTracks[this.currentPlayingTrackIndex]?.id;
+				console.log(uri);
+				await this.$store.dispatch('controller/playSelectedContext', uri);
 			}
 		},
 		async fetchFavAlbums() {
@@ -470,7 +485,7 @@ export default {
 
 		findFavTracks() {
 			this.allFavTracks.forEach((track, i) => {
-				this.albumTrackItems.forEach((item, i) => {
+				this.currentAlbumTracks.forEach((item, i) => {
 					if (track.track.id === item.id) {
 						this.$store.dispatch('albums/favTracksID', item.id);
 					}
@@ -536,14 +551,7 @@ export default {
 			const result = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
 			return result;
 		},
-		openAlbum(_, e) {
-			console.log(e.target.id);
-			const selectedAlbumID = e.target.closest('.albumCard').id;
-			this.$router.push({
-				name: 'album',
-				params: { id: `${selectedAlbumID}` },
-			});
-		},
+
 		toggleAppOptions() {
 			this.appOptions = !this.appOptions;
 		},
@@ -607,13 +615,15 @@ export default {
 		getToken() {
 			return this.$store.getters.accessToken;
 		},
-		currentAlbum() {
-			return this.$store.getters['albums/getAlbum'];
-		},
+
 		allFavTracks() {
 			return this.$store.getters['favTracks/getTracks'].items;
 		},
-		albumTrackItems() {
+
+		currentAlbum() {
+			return this.$store.getters['albums/getAlbum'];
+		},
+		currentAlbumTracks() {
 			return this.currentAlbum?.tracks?.items;
 		},
 		getCurrentlyPlayingTrack() {
@@ -624,8 +634,8 @@ export default {
 			return this.getCurrentlyPlayingTrack?.item?.id;
 		},
 		findCurrentPlayingTrackIndex() {
-			return this.albumTrackItems.indexOf(
-				this.albumTrackItems.find(item => item.id === this.currentTrackID)
+			return this.currentAlbumTracks?.indexOf(
+				this.currentAlbumTracks?.find(item => item.id === this.currentTrackID)
 			);
 		},
 		currentPlayingTrackIndex() {
@@ -765,7 +775,7 @@ export default {
 		},
 		async isClickHeaderBtn(newVal, oldVal) {
 			if (newVal !== oldVal) {
-				await this.playAlbumContext({
+				await this.playCurrentAlbumContext({
 					uri: this.albumUri,
 					index: this.currentPlayingTrackIndex,
 					type: this.contextType,
