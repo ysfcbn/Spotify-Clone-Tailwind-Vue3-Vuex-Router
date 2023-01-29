@@ -58,7 +58,7 @@ export default {
 	},
 	computed: {
 		isLoginPage() {
-			return this.$route.path === '/login' ? true : false;
+			return this.$route.path === '/login';
 		},
 		pending() {
 			return console.log('fallback component is pending');

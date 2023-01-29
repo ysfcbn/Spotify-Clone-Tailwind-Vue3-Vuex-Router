@@ -87,8 +87,7 @@
 								index: currentPlayingTrackIndex,
 								type: contextType,
 								id: currentTrackID,
-							}),
-							(href = $route.params.id)
+							})
 						)
 					"
 					:class="{
@@ -352,9 +351,9 @@ export default {
 		};
 	},
 	methods: {
-		async fetchAlbum(href = this.$route.params.id) {
+		async fetchAlbum(href) {
 			return await axios
-				.get('https://api.spotify.com/v1/albums/' + href, {
+				.get(href, {
 					headers: {
 						Accept: 'application/json',
 						'Content-Type': 'application/json',
@@ -373,7 +372,6 @@ export default {
 				await this.$store.dispatch('controller/pauseCurrentTrack');
 			} else {
 				uri.index = this.currentPlayingTrackIndex;
-				await this.fetchAlbum(href);
 				uri.id = this.currentAlbumTracks[this.currentPlayingTrackIndex]?.id;
 				!this.currentPlayingTrackIndex
 					? await this.$store.dispatch('controller/playSelectedContext', uri)
@@ -789,7 +787,9 @@ export default {
 		console.log('albumPage Created');
 		window.addEventListener('resize', this.resizeOption2);
 
-		this.albumData = await this.fetchAlbum();
+		this.albumData = await this.fetchAlbum(
+			'https://api.spotify.com/v1/albums/' + this.id
+		);
 		this.artistAlbums = await this.fetchArtistAlbums();
 		this.artistAlbums = this.artistAlbums.items.slice(0, 10);
 

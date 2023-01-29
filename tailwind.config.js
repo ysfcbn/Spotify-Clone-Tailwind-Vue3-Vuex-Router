@@ -67,7 +67,7 @@ module.exports = {
 				purplee: 'rgb(220, 20, 140)',
 				purplee2: 'rgb(141, 103, 171)',
 				purple3: '#450af5',
-				purple4: '#4C3693',
+				purple4: '#20173E',
 				bgpurple: 'rgb(64, 46, 125)',
 				purple5: 'rgb(147,112,219)',
 				purple6: 'rgb(99, 88, 112)',
@@ -99,7 +99,7 @@ module.exports = {
 			gridTemplateColumns: {
 				colMain: 'repeat(5,minmax(min-content,max-content))',
 				rowMain: 'repeat(5,minmax(0.5fr,1fr))',
-				col180: 'repeat(auto-fill,minmax(150px, 0.5fr))',
+				col180: 'repeat(auto-fill,minmax(165px, 0.5fr))',
 				info: 'repeat(auto-fill,minmax(137px, 197px))',
 				col100: 'repeat(auto-fill,minmax(160px, 1fr))',
 				colArt: 'repeat(auto-fill,minmax(180px, 0.4fr))',

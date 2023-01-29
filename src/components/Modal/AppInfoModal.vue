@@ -114,7 +114,7 @@ export default {
 <style scoped lang="scss">
 .info--modal {
   position: absolute;
-  bottom: 10%;
+  bottom: 8%;
   left: 50%;
   transform: translate(-50%, -50%);
 }

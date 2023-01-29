@@ -1,7 +1,7 @@
 <template>
 	<div
 		role="row"
-		class="track--container group grid grid-rows-0 border border-transparent h-[56px] hover:bg-light shrink px-1 rounded-md gap-3"
+		class="track--container group grid grid-rows-0 border border-transparent h-[50px] hover:bg-light shrink px-1 rounded-md gap-3"
 		:class="{
 			relative: !artistPage,
 			activeTrack: trackOptions,

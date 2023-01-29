@@ -51,7 +51,7 @@
 		</div>
 
 		<div
-			class="absolute w-full h-[212px] left-0 shrink-0 z-0 bg-gradient-to-b from-purple4/40 to-dark"
+			class="absolute w-full h-[212px] left-0 shrink-0 z-0 bg-gradient-to-b from-purple4 to-dark"
 		></div>
 
 		<div class="w-full h-[6.8rem] relative flex items-start py-[24px]">
@@ -73,7 +73,7 @@
 						'bg-green3/70 scale-[1]': leftClick,
 						'hover:scale-[1.04] bg-green3/95 hover:bg-green3': !leftClick,
 					}"
-					class="rounded-full p-[1rem] cursor-default"
+					class="rounded-full p-[0.8rem] cursor-default"
 				>
 					<svg role="img" height="28" width="28" viewBox="0 0 24 24">
 						<path

@@ -778,7 +778,7 @@ export default {
 		setTimeout(() => {
 			this.header = document.getElementById('header');
 			this.playlistEl = document.getElementById('playlistPage');
-			this.playlistTracksItems.length
+			this.playlistTracksItems?.length
 				? (this.presentation = document.querySelector('.presentation'))
 				: '';
 
@@ -826,7 +826,7 @@ export default {
 				}
 			}, this.options2);
 
-			this.playlistTracksItems.length
+			this.playlistTracksItems?.length
 				? this.observer2.observe(this.presentation)
 				: '';
 		}, 1);
@@ -838,10 +838,10 @@ export default {
 		this.playlistTracksItems?.length && this.playlistEl
 			? this.observer.unobserve(this.playlistEl)
 			: '';
-		this.playlistTracksItems.length && this.playlistEl
+		this.playlistTracksItems?.length && this.playlistEl
 			? this.observer2.unobserve(this.presentation)
 			: '';
-		this.playlistTracksItems.length && this.playlistEl
+		this.playlistTracksItems?.length && this.playlistEl
 			? this.presentation.classList.remove('prebg')
 			: '';
 		this.header?.classList.remove('fav-songs-intersec-bg1');
