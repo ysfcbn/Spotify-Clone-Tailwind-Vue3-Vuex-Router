@@ -216,6 +216,7 @@ export default {
 							uri: this.contextUri,
 							index: this.currentPlayingTrackIndex,
 							type: this.contextType,
+							id: this.currentTrackID,
 						},
 						this.item?.context?.href
 					);
