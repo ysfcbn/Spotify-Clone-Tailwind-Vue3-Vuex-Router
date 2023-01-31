@@ -24,12 +24,11 @@ const controllerModule = {
 		device_id: null,
 		myDevice: null,
 		volumePercent: null,
-		playerProgress: '0%',
+		playerProgress: 0,
 		startInterval: '',
 		currentProgressMS: null,
-		lastProgressMS: null,
+		lastProgressMS: 0,
 		currentDurationMS: null,
-		intervalTime: null,
 		currentTrackID: null,
 		currentContextType: null,
 		isArtistContext: null,
@@ -57,12 +56,12 @@ const controllerModule = {
 		lastProgressMS(state, payload) {
 			state.lastProgressMS = payload;
 		},
+		clearLastProgressMS(state) {
+			state.lastProgressMS = 0;
+		},
 
 		currentDurationMS(state, payload) {
 			state.currentDurationMS = payload;
-		},
-		intervalTime(state, payload) {
-			state.intervalTime = payload;
 		},
 
 		deviceID(state, id) {
@@ -172,33 +171,36 @@ const controllerModule = {
 					console.log(data);
 					if (data) {
 						commit('currentlyPlayingTrack', data);
-						dispatch('fetchPlaybackState');
-						setTimeout(() => {
-							commit(
-								'currentProgressMS',
-								getters.getCurrentlyPlayingTrack?.progress_ms
-							);
-							commit(
-								'currentDurationMS',
-								getters.getCurrentlyPlayingTrack?.item.duration_ms
-							);
-							commit(
-								'playerPercent',
-								Math.floor(
-									(getters.getCurrentProgress / getters.getCurrentDuration) *
-										100
-								) + '%'
-							);
-							commit(
-								'intervalTime',
-								getters.getCurrentDuration - getters.getCurrentProgress
-							);
-						}, 1000);
+						dispatch('fetchPlaybackState')
+							.then(() => {
+								dispatch('clearIntervalFunc');
+								commit(
+									'currentProgressMS',
+									getters.getCurrentlyPlayingTrack?.progress_ms
+								);
+								commit(
+									'currentDurationMS',
+									getters.getCurrentlyPlayingTrack?.item.duration_ms
+								);
+								commit(
+									'playerPercent',
+									Math.floor(
+										(getters.getCurrentProgress / getters.getCurrentDuration) *
+											100
+									)
+								);
 
-						commit('currentContextType', data?.context?.type);
-						commit('currentTrackID', data.item.id);
-						dispatch('isFavTrack');
-						commit('currentTrackAlbumImage', data.item.album.images[0].url);
+								commit('currentContextType', data?.context?.type);
+								commit('currentTrackID', data.item.id);
+								dispatch('isFavTrack');
+								commit('currentTrackAlbumImage', data.item.album.images[0].url);
+								if (getters.getCurrentlyPlayingTrack.is_playing) {
+									dispatch('clearIntervalFunc');
+									commit('lastProgressMS', getters.getCurrentProgress);
+									state.startInterval === '' ? dispatch('setIntervalFunc') : '';
+								}
+							})
+							.catch(err => console.log(err));
 					}
 				})
 				.catch(err => console.log(err));
@@ -294,15 +296,10 @@ const controllerModule = {
 				)
 				.then(data => {
 					if (data.status === 204) {
-						dispatch('fetchCurrentlyPlayingTrack')
-							.then(() => {
-								console.log(getters.currentTrackID);
-								commit('lastProgressMS', getters.getCurrentProgress);
-								console.log(getters.getLastProgressMS);
-								dispatch('clearIntervalFunc');
-								dispatch('setIntervalFunc');
-							})
-							.catch(err => console.log(err));
+						console.log(getters.currentTrackID);
+						commit('lastProgressMS', getters.getCurrentProgress);
+						dispatch('clearIntervalFunc');
+						dispatch('setIntervalFunc');
 					}
 				})
 				.catch(err => console.log(err));
@@ -426,7 +423,7 @@ const controllerModule = {
 				})
 				.catch(err => console.log(err));
 		},
-		songTimeProgress({ dispatch, commit, getters, state }) {
+		songTimeProgress({ commit, getters, state }) {
 			commit('lastProgressMS', state.lastProgressMS + 1000);
 			console.log(getters.getLastProgressMS);
 			commit('currentProgressMS', getters.getLastProgressMS);
@@ -434,7 +431,7 @@ const controllerModule = {
 				'playerPercent',
 				Math.floor(
 					(getters.getLastProgressMS / getters.getCurrentDuration) * 100
-				) + '%'
+				)
 			);
 		},
 		setIntervalFunc({ dispatch }) {
@@ -465,7 +462,7 @@ const controllerModule = {
 				.catch(err => console.log(err));
 		},
 
-		async skipToNextTrack({ getters, dispatch }) {
+		async skipToNextTrack({ getters, dispatch, commit }) {
 			await fetch(
 				`https://api.spotify.com/v1/me/player/next?device_id=${getters.deviceID}`,
 				{
@@ -482,6 +479,9 @@ const controllerModule = {
 					if (data.status === 204) {
 						console.log('skipped to Next Track!');
 						dispatch('fetchCurrentlyPlayingTrack');
+						dispatch('clearIntervalFunc');
+						commit('clearLastProgressMS');
+						dispatch('setIntervalFunc');
 					}
 				})
 				.catch(err => console.log(err));
@@ -503,6 +503,9 @@ const controllerModule = {
 					if (data.status === 204) {
 						console.log('skipped to Previous Track!');
 						dispatch('fetchCurrentlyPlayingTrack');
+						dispatch('clearIntervalFunc');
+						commit('clearLastProgressMS');
+						dispatch('setIntervalFunc');
 					}
 				})
 				.catch(err => console.log(err));
@@ -620,9 +623,7 @@ const controllerModule = {
 		getLastProgressMS(state) {
 			return state.lastProgressMS;
 		},
-		getIntervalTime(state) {
-			return state.intervalTime;
-		},
+
 		getPlayerProgress(state) {
 			return state.playerProgress;
 		},

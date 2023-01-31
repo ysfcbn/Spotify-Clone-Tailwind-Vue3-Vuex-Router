@@ -3,7 +3,7 @@
 		<div class="flex justify-between h-[3.3rem]">
 			<div class="h-fit flex flex-col gap-1">
 				<h2
-					class="text-[1.5rem] text-white leading-7 tracking-tight hover:underline hover:text-underline-offset-8 cursor-pointer"
+					class="text-[1.3rem] text-white leading-7 tracking-tighter hover:underline hover:text-underline-offset-8 cursor-pointer"
 					style="font-weight: 700"
 				>
 					<slot name="cardTitle"></slot>
@@ -15,9 +15,9 @@
 			<div class="">
 				<h6
 					style="font-weight: 600"
-					class="h-full mb:text-[10px] md:text-[12px] text-lg leading-10 text-lightest hover:underline hover:text-white uppercase cursor-pointer pb-2 tracking-widest"
+					class="h-full mb:text-[10px] md:text-[12px] text-md leading-10 text-lightest hover:underline uppercase cursor-pointer pb-2 px-2 tracking-widest"
 				>
-					<slot name="seeMore"> HEPSİNİ GÖR</slot>
+					<slot name="seeMore"> TÜMÜNÜ GÖSTER</slot>
 				</h6>
 			</div>
 		</div>

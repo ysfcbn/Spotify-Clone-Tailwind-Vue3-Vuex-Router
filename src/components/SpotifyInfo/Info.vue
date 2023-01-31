@@ -7,10 +7,10 @@
 				class="w-[80%] h-full flex items-start justify-start flex-wrap shrink"
 			>
 				<div class="w-[180px] max-w-[208px] mb-8 mr-[24px]">
-					<p class="font-semibold text-white text-lg tracking-tighter mb-2">
+					<p class="font-semibold text-white text-md tracking-tighter mb-2">
 						Şirket
 					</p>
-					<ul class="text-textColor3 flex flex-col gap-2">
+					<ul class="text-textColor3 flex flex-col gap-2 text-sm">
 						<li class="footer--bottom--link">
 							<a href="#">Hakkında</a>
 						</li>
@@ -19,10 +19,10 @@
 					</ul>
 				</div>
 				<div class="w-[180px] max-w-[208px] mb-8 mr-[24px]">
-					<p class="font-semibold text-white text-lg tracking-tighter mb-2">
+					<p class="font-semibold text-white text-md tracking-tighter mb-2">
 						Topluluklar
 					</p>
-					<ul class="text-textColor3 flex flex-col gap-2">
+					<ul class="text-textColor3 flex flex-col gap-2 text-sm">
 						<li class="footer--bottom--link">
 							<a href="#">Sanatçılar İçin</a>
 						</li>
@@ -33,10 +33,10 @@
 					</ul>
 				</div>
 				<div class="w-[180px] max-w-[208px] mb-8 mr-[24px]">
-					<p class="font-semibold text-white text-lg tracking-tighter mb-2">
+					<p class="font-semibold text-white text-md tracking-tighter mb-2">
 						Yararlı bağlantılar
 					</p>
-					<ul class="text-textColor3 flex flex-col gap-2">
+					<ul class="text-textColor3 flex flex-col gap-2 text-sm">
 						<li class="footer--bottom--link"><a href="#">Destek</a></li>
 						<li class="footer--bottom--link">
 							<a href="#">Ücretsiz Mobil Uygulama</a>
@@ -45,10 +45,10 @@
 				</div>
 			</div>
 			<div
-				class="flex items-center justify-between text-lightest w-[10rem] mb-8"
+				class="flex items-center justify-start gap-x-4 text-white w-[10rem] mb-8"
 			>
-				<div class="bg-dark2 hover:bg-dark3 rounded-full p-[10px]">
-					<a href="#"
+				<div class="bg-dark2 hover:bg-white/40 rounded-full p-[9px]">
+					<a href="#" class="cursor-default"
 						><svg
 							role="img"
 							height="16"
@@ -66,8 +66,8 @@
 							></path></svg
 					></a>
 				</div>
-				<div class="bg-dark2 hover:bg-dark3 rounded-full p-[10px]">
-					<a href="#"
+				<div class="bg-dark2 hover:bg-white/40 rounded-full p-[9px]">
+					<a href="#" class="cursor-default"
 						><svg
 							role="img"
 							height="16"
@@ -81,8 +81,8 @@
 							></path></svg
 					></a>
 				</div>
-				<div class="bg-dark2 hover:bg-dark3 rounded-full p-[10px]">
-					<a href="#"
+				<div class="bg-dark2 hover:bg-white/40 rounded-full p-[9px]">
+					<a href="#" class="cursor-default"
 						><svg role="img" height="16" width="16" viewBox="0 0 16 16">
 							<path
 								fill="currentColor"
@@ -94,7 +94,7 @@
 		</div>
 		<hr class="mb-6 text-white/20" />
 		<div
-			class="h-fit w-full footer--bottom flex items-center justify-between flex-wrap"
+			class="h-fit w-full footer--bottom flex items-center justify-between flex-wrap text-xs gap-y-2"
 		>
 			<div class="text-textColor3 flex item-center gap-3 flex-wrap">
 				<a href="#"><span class="footer--bottom--link">Yasal</span></a>
@@ -111,7 +111,7 @@
 					><span class="footer--bottom--link">Reklamlar Hakkında</span></a
 				>
 			</div>
-			<div class="copyright flex mt-2 w-fit">
+			<div class="copyright flex w-fit">
 				<p class="text-textColor3">© 2022 Spotify AB</p>
 			</div>
 		</div>
@@ -134,6 +134,8 @@ export default {
 }
 .footer--bottom--link:hover {
 	color: white;
+}
+.footer--bottom--link > :nth-child(1):hover {
 	text-decoration: underline;
 }
 </style>
