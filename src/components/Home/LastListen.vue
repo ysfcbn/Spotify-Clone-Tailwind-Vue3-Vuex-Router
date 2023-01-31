@@ -241,12 +241,22 @@ export default {
 				if ((await uri.type) === 'playlist') {
 					this.typeOfSelectedSection = 'playlist';
 					await this.fetchPlaylist(href);
-					uri.id =
-						this.currentPlaylist[this.currentPlayingTrackIndex]?.track.id;
+					if (
+						this.getCurrentlyPlayingTrack?.context.type ===
+						this.typeOfSelectedSection
+					) {
+						uri.id =
+							this.currentPlaylist[this.currentPlayingTrackIndex]?.track.id;
+					}
 				} else if ((await uri.type) === 'album') {
 					this.typeOfSelectedSection = 'album';
 					await this.fetchAlbum(href);
-					uri.id = this.currentAlbumTracks[this.currentPlayingTrackIndex]?.id;
+					if (
+						this.getCurrentlyPlayingTrack?.context.type ===
+						this.typeOfSelectedSection
+					) {
+						uri.id = this.currentAlbumTracks[this.currentPlayingTrackIndex]?.id;
+					}
 				}
 				uri.index = this.currentPlayingTrackIndex;
 				await this.$store.dispatch('controller/playSelectedContext', uri);
@@ -314,29 +324,33 @@ export default {
 			return this.$store.getters['favTracks/getTracks']?.items;
 		},
 		findCurrentPlayingTrackIndex() {
-			return this.contextType === 'playlist'
+			return (this.contextType === 'playlist') ===
+				this.getCurrentlyPlayingTrack?.context.type
 				? this.currentPlaylist?.indexOf(
 						this.currentPlaylist?.find(
 							item => item.track.id === this.currentTrackID
 						)
 				  )
-				: this.contextType === 'album'
+				: (this.contextType === 'album') ===
+				  this.getCurrentlyPlayingTrack?.context.type
 				? this.currentAlbumTracks?.indexOf(
 						this.currentAlbumTracks?.find(
 							item => item.id === this.currentTrackID
 						)
 				  )
-				: this.contextType === 'artist'
+				: (this.contextType === 'artist') ===
+				  this.getCurrentlyPlayingTrack?.context.type
 				? this.artistTopTracks.indexOf(
 						this.artistTopTracks.find(item => item.id === this.currentTrackID)
 				  )
-				: this.contextType === 'collection'
+				: (this.contextType === 'collection') ===
+				  this.getCurrentlyPlayingTrack?.context.type
 				? this.getFavTracks.indexOf(
 						this.getFavTracks.find(
 							item => item.track.id === this.currentTrackID
 						)
 				  )
-				: '';
+				: 0;
 		},
 		currentPlayingTrackIndex() {
 			return this.findCurrentPlayingTrackIndex + 1

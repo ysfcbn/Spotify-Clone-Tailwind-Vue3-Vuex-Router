@@ -14,9 +14,13 @@
 					'mb:grid-cols-colPresm md2:grid-cols-colPremd lg2:grid-cols-colPre':
 						favoriteSongs || playlistPage,
 				}"
-				class="grid text-lightest mb:text-xs sm3:text-[13px] items-center min-w-[300px] gap-2"
+				class="grid text-lightest mb:text-[11px] sm3:text-[12px] items-center min-w-[300px] gap-2 font-semibold"
 			>
-				<div class="text-lg flex justify-start items-end h-full w-full">#</div>
+				<div
+					class="mb:text-base md:text-lg flex justify-start items-end h-full w-full"
+				>
+					#
+				</div>
 				<div>BAŞLIK</div>
 				<div v-if="!albumPage && !diskografiPage" class="hidden md2:block">
 					ALBÜM

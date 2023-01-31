@@ -2,8 +2,8 @@
 	<section class="box-border">
 		<div
 			id="favoriteSongss"
-			class="bg-bgpurple p-5 max-h-[800px] min-h-[340px] w-full mt-[-66px] relative shadow-[2px_0px_5px_5px_rgba(0,0,0,0.4)] bg-gradient-to-b from-bgpurple to-purple2"
-			style="height: 326px"
+			class="bg-bgpurple p-5 max-h-[800px] min-h-[300px] w-full mt-[-66px] relative shadow-[2px_0px_5px_5px_rgba(0,0,0,0.4)] bg-gradient-to-b from-bgpurple to-purple2"
+			style="height: 311px"
 		>
 			<div class="flex items-end justify-start h-full lg:ml-[1rem]">
 				<div
@@ -54,7 +54,7 @@
 			class="absolute w-full h-[212px] left-0 shrink-0 z-0 bg-gradient-to-b from-purple4 to-dark"
 		></div>
 
-		<div class="w-full h-[6.8rem] relative flex items-start py-[24px]">
+		<div class="w-full h-[5.8rem] relative flex items-start pt-[24px]">
 			<div class="w-full ml-[1.2rem] flex items-center lg:ml-[2rem]">
 				<button
 					@mousedown="leftClick = true"
@@ -73,7 +73,7 @@
 						'bg-green3/70 scale-[1]': leftClick,
 						'hover:scale-[1.04] bg-green3/95 hover:bg-green3': !leftClick,
 					}"
-					class="rounded-full p-[0.8rem] cursor-default"
+					class="rounded-full p-[12px] cursor-default"
 				>
 					<svg role="img" height="28" width="28" viewBox="0 0 24 24">
 						<path

@@ -108,7 +108,7 @@
 						!TrackPage &&
 						!TrackPage2,
 				}"
-				class="font-normal mb:text-sm sm3:text-[15px] truncate"
+				class="font-normal mb:text-sm sm3:text-[14px] truncate"
 			>
 				<div
 					:class="{
@@ -121,7 +121,7 @@
 				</div>
 
 				<div
-					class="text-xs sm3:text-[13px] group-hover:text-white sm:max-w-[13rem] md:max-w-full truncate pt-1 cursor-default"
+					class="mb:text-xs sm3:text-[12px] group-hover:text-white sm:max-w-[13rem] md:max-w-full truncate pt-1 cursor-default font-semibold"
 					:class="{
 						'text-white': active,
 						'text-lightest ': !active,
@@ -138,7 +138,7 @@
 			class="flex justify-start items-center hidden sm:ml-[2px]"
 		>
 			<span
-				class="text-[16px] group-hover:text-white font-semibold truncate"
+				class="mb:text-xs sm3:text-[13px] group-hover:text-white font-semibold truncate"
 				:class="{ 'text-white': active, 'text-lightest': !active }"
 			>
 				<span :class="{ 'hover:underline': favoriteSongs || playlistPage }">

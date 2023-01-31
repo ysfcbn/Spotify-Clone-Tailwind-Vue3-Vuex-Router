@@ -96,7 +96,7 @@
 						playPlaylistContext(
 							(uri = {
 								uri: playlistUri,
-								index: 0,
+								index: currentPlayingTrackIndex,
 								type: contextType,
 								id: currentTrackID,
 							})
@@ -329,6 +329,10 @@ export default {
 				await this.$store.dispatch('controller/pauseCurrentTrack');
 			} else {
 				uri.index = this.currentPlayingTrackIndex;
+				console.log(
+					'LOCATED PLAYLİST CONTEXT PLAY INDEX',
+					this.currentPlayingTrackIndex
+				);
 				!this.currentPlayingTrackIndex
 					? await this.$store.dispatch('controller/playSelectedContext', uri)
 					: await this.$store.dispatch('controller/playCurrentTrack', uri);
@@ -645,9 +649,13 @@ export default {
 		},
 
 		findCurrentPlayingTrackIndex() {
-			return this.playlistTracks.indexOf(
-				this.playlistTracks.find(item => item.track.id === this.currentTrackID)
-			);
+			return this.getCurrentlyPlayingTrack?.context.type === this.contextType
+				? this.playlistTracks.indexOf(
+						this.playlistTracks.find(
+							item => item.track.id === this.currentTrackID
+						)
+				  )
+				: 0;
 		},
 		currentPlayingTrackIndex() {
 			return this.findCurrentPlayingTrackIndex + 1

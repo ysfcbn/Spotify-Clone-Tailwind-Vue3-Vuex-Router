@@ -176,11 +176,11 @@ const controllerModule = {
 								dispatch('clearIntervalFunc');
 								commit(
 									'currentProgressMS',
-									getters.getCurrentlyPlayingTrack?.progress_ms
+									getters.getPlaybackState?.progress_ms
 								);
 								commit(
 									'currentDurationMS',
-									getters.getCurrentlyPlayingTrack?.item.duration_ms
+									getters.getPlaybackState?.item.duration_ms
 								);
 								commit(
 									'playerPercent',
@@ -194,7 +194,7 @@ const controllerModule = {
 								commit('currentTrackID', data.item.id);
 								dispatch('isFavTrack');
 								commit('currentTrackAlbumImage', data.item.album.images[0].url);
-								if (getters.getCurrentlyPlayingTrack.is_playing) {
+								if (getters.getPlaybackState.is_playing) {
 									dispatch('clearIntervalFunc');
 									commit('lastProgressMS', getters.getCurrentProgress);
 									state.startInterval === '' ? dispatch('setIntervalFunc') : '';
@@ -250,12 +250,10 @@ const controllerModule = {
 			commit('volumePercent', await state.myDevice[0].volume_percent);
 		},
 		async playCurrentTrack({ getters, dispatch, commit }) {
-			if (!getters.getCurrentlyPlayingTrack?.item?.uri) return;
+			if (!getters.getPlaybackState?.item?.uri) return;
 			await fetch(`https://api.spotify.com/v1/me/player/play`, {
 				method: 'PUT',
-				context_uri: JSON.stringify(
-					getters.getCurrentlyPlayingTrack?.item?.uri
-				),
+				context_uri: JSON.stringify(getters.getPlaybackState?.item?.uri),
 				headers: {
 					Accept: 'application/json',
 					'Content-Type': 'application/json',
@@ -268,7 +266,6 @@ const controllerModule = {
 						console.log('Playback started');
 						dispatch('fetchCurrentlyPlayingTrack');
 						commit('lastProgressMS', getters.getCurrentProgress);
-						console.log(getters.getLastProgressMS);
 						dispatch('clearIntervalFunc');
 						dispatch('setIntervalFunc');
 					}
@@ -282,8 +279,8 @@ const controllerModule = {
 					{
 						uris: [uri.uri],
 						position_ms:
-							uri.id === getters.getCurrentlyPlayingTrack?.item.id
-								? getters.getCurrentlyPlayingTrack.progress_ms
+							uri.id === getters.getPlaybackState?.item.id
+								? getters.getPlaybackState.progress_ms
 								: 0,
 					},
 					{
@@ -331,14 +328,13 @@ const controllerModule = {
 						uris: [uris.uri[uris.index], ...uris.uri.slice(uris.index + 1)],
 						position_ms:
 							uris.type === 'artist' &&
-							uris.artistID ===
-								getters.getCurrentlyPlayingTrack?.item.artists[0].id &&
-							!getters.getCurrentlyPlayingTrack?.context
-								? getters.getCurrentlyPlayingTrack.progress_ms
+							uris.artistID === getters.getPlaybackState?.item.artists[0].id &&
+							!getters.getPlaybackState?.context
+								? getters.getPlaybackState.progress_ms
 								: ((await uris.artistID) ===
-										getters.getCurrentlyPlayingTrack?.item.id &&
-										(await uris.type)) === 'artist'
-								? getters.getCurrentlyPlayingTrack.progress_ms
+										getters.getPlaybackState?.item.id && (await uris.type)) ===
+								  'artist'
+								? getters.getPlaybackState.progress_ms
 								: 0,
 					},
 					{
@@ -354,7 +350,7 @@ const controllerModule = {
 						dispatch('fetchCurrentlyPlayingTrack')
 							.then(() => {
 								console.log(getters.currentTrackID);
-								commit('lastProgressMS', getters.getCurrentProgress);
+								commit('lastProgressMS', getters.getPlaybackState?.progress_ms);
 								console.log(getters.getLastProgressMS);
 								dispatch('clearIntervalFunc');
 								dispatch('setIntervalFunc');
@@ -379,17 +375,15 @@ const controllerModule = {
 						offset: { position: await contextUri.index },
 						position_ms:
 							(await contextUri.type) ===
-								getters.getCurrentlyPlayingTrack?.context?.type &&
+								getters.getPlaybackState?.context?.type &&
 							(await contextUri.uri) ===
-								getters.getCurrentlyPlayingTrack?.context?.uri &&
-							(await contextUri.id) ===
-								getters.getCurrentlyPlayingTrack?.item.id
-								? getters.getCurrentlyPlayingTrack.progress_ms
-								: (await contextUri.id) ===
-										getters.getCurrentlyPlayingTrack?.item.id &&
+								getters.getPlaybackState?.context?.uri &&
+							(await contextUri.id) === getters.getPlaybackState?.item.id
+								? getters.getPlaybackState?.progress_ms
+								: (await contextUri.id) === getters.getPlaybackState?.item.id &&
 								  (await contextUri.type) ===
-										getters.getCurrentlyPlayingTrack?.context?.type
-								? getters.getCurrentlyPlayingTrack.progress_ms
+										getters.getPlaybackState?.context?.type
+								? getters.getPlaybackState?.progress_ms
 								: 0,
 					},
 					{
@@ -409,7 +403,7 @@ const controllerModule = {
 								console.log(getters.currentTrackID);
 								console.log(
 									'context type=>',
-									getters.getCurrentlyPlayingTrack?.context?.type
+									getters.getPlaybackState?.context?.type
 								);
 								// commit('playerPercent', state.playerProgress);
 								commit('lastProgressMS', getters.getCurrentProgress);

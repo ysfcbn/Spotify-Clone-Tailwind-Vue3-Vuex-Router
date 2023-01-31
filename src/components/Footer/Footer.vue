@@ -1,7 +1,7 @@
 <template>
 	<div
 		v-if="isAuth"
-		class="w-full h-[92px] bg-dark1 flex justify-start items-center overflow-hidden relative border-t border-opacwhite2"
+		class="h-[92px] bg-dark1 flex justify-start items-center overflow-hidden relative border-t border-opacwhite2"
 	>
 		<!-- Current Playing Track Info -->
 		<TrackInfo :trackImgDisplay="trackImgDisplay" :toggleImg="toggleImg" />

@@ -1,14 +1,14 @@
 <template>
 	<div
-		class="flex text-lightest justify-end items-center min-w-[29%] shrink-0 mx-4"
+		class="flex text-lightest justify-end items-center min-w-[32%] shrink-0 mx-4"
 	>
-		<div v-if="false" class="mr-4">
+		<div v-if="true" class="mr-4">
 			<button class="cursor-default">
 				<svg
 					class="hover:text-white"
 					role="img"
-					height="16"
-					width="16"
+					height="14"
+					width="14"
 					viewBox="0 0 16 16"
 				>
 					<path
@@ -23,8 +23,8 @@
 				<svg
 					class="hover:text-white"
 					role="img"
-					height="16"
-					width="16"
+					height="14"
+					width="14"
 					viewBox="0 0 16 16"
 				>
 					<path
@@ -38,8 +38,8 @@
 			<button class="cursor-default">
 				<svg
 					role="img"
-					height="16"
-					width="16"
+					height="14"
+					width="14"
 					class="hover:text-white"
 					viewBox="0 0 16 16"
 				>
@@ -59,8 +59,8 @@
 			<button class="mr-2 cursor-default">
 				<svg
 					@click="muteVolume"
-					height="16"
-					width="16"
+					height="15"
+					width="15"
 					viewBox="0 0 16 16"
 					class="hover:text-white"
 				>
@@ -109,8 +109,8 @@
 			<button class="cursor-default">
 				<svg
 					role="img"
-					height="16"
-					width="16"
+					height="14"
+					width="14"
 					viewBox="0 0 16 16"
 					class="hover:text-white"
 				>

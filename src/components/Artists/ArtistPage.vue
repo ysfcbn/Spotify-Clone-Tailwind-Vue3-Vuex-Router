@@ -67,7 +67,7 @@
 								'bg-green3/70 scale-[1]': leftClick,
 								'hover:scale-[1.04] bg-green3/95 hover:bg-green3': !leftClick,
 							}"
-							class="rounded-full p-[14px] w-fit cursor-default"
+							class="rounded-full p-[12px] w-fit cursor-default"
 						>
 							<svg
 								role="img"
@@ -142,7 +142,7 @@
 			</div>
 
 			<div
-				:class="{ 'h-[17.5rem]': !seeMore, 'h-full': seeMore }"
+				:class="{ 'h-[15.8rem]': !seeMore, 'h-full': seeMore }"
 				class="overflow-hidden wrapper"
 			>
 				<TrackItems
@@ -180,7 +180,7 @@
 			</div>
 			<button
 				@click="seeMoreFunc"
-				class="m-2 text-[0.75rem] text-opacwhite5 hover:text-white leading-7 tracking-widest hover:text-underline-offset-8 font-semibold cursor-default uppercase mb-8"
+				class="m-4 sm:text-[10px] sm3:text-[0.75rem] text-opacwhite5 hover:text-white leading-7 tracking-widest hover:text-underline-offset-8 font-semibold cursor-default uppercase mb-8"
 			>
 				<span v-if="!seeMore">See More</span>
 				<span v-else>daha azını göster</span>

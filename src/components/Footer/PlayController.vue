@@ -1,12 +1,12 @@
 <template>
-	<div class="flex flex-col min-w-[37.7%] shrink-0">
+	<div class="flex flex-col min-w-[33.7%] shrink-0">
 		<div class="flex justify-center mb-2 w-full">
 			<div class="flex justify-between text-lightest w-14 mr-6">
 				<button class="cursor-default">
 					<svg
 						role="img"
-						height="16"
-						width="16"
+						height="14"
+						width="14"
 						viewBox="0 0 16 16"
 						class="hover:text-white"
 					>
@@ -29,8 +29,8 @@
 				>
 					<svg
 						role="img"
-						height="16"
-						width="16"
+						height="14"
+						width="14"
 						viewBox="0 0 16 16"
 						:class="{
 							'text-lightest': leftClick,
@@ -50,7 +50,7 @@
 				@mouseup="leftClick = false"
 				@click="playCurrentTrack"
 				id="playBtn"
-				class="items-center bg-white rounded-full w-fit p-[10px] cursor-default text-dark"
+				class="items-center bg-white rounded-full w-fit p-[9px] cursor-default text-dark"
 				:class="{
 					'scale-[1]': leftClick,
 					'hover:scale-110': !leftClick,
@@ -90,8 +90,8 @@
 							'hover:text-white': !leftClick,
 						}"
 						role="img"
-						height="16"
-						width="16"
+						height="14"
+						width="14"
 						viewBox="0 0 16 16"
 					>
 						<path
@@ -104,8 +104,8 @@
 					<svg
 						class="hover:text-white"
 						role="img"
-						height="16"
-						width="16"
+						height="14"
+						width="14"
 						viewBox="0 0 16 16"
 					>
 						<path

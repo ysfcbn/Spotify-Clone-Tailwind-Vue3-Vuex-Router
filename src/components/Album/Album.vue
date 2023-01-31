@@ -94,7 +94,7 @@
 						'bg-green3/70 scale-[1]': leftClick,
 						'hover:scale-[1.04] bg-green3/95 hover:bg-green3': !leftClick,
 					}"
-					class="rounded-full p-[1rem] cursor-default"
+					class="rounded-full p-[12px] cursor-default"
 				>
 					<svg role="img" height="28" width="28" viewBox="0 0 24 24">
 						<path
