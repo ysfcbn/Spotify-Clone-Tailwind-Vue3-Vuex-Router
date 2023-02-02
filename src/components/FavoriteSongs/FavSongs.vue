@@ -332,7 +332,7 @@ export default {
 			return this.getCurrentlyPlayingTrack?.item?.id;
 		},
 		findCurrentPlayingTrackIndex() {
-			return this.getCurrentlyPlayingTrack.context.type === 'collection'
+			return this.getCurrentlyPlayingTrack?.context.type === 'collection'
 				? this.allFavTracks.indexOf(
 						this.allFavTracks.find(
 							item => item.track.id === this.currentTrackID

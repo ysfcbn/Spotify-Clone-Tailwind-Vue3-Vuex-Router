@@ -324,27 +324,27 @@ export default {
 			return this.$store.getters['favTracks/getTracks']?.items;
 		},
 		findCurrentPlayingTrackIndex() {
-			return (this.contextType === 'playlist') ===
-				this.getCurrentlyPlayingTrack?.context.type
+			return this.contextType === 'playlist' &&
+				this.contextType === this.getCurrentlyPlayingTrack?.context.type
 				? this.currentPlaylist?.indexOf(
 						this.currentPlaylist?.find(
 							item => item.track.id === this.currentTrackID
 						)
 				  )
-				: (this.contextType === 'album') ===
-				  this.getCurrentlyPlayingTrack?.context.type
+				: this.contextType === 'album' &&
+				  this.contextType === this.getCurrentlyPlayingTrack?.context.type
 				? this.currentAlbumTracks?.indexOf(
 						this.currentAlbumTracks?.find(
 							item => item.id === this.currentTrackID
 						)
 				  )
-				: (this.contextType === 'artist') ===
-				  this.getCurrentlyPlayingTrack?.context.type
+				: this.contextType === 'artist' &&
+				  this.contextType === this.getCurrentlyPlayingTrack?.context.type
 				? this.artistTopTracks.indexOf(
 						this.artistTopTracks.find(item => item.id === this.currentTrackID)
 				  )
-				: (this.contextType === 'collection') ===
-				  this.getCurrentlyPlayingTrack?.context.type
+				: this.contextType === 'collection' &&
+				  this.contextType === this.getCurrentlyPlayingTrack?.context.type
 				? this.getFavTracks.indexOf(
 						this.getFavTracks.find(
 							item => item.track.id === this.currentTrackID

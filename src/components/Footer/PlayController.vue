@@ -1,5 +1,5 @@
 <template>
-	<div class="flex flex-col min-w-[33.7%] shrink-0">
+	<div class="flex flex-col min-w-[36%] shrink-0">
 		<div class="flex justify-center mb-2 w-full">
 			<div class="flex justify-between text-lightest w-14 mr-6">
 				<button class="cursor-default">
@@ -53,7 +53,7 @@
 				class="items-center bg-white rounded-full w-fit p-[9px] cursor-default text-dark"
 				:class="{
 					'scale-[1]': leftClick,
-					'hover:scale-110': !leftClick,
+					'hover:scale-106': !leftClick,
 				}"
 			>
 				<svg
@@ -135,7 +135,7 @@
 			</div>
 			<div
 				:class="{ 'h-[8px]': isStarwarsAlbum, 'h-1': !isStarwarsAlbum }"
-				class="group w-full bg-lightest/40 rounded-full relative"
+				class="progress--bar--container relative group w-full bg-lightest/40 rounded-full"
 			>
 				<span
 					id="progress--bar"
@@ -300,7 +300,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
 #saber {
 	background-size: contain;
 	background-image: var(--saberImg);
@@ -325,6 +325,11 @@ export default {
 #progress--bar:hover {
 	background-color: var(--background-color-hover);
 	animation: blink 0.1s linear infinite;
+}
+.progress--bar--container:hover {
+	#progress--bar {
+		background-color: var(--background-color-hover);
+	}
 }
 @keyframes blink {
 	0% {

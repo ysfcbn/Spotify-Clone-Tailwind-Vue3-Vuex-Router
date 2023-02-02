@@ -34,7 +34,7 @@
 				</div>
 				<div class="flex relative z-0">
 					<router-link
-						:class="currentTrackArtistsArr.length > 1 ? 'artist--name ' : ''"
+						:class="currentTrackArtistsArr.length > 1 ? 'artist--name' : ''"
 						class="text-[11px] text-lightest shrink-0 hover:underline hover:text-white"
 						v-for="artist in currentTrackArtistsArr"
 						:key="artist.id"
@@ -137,7 +137,7 @@ export default {
 
 <style lang="scss" scoped>
 .artist--name {
-	&::before {
+	&::after {
 		display: inline-block;
 		content: '\00a0';
 	}

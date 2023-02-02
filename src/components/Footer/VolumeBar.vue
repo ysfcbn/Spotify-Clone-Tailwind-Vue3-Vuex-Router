@@ -2,7 +2,7 @@
 	<div
 		class="flex text-lightest justify-end items-center min-w-[32%] shrink-0 mx-4"
 	>
-		<div v-if="true" class="mr-4">
+		<div v-if="true">
 			<button class="cursor-default">
 				<svg
 					class="hover:text-white"
@@ -18,7 +18,7 @@
 				</svg>
 			</button>
 		</div>
-		<div class="mr-4">
+		<div class="mx-4">
 			<button class="cursor-default">
 				<svg
 					class="hover:text-white"
@@ -54,9 +54,8 @@
 				</svg>
 			</button>
 		</div>
-
-		<div class="volume flex items-center mx-2 mb-1 w-[7.3rem]">
-			<button class="mr-2 cursor-default">
+		<div class="ml-2">
+			<button class="cursor-default">
 				<svg
 					@click="muteVolume"
 					height="15"
@@ -90,16 +89,18 @@
 					></path>
 				</svg>
 			</button>
+		</div>
+		<div class="flex items-center mx-2 mb-1 min-w-[3.8rem]">
 			<div
 				id="volume-bar"
-				class="group relative w-[5.8rem] max-w-[5.8rem] h-1 bg-lightest/40 rounded-full"
+				class="group flex relative w-full h-1 bg-lightest/40 rounded-full"
 			>
 				<span
 					:style="{ width: percentVol + '%' }"
-					class="absolute bg-white max-w-[5.8rem] h-1 absolute rounded-full group-hover:bg-green3"
+					class="absolute bg-white h-1 rounded-full group-hover:bg-green3"
 				>
 					<span
-						class="hidden group-hover:block bg-white w-[13px] h-[13px] absolute rounded-full top-[-5px] right-[-8px]"
+						class="block invisible group-hover:visible bg-white w-[13px] h-[13px] absolute rounded-full top-[-4px] right-[-8px]"
 					></span>
 				</span>
 			</div>
