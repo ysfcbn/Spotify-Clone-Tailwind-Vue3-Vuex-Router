@@ -75,7 +75,7 @@
 					}"
 					class="rounded-full p-[12px] cursor-default"
 				>
-					<svg role="img" height="28" width="28" viewBox="0 0 24 24">
+					<svg role="img" height="26" width="26" viewBox="0 0 24 24">
 						<path
 							v-if="!isPlayingFavSongsContextUri"
 							fill="currentColor"

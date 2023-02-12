@@ -120,10 +120,13 @@
     <div
       class="flex items-center justify-around text-lightest text-sm min-w-[17rem]"
     >
-      <div class="text-[11px] mr-2 w-[1.5rem]">
-        {{ trackDurationFunc((duration = trackSeek)) }}
+      <div
+        :class="isStarwarsAlbum ? 'mt-[2px] w-[1.1rem]' : ''"
+        class="text-[0.71rem] font-semibold tracking-widest cursor-default mr-[0.6rem]"
+      >
+        {{ timeParse(trackSeek) }}
       </div>
-      <div v-if="isStarwarsAlbum" class="w-[5.2rem] h-full z-20 flex-none">
+      <div v-if="isStarwarsAlbum" class="w-[5.3rem] h-full z-10 flex-none">
         <button
           @click="changeBladeIcon"
           class="cursor-default"
@@ -134,15 +137,18 @@
         ></button>
       </div>
       <div
-        :class="{ 'h-[8px]': isStarwarsAlbum, 'h-1': !isStarwarsAlbum }"
+        :class="{ 'h-1': !isStarwarsAlbum }"
         class="progress--bar--container relative group w-full bg-lightest/40 rounded-full"
+        @click="seekToPosition(msg, $event)"
+        :style="{
+          height: isStarwarsAlbum ? starWarsBarIcons[`${index}`].height : '4px',
+        }"
       >
-        <span
+        <div
           id="progress--bar"
           :style="styleObject"
           :class="{
-            'h-[8px]': isStarwarsAlbum,
-            'h-1 bg-white': !isStarwarsAlbum,
+            ' bg-white': !isStarwarsAlbum,
           }"
           class="absolute rounded-full group-hover:bg-green3"
         >
@@ -153,10 +159,24 @@
             }"
             class="block invisible group-hover:visible bg-white absolute w-[12px] h-[12px] rounded-full right-[-5px]"
           ></span>
-        </span>
+        </div>
       </div>
-      <div class="text-[11px] ml-2">
-        {{ trackDurationFunc((duration = trackDuration)) }}
+      <div
+        @click="toggleDuration"
+        class="text-[0.71rem] shrink-0 flex h-[1.4rem] w-[0.5rem] font-semibold ml-2 tracking-widest cursor-default"
+      >
+        <div v-if="reverseDuration" class="flex items-center">
+          <span>
+            {{ timeParse(trackDuration) }}
+          </span>
+        </div>
+
+        <div v-else class="flex items-center">
+          <span class="h-full"> - </span>
+          <span>
+            {{ timeParse(getReverseDuration) }}
+          </span>
+        </div>
       </div>
     </div>
   </div>
@@ -169,50 +189,59 @@ export default {
   data() {
     return {
       leftClick: false,
+      reverseDuration: false,
       index: 0,
       progressBarWidth: "0%",
+      progresBarEl: null,
       starWarsBarIcons: [
         {
           id: 0,
           url: "https://open.spotifycdn.com/cdn/images/sw_saber_anakin.46a12813.png",
           edgeColor: "rgb(55, 132, 214)",
           blurColor: "#2e77d0",
+          height: "7px",
         },
         {
           id: 1,
           url: "https://open.spotifycdn.com/cdn/images/sw_saber_luke.170f9698.png",
           edgeColor: "rgb(135, 220, 90)",
           blurColor: "#1ed760",
+          height: "10px",
         },
         {
           id: 2,
           url: "https://open.spotifycdn.com/cdn/images/sw_saber_vader.78296917.png",
           edgeColor: "rgb(229, 17, 21)",
           blurColor: "#cd1a2b",
+          height: "7px",
         },
         {
           id: 3,
           url: "https://open.spotifycdn.com/cdn/images/sw_saber_rey.b4a2ccc1.png",
           edgeColor: "rgb(249, 164, 11)",
           blurColor: " rgb(253, 175, 33)",
+          height: "10px",
         },
         {
           id: 4,
           url: "https://open.spotifycdn.com/cdn/images/sw_saber_leia.47a0ef84.png",
           edgeColor: "rgb(55, 132, 214)",
           blurColor: "#2e77d0",
+          height: "8px",
         },
         {
           id: 5,
           url: "https://open.spotifycdn.com/cdn/images/sw_saber_mace.de90025a.png",
           edgeColor: "rgb(90, 22, 167)",
           blurColor: "rgb(172, 57, 193)",
+          height: "6px",
         },
         {
           id: 6,
           url: "https://open.spotifycdn.com/cdn/images/sw_saber_ahsoka1.dd3102a7.png",
           edgeColor: "rgb(255,255,255)",
           blurColor: "rgb(255,255,255)",
+          height: "6px",
         },
       ],
     };
@@ -235,6 +264,9 @@ export default {
     },
     trackSeek() {
       return this.$store.getters["controller/getCurrentProgress"];
+    },
+    getReverseDuration() {
+      return this.$store.getters["controller/getLastReverseProgressMS"];
     },
     isStarwarsAlbum() {
       return (
@@ -269,11 +301,25 @@ export default {
     async skipToPrevTrack() {
       await this.$store.dispatch("controller/skipToPrevTrack");
     },
-    trackDurationFunc(duration) {
+    timeParse(duration) {
       const minutes = Math.floor(duration / 60000);
       const seconds = Math.floor((duration % 60000) / 1000);
       const result = minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
       return result;
+    },
+    seekToPosition(_, e) {
+      const jumpToSeek = (e.offsetX * 100) / this.progresBarEl.offsetWidth;
+      const seekTo = (Math.round(jumpToSeek) * this.trackDuration) / 100;
+      console.log(Math.round(jumpToSeek));
+      console.log(Math.round(seekTo));
+      this.$store.dispatch("controller/seekToPosition", Math.round(seekTo));
+      this.$store.commit(
+        "controller/currentProgressMS",
+        this.getCurrentlyPlayingTrack?.progress_ms
+      );
+    },
+    toggleDuration() {
+      this.reverseDuration = !this.reverseDuration;
     },
     changeBladeIcon() {
       this.index !== 6 ? (this.index = this.index + 1) : (this.index = 0);
@@ -283,7 +329,7 @@ export default {
     playerProgress(newVal, oldVal) {
       if (newVal !== oldVal) {
         this.progressBarWidth = newVal + "%";
-        if (newVal >= 100) {
+        if (newVal >= 99.65) {
           this.$store.commit(
             "controller/currentProgressMS",
             this.trackDuration
@@ -296,6 +342,11 @@ export default {
         this.progressBarWidth = oldVal + "%";
       }
     },
+  },
+  mounted() {
+    this.progresBarEl = [
+      document.querySelector(".progress--bar--container"),
+    ][0];
   },
 };
 </script>
@@ -312,23 +363,29 @@ export default {
   top: 56%;
   position: absolute;
 }
+
 #progress--bar {
   background: linear-gradient(
     to bottom,
-    var(--saberColor),
-    #fff 50%,
-    var(--saberColor)
+    var(--saberColor) 0,
+    var(--saberColor) 10%,
+    #fff 10%,
+    #fff 90%,
+    var(--saberColor) 90%,
+    var(--saberColor) 100%
   );
-  box-shadow: 0px 0px 12px 1px var(--saberColor);
+  box-shadow: 0px 0px 12px 3px var(--saberColor);
   background-color: var(--background-color);
+  height: 100%;
+  width: 100%;
 }
 #progress--bar:hover {
   background-color: var(--background-color-hover);
-  animation: blink 0.1s linear infinite;
 }
 .progress--bar--container:hover {
   #progress--bar {
     background-color: var(--background-color-hover);
+    animation: blink 0.1s linear infinite;
   }
 }
 @keyframes blink {

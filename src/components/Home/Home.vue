@@ -135,7 +135,7 @@
 				<div class="flex justify-between h-[3.3rem]">
 					<div class="h-fit flex flex-col gap-1">
 						<h2
-							class="text-[1.5rem] text-white leading-7 tracking-tight hover:underline hover:text-underline-offset-8 cursor-pointer"
+							class="text-[1.3rem] text-white leading-7 tracking-tight hover:underline hover:text-underline-offset-8 cursor-pointer"
 							style="font-weight: 700"
 						>
 							Yakında Çalınanlar

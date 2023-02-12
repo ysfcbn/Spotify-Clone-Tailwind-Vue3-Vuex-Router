@@ -106,9 +106,9 @@
 						'bg-green3/70 scale-[1]': leftClick,
 						'hover:scale-[1.04] bg-green3/95 hover:bg-green3': !leftClick,
 					}"
-					class="rounded-full p-[14px] cursor-default"
+					class="rounded-full p-[12px] cursor-default"
 				>
-					<svg height="28" width="28" viewBox="0 0 24 24" class="">
+					<svg height="26" width="26" viewBox="0 0 24 24" class="">
 						<path
 							v-if="!isPlayingPlaylistContextUri"
 							fill="currentColor"
@@ -127,7 +127,7 @@
 						v-if="totalPlaylistTracks"
 						@click="unFollowPlaylist"
 						id="heartBtn"
-						class="p-[0.9rem] w-[4rem] ml-4 mx-1 cursor-default"
+						class="p-[0.9rem] w-[4rem] ml-3 cursor-default"
 						:class="{
 							greenHeart: isFavPlaylist,
 							emptyHeart: !isFavPlaylist,
@@ -137,8 +137,8 @@
 							:class="{
 								'hover:text-white': !isFavPlaylist,
 							}"
-							height="32"
-							width="32"
+							height="28"
+							width="28"
 							viewBox="0 0 24 24"
 						>
 							<path

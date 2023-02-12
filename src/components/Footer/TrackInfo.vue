@@ -1,13 +1,13 @@
 <template>
-  <div class="flex w-[32%] ml-3 min-w-[13rem] flex-shrink mr-6">
+  <div class="flex w-[32%] min-w-[13rem] shrink-0 mr-2">
     <div
       v-show="getCurrentTrack"
-      class="relative flex items-center justify-center ease-in duration-200"
+      class="relative flex items-center justify-center ease-in duration-200 min-w-[14.5rem]"
       :class="{
         'right-[4.5rem] ease-in duration-200 ': !trackImgDisplay,
       }"
     >
-      <div class="group relative shrink-0 mr-3">
+      <div class="group relative shrink-0 mx-3">
         <span
           class="hidden group-hover:block text-lightest w-fit rounded-full p-1 bg-black/70 absolute right-1 top-1 hover:scale-112 hover:bg-black/90 hover:text-white"
           @click="toggleImg"
@@ -22,7 +22,7 @@
         <img width="52" height="52" :src="currentTrackAlbumImage" />
       </div>
       <div
-        class="trackInfo flex flex-col overflow-x-hidden flex-shrink min-w-[0rem] pr-4"
+        class="trackInfo flex flex-col overflow-x-hidden gap-y-1 min-w-[4rem] pr-4"
         :class="{
           'ml-2': !trackImgDisplay,
         }"
@@ -54,13 +54,15 @@
           </router-link>
         </div>
       </div>
-      <div class="flex items-center justify-center text-lightest">
+      <div
+        class="flex items-center justify-center text-lightest w-[5rem] shrink-0 h-full"
+      >
         <button
           :class="{
             greenHeart: currentTrackIsFav,
             'emptyHeart hover:text-white': !currentTrackIsFav,
           }"
-          class="ml-4 cursor-default"
+          class="cursor-default"
         >
           <svg role="img" height="14" width="14" viewBox="0 0 16 16" class="">
             <path
@@ -151,7 +153,7 @@ export default {
     content: "";
     position: absolute;
     z-index: 0;
-    width: 10px;
+    width: 15px;
     height: 100%;
     top: 0;
     right: 0;

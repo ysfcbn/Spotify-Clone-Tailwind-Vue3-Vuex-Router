@@ -96,7 +96,7 @@
 					}"
 					class="rounded-full p-[12px] cursor-default"
 				>
-					<svg role="img" height="28" width="28" viewBox="0 0 24 24">
+					<svg role="img" height="26" width="26" viewBox="0 0 24 24">
 						<path
 							v-if="!isPlayingAlbumContextUri"
 							fill="currentColor"
@@ -113,7 +113,7 @@
 					<button
 						@click="unFollowAlbum"
 						id="heartBtn"
-						class="p-[0.9rem] w-[4rem] ml-4 mx-1 cursor-default"
+						class="p-[0.9rem] w-[4rem] ml-3 cursor-default"
 						:class="{
 							greenHeart: isFavAlbum,
 							emptyHeart: !isFavAlbum,
@@ -124,8 +124,8 @@
 								'hover:text-white': !isFavAlbum,
 							}"
 							role="img"
-							height="32"
-							width="32"
+							height="28"
+							width="28"
 							viewBox="0 0 24 24"
 						>
 							<path
@@ -220,11 +220,11 @@
 			</div>
 		</div>
 
-		<div class="text-lightest mt-10 sm:ml-5 lg:ml-[2.4rem]">
-			<div>
-				<p class="text-md mb-1">{{ currentReleaseDate() }}</p>
-				<div>
-					<p class="text-[11px]" v-for="copy in copyrights" :key="copy.type">
+		<div class="text-lightest mt-10 text-sm mb:ml-5 lg:ml-[2.4rem]">
+			<div class="">
+				<p class="mb-1">{{ currentReleaseDate() }}</p>
+				<div class="flex flex-col w-[80%]">
+					<p class="text-[10px]" v-for="copy in copyrights" :key="copy.type">
 						{{ copy.text }}
 					</p>
 				</div>
@@ -234,7 +234,7 @@
 		<!-- More Singles -->
 		<section
 			v-if="artistAlbums.length"
-			class="sm:pl-5 lg:p-5 lg:ml-[1rem] mt-10"
+			class="mb:pl-5 lg:p-5 lg:ml-[1rem] mt-10"
 		>
 			<!-- Cards -->
 			<Card :currentData="artistAlbums">
