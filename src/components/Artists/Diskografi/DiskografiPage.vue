@@ -144,27 +144,18 @@ export default {
 				this.$store.dispatch('discography/discoRenderType', 'cardView');
 			}
 		},
-
-		toggleHeaderDiskoFunc(value) {
-			this.$emit('toggleHeaderDisko', value);
-		},
-		visToggleHeaderDiskoFunc(value) {
-			this.$emit('visToggleHeaderDisko', value);
-		},
-		diskoSectionName(name) {
-			this.$emit('sectionTitle', name);
-		},
-		selectedArtsitNameFunc(name) {
-			this.$emit('selectedArtistName', name);
-		},
 	},
 
 	created() {
 		this.diskografiPage = true;
-		console.log(this.artistPublications);
-		console.log(this.selectedType);
-		this.selectedType.forEach(item => this.currentSectionAlbums.push(item.id));
-		console.log(this.currentSectionAlbums);
+		if (!this.selectedType) {
+			this.artistPublications.forEach(item =>
+				this.currentSectionAlbums.push(item.id)
+			);
+		} else
+			this.selectedType.forEach(item =>
+				this.currentSectionAlbums.push(item.id)
+			);
 		this.$store.dispatch(
 			'discography/currentSectionAlbumsID',
 			this.currentSectionAlbums

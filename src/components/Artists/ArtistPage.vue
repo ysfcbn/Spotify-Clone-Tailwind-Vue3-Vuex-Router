@@ -204,7 +204,7 @@
 						@click="openDiscografi"
 						:to="{
 							name: 'discography',
-							params: { id: currentArtist?.id, type: `${this.type}` },
+							params: { id: currentArtist?.id, type: this.type },
 						}"
 						class="uppercase text-lightest"
 						>HEPSİNİ GÖR</router-link

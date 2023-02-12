@@ -177,7 +177,7 @@
 			<TrackItemsHeader :margin="margin" :albumPage="albumPage" />
 			<div class="trackItems--container mt-2">
 				<TrackItems
-					v-for="(item, i) in albumData?.tracks?.items"
+					v-for="(item, i) in currentAlbum?.tracks?.items"
 					:key="item.id"
 					:id="item.id"
 					:uri="albumUri"
@@ -202,7 +202,7 @@
 							class="hover:underline"
 							v-for="artist in item.artists"
 							:key="artist.id"
-							:to="{ name: 'artist', params: { id: `${artist.id}` } }"
+							:to="{ name: 'artist', params: { id: artist.id } }"
 						>
 							{{
 								item.artists.length > 1
@@ -214,7 +214,9 @@
 						</router-link></template
 					>
 					<template v-slot:duration>{{
-						trackDuration((duration = albumData?.tracks?.items[i]?.duration_ms))
+						trackDuration(
+							(duration = currentAlbum?.tracks?.items[i]?.duration_ms)
+						)
 					}}</template>
 				</TrackItems>
 			</div>
@@ -233,7 +235,7 @@
 
 		<!-- More Singles -->
 		<section
-			v-if="artistAlbums.length"
+			v-if="artistAlbums?.length"
 			class="mb:pl-5 lg:p-5 lg:ml-[1rem] mt-10"
 		>
 			<!-- Cards -->
@@ -241,7 +243,17 @@
 				<template #cardTitle>
 					Daha fazla {{ albumArtistName[0].name }}</template
 				>
-				<template #seeMore>DİSKOGRAFİYE BAK</template>
+				<template #seeMore>
+					<router-link
+						@click="openDiscografi"
+						:to="{
+							name: 'discography',
+							params: { id: albumArtistName[0].id, type: 'all' },
+						}"
+						class="uppercase text-lightest"
+						>DİSKOGRAFİYE BAK</router-link
+					>
+				</template>
 
 				<template #imgContainer="{ data }">
 					<div class="w-full relative mb-5">
@@ -254,7 +266,7 @@
 				</template>
 				<template #firstTitle="{ data }">{{ data?.name }}</template>
 				<template #secondTitle="{ data }"
-					><span class="capitalize">{{ data?.type }}</span>
+					><span>{{ new Date(data?.release_date).getFullYear() }}</span>
 				</template>
 				<template #playBtn="{ data }">
 					<div
@@ -344,14 +356,12 @@ export default {
 				.height,
 			bodyHeight: document.body.getBoundingClientRect().height,
 			bodyWidth: document.body.getBoundingClientRect().width,
-			albumData: [],
 			totalArtist: [],
-			artistAlbums: [],
 			artistImg: '',
 		};
 	},
 	methods: {
-		async fetchAlbum(href) {
+		async fetchAlbum(href, id = this.id) {
 			return await axios
 				.get(href, {
 					headers: {
@@ -361,11 +371,13 @@ export default {
 					},
 				})
 				.then(({ data }) => {
-					this.$store.dispatch('albums/getAlbum', data);
-					return data;
+					if (id === this.id) {
+						this.$store.dispatch('albums/getAlbum', data);
+					} else this.$store.dispatch('albums/selectedCardAlbum', data);
 				})
 				.catch(err => console.log(err));
 		},
+
 		async playCurrentAlbumContext(uri, href) {
 			console.log(uri);
 			if (this.isPlayingAlbumContextUri) {
@@ -386,7 +398,10 @@ export default {
 			) {
 				await this.$store.dispatch('controller/pauseCurrentTrack');
 			} else {
-				await this.fetchAlbum(href);
+				await this.fetchAlbum(
+					href,
+					this.currentAlbumTracks[this.currentPlayingTrackIndex]?.id
+				);
 				uri.index = this.currentPlayingTrackIndex;
 				uri.id = this.currentAlbumTracks[this.currentPlayingTrackIndex]?.id;
 				console.log(uri);
@@ -408,12 +423,70 @@ export default {
 				})
 				.catch(err => console.log(err));
 		},
+		async fetchArtist() {
+			await axios
+				.get(
+					'https://api.spotify.com/v1/artists/' + this.albumArtistName[0].id,
+					{
+						headers: {
+							Accept: 'application/json',
+							'Content-Type': 'application/json',
+							Authorization: 'Bearer ' + this.getToken,
+						},
+					}
+				)
+				.then(({ data }) => {
+					console.log(data);
+					this.$store.dispatch('artists/currentArtist', data);
+				})
+				.catch(err => console.log(err));
+		},
+		async fetchArtistSingles() {
+			await axios
+				.get(
+					'https://api.spotify.com/v1/artists/' +
+						this.albumArtistName[0]?.id +
+						'/albums?limit=10&include_groups=single',
+					{
+						headers: {
+							Accept: 'application/json',
+							'Content-Type': 'application/json',
+							Authorization: 'Bearer ' + this.getToken,
+						},
+					}
+				)
+				.then(({ data }) => {
+					console.log(data);
+					this.$store.dispatch('artists/artistSingles', data);
+				})
+				.catch(err => console.log(err));
+		},
+		async fetchArtistCompilations() {
+			await axios
+				.get(
+					'https://api.spotify.com/v1/artists/' +
+						this.albumArtistName[0]?.id +
+						'/albums?limit=10&include_groups=compilation',
+					{
+						headers: {
+							Accept: 'application/json',
+							'Content-Type': 'application/json',
+							Authorization: 'Bearer ' + this.getToken,
+						},
+					}
+				)
+				.then(({ data }) => {
+					console.log(data);
+					this.$store.dispatch('artists/artistCompilations', data);
+				})
+				.catch(err => console.log(err));
+		},
 		async fetchArtistAlbums() {
 			return await axios
 				.get(
 					'https://api.spotify.com/v1/artists/' +
 						this.albumArtistName[0]?.id +
-						'/albums',
+						'/albums?limit=10',
 					{
 						headers: {
 							Accept: 'application/json',
@@ -424,11 +497,17 @@ export default {
 				)
 				.then(({ data }) => {
 					console.log(data);
-					return data;
+					this.$store.dispatch('artists/artistAlbums', data);
+					this.$store.dispatch('artists/artistPublications', data);
 				})
 				.catch(err => console.log(err));
 		},
-
+		async openDiscografi() {
+			await this.fetchArtist();
+			await this.fetchArtistSingles();
+			await this.fetchArtistCompilations();
+			this.$store.dispatch('discography/selectedType', 'all');
+		},
 		async unFollowAlbum() {
 			if (this.isFavAlbum) {
 				await axios
@@ -540,9 +619,6 @@ export default {
 			);
 		},
 
-		cartAlbumYear(i) {
-			return new Date(`${this.artistAlbums[i].release_date}`).getFullYear();
-		},
 		trackDuration(duration) {
 			const minutes = Math.floor(duration / 60000);
 			const seconds = Math.floor((duration % 60000) / 1000);
@@ -554,7 +630,7 @@ export default {
 			this.appOptions = !this.appOptions;
 		},
 		totalDuration() {
-			const totalMiliSeconds = this.albumData?.tracks?.items?.reduce(
+			const totalMiliSeconds = this.currentAlbum?.tracks?.items?.reduce(
 				(acc, track) => {
 					acc += track.duration_ms;
 					return acc;
@@ -617,7 +693,6 @@ export default {
 		allFavTracks() {
 			return this.$store.getters['favTracks/getTracks'].items;
 		},
-
 		currentAlbum() {
 			return this.$store.getters['albums/getAlbum'];
 		},
@@ -681,6 +756,9 @@ export default {
 			return this.currentAlbum?.artists.length === 1
 				? this.currentAlbum?.images[2]?.url
 				: '';
+		},
+		artistAlbums() {
+			return this.$store.getters['artists/getArtistAlbums']?.items;
 		},
 		albumYear() {
 			return new Date(`${this.currentAlbum?.release_date}`).getFullYear();
@@ -786,14 +864,10 @@ export default {
 	async created() {
 		console.log('albumPage Created');
 		window.addEventListener('resize', this.resizeOption2);
-
-		this.albumData = await this.fetchAlbum(
-			'https://api.spotify.com/v1/albums/' + this.id
-		);
-		this.artistAlbums = await this.fetchArtistAlbums();
-		this.artistAlbums = this.artistAlbums.items.slice(0, 10);
-
 		this.albumPage = true;
+
+		await this.fetchAlbum('https://api.spotify.com/v1/albums/' + this.id);
+		await this.fetchArtistAlbums();
 
 		(await this.isPlayingAlbumContextUri)
 			? this.$store.dispatch('controller/isPlayingHeaderBtn', true)
