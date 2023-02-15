@@ -122,7 +122,7 @@
 							>
 								<button
 									id="playBtn"
-									class="p-3 bg-green3 rounded-full cursor-default lg:group-hover:block hover:scale-110 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+									class="p-[10px] bg-green3 rounded-full cursor-default lg:group-hover:block hover:scale-110 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
 								>
 									<h1 class="text-white"></h1>
 									<svg role="img" height="24" width="24" viewBox="0 0 24 24">

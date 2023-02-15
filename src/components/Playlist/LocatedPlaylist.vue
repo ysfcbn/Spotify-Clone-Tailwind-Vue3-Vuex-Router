@@ -352,6 +352,11 @@ export default {
 						}
 					)
 					.then(data => {
+						if (data.status !== 200) {
+							this.$store.dispatch('controller/modalInfoType', {
+								type: 'error',
+							});
+						}
 						if (data.status === 200) {
 							heartBtn.classList.add('animationEmptyHeart');
 							heartBtn.classList.remove('animationGreenHeart');
@@ -438,7 +443,24 @@ export default {
 					});
 				});
 		},
-
+		// async checkFavTracks() {
+		// 	await axios
+		// 		.get(
+		// 			'https://api.spotify.com/v1/me/trakcs/contains?ids=' +
+		// 				this.allFavTrackIDs,
+		// 			{
+		// 				headers: {
+		// 					Accept: 'application/json',
+		// 					'Content-Type': 'application/json',
+		// 					Authorization: 'Bearer ' + this.getToken,
+		// 				},
+		// 			}
+		// 		)
+		// 		.then(({ data }) => {
+		// 			this.$store.dispatch('episodes/currentEpisodeIsFav', data);
+		// 		})
+		// 		.catch(err => console.log(err));
+		// },
 		findFavTracks() {
 			this.allFavTracks.forEach((track, i) => {
 				this.playlistTracksItems.forEach((item, i) => {
@@ -497,7 +519,6 @@ export default {
 				'hidden'
 			);
 		},
-
 		toggleAppOptions() {
 			this.appOptions = !this.appOptions;
 		},
@@ -679,6 +700,9 @@ export default {
 		allFavTracks() {
 			return this.$store.getters['favTracks/getTracks']?.items;
 		},
+		// allFavTrackIDs() {
+		// 	return this.getFavTracksonplaylist?.map(item => item.id).join(',');
+		// },
 		getFavTracksonplaylist() {
 			return this.$store.getters['playlists/getfavTracksID'];
 		},

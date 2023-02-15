@@ -201,7 +201,7 @@
 			</div>
 			<div
 				@click="toggleDuration"
-				class="text-[0.55rem] h-5 w-[1rem] font-semibold ml-2 tracking-widest cursor-default"
+				class="text-[0.55rem] h-5 w-[1rem] font-semibold ml-1 tracking-widest cursor-default"
 			>
 				<div v-if="reverseDuration" class="flex items-center">
 					<span>
@@ -210,7 +210,7 @@
 				</div>
 
 				<div v-else class="flex items-center">
-					<span class="h-full"> - </span>
+					<span> - </span>
 					<span>
 						{{ timeParse(getReverseDuration) }}
 					</span>

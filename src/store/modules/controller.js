@@ -638,8 +638,12 @@ const controllerModule = {
 			)
 				.then(data => {
 					console.log(data);
+					if (data.status !== 204) {
+						dispatch('modalInfoType', {
+							type: 'error',
+						});
+					}
 					if (data.status === 204) {
-						console.log('!!!!!!!!item added to Queue!!!!!!!!!!!!');
 						dispatch('modalInfoType', {
 							type: 'queue',
 							status: true,

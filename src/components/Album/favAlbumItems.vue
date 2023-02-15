@@ -13,8 +13,9 @@
 				<div
 					:class="{
 						'opacity-100 translate-y-[-0.4rem]': isPlayingContextUri,
+						'opacity-0': !isPlayingContextUri,
 					}"
-					class="bg-dark1 rounded-full right-0 bottom-0 absolute flex items-center right-0 bottom-0 my-1 mx-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
+					class="bg-dark rounded-full right-0 bottom-0 absolute flex items-center mx-1 group-hover:block group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
 				>
 					<button
 						@mousedown="leftClick = true"
@@ -22,9 +23,9 @@
 						id="playBtn"
 						:class="{
 							' bg-green3/80 scale-80': leftClick,
-							'hover:scale-110 bg-green3/95 hover:bg-green3': !leftClick,
+							'hover:scale-106 bg-green3/95 hover:bg-green3': !leftClick,
 						}"
-						class="p-3 rounded-full cursor-default shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+						class="p-[10px] rounded-full cursor-default shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
 					>
 						<span>
 							<svg role="img" height="24" width="24" viewBox="0 0 24 24">

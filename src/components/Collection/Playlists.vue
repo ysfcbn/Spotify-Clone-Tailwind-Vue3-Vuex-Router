@@ -187,12 +187,14 @@
 									'opacity-100 translate-y-[-0.4rem]':
 										getCurrentlyPlayingTrack?.is_playing &&
 										playlist.uri === getCurrentlyPlayingTrack?.context?.uri,
+									'opacity-0':
+										getCurrentlyPlayingTrack?.is_playing &&
+										playlist.uri !== getCurrentlyPlayingTrack?.context?.uri,
 								}"
-								class="absolute flex items-start right-0 bottom-0 py-1 px-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:block group-hover:translate-y-[-0.4rem]"
+								class="bg-dark rounded-full right-0 bottom-0 absolute flex items-center mx-2 group-hover:block group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
 							>
 								<button
 									v-if="playlist?.images[0]?.url"
-									id="playBtn"
 									@click="
 										playContextUri(
 											(uri = {
@@ -203,7 +205,14 @@
 											(href = playlist.href)
 										)
 									"
-									class="p-3 bg-green3 rounded-full cursor-default lg:group-hover:block hover:scale-110 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+									@mousedown="leftClick = true"
+									@mouseup="leftClick = false"
+									id="playBtn"
+									:class="{
+										' bg-green3/80 scale-80': leftClick,
+										'hover:scale-104 bg-green3/95 hover:bg-green3': !leftClick,
+									}"
+									class="p-3 rounded-full cursor-default shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
 								>
 									<svg role="img" height="24" width="24" viewBox="0 0 24 24">
 										<path
@@ -257,7 +266,7 @@ export default {
 	name: 'playlists',
 	components: { Info },
 	data() {
-		return { librarySec: false, typeOfSelectedSection: null };
+		return { librarySec: false, leftClick: false, typeOfSelectedSection: null };
 	},
 	methods: {
 		toggleFavSong(_, event) {

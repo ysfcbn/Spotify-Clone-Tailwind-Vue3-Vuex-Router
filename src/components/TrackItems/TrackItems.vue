@@ -489,53 +489,70 @@ export default {
 				headers: {
 					Accept: 'application/json',
 					'Content-Type': 'application/json',
-					Authorization: 'Bearer ' + (await this.getToken),
+					Authorization: 'Bearer ' + this.getToken,
 				},
 			})
 				.then(data => {
 					console.log(data.status);
-					if (data.status === 200)
+					if (data.status !== 200) {
 						this.$store.dispatch('controller/modalInfoType', {
-							type: 'favSong',
-							status: true,
+							type: 'error',
 						});
-					this.fetchFavTracks()
-						.then(() => {
-							this.playlistPage
-								? this.$store.dispatch('playlists/clearTracksID')
-								: this.albumPage || this.TrackPage
-								? this.$store.dispatch('albums/clearTracksID') &
-								  this.$store.dispatch('albums/clearTracksID2')
-								: this.userPage
-								? this.$store.dispatch('users/clearTracksID')
-								: this.artistPage
-								? this.$store.dispatch('artists/clearTracksID')
-								: this.diskografiPage
-								? this.$store.dispatch('discography/clearTracksID')
-								: '';
-							this.findFavTracks();
-							this.TrackPage ? this.findFavTracks2() : '';
-						})
-						.then(() => {
-							const trackItem = document.getElementById(trackID);
-							const trackItem2 = document.getElementsByClassName(trackID);
-							this.addGreenHeartFavTracks(trackItem);
-							this.TrackPage ? this.addGreenHeartFavTracks2(trackItem2) : '';
-						});
+					}
+					if (data.status === 200)
+						this.$store
+							.dispatch('controller/modalInfoType', {
+								type: 'favSong',
+								status: true,
+							})
+							.then(() => {
+								this.fetchFavTracks()
+									.then(() => {
+										this.playlistPage
+											? this.$store.dispatch('playlists/clearTracksID')
+											: this.albumPage || this.TrackPage
+											? this.$store.dispatch('albums/clearTracksID') &
+											  this.$store.dispatch('albums/clearTracksID2')
+											: this.userPage
+											? this.$store.dispatch('users/clearTracksID')
+											: this.artistPage
+											? this.$store.dispatch('artists/clearTracksID')
+											: this.diskografiPage
+											? this.$store.dispatch('discography/clearTracksID')
+											: '';
+										this.findFavTracks();
+										this.TrackPage ? this.findFavTracks2() : '';
+									})
+									.then(() => {
+										const trackItem = document.getElementById(trackID);
+										const trackItem2 = document.getElementsByClassName(trackID);
+										this.addGreenHeartFavTracks(trackItem);
+										this.TrackPage
+											? this.addGreenHeartFavTracks2(trackItem2)
+											: '';
+									});
+							});
 				})
-				.catch(err => console.log(err));
+				.catch(err => {
+					console.log(err);
+				});
 		},
 		async removeFavTrack(trackID) {
-			await axios
-				.delete('https://api.spotify.com/v1/me/tracks?ids=' + trackID, {
-					headers: {
-						Accept: 'application/json',
-						'Content-Type': 'application/json',
-						Authorization: 'Bearer ' + (await this.getToken),
-					},
-				})
+			await fetch('https://api.spotify.com/v1/me/tracks?ids=' + trackID, {
+				method: 'DELETE',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+					Authorization: 'Bearer ' + this.getToken,
+				},
+			})
 				.then(data => {
-					console.log(data);
+					console.log(data.status);
+					if (data.status !== 200) {
+						this.$store.dispatch('controller/modalInfoType', {
+							type: 'error',
+						});
+					}
 					if (data.status === 200) {
 						this.$store.dispatch('controller/modalInfoType', {
 							type: 'favSong',

@@ -35,7 +35,7 @@
 							' bg-green3/80 scale-80': leftClick,
 							'hover:scale-110 bg-green3/95 hover:bg-green3': !leftClick,
 						}"
-						class="p-3 rounded-full cursor-default shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+						class="p-[10px] rounded-full cursor-default shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
 					>
 						<h1 class="text-white"></h1>
 						<svg role="img" height="24" width="24" viewBox="0 0 24 24">
@@ -78,7 +78,7 @@
 							' bg-green3/80 scale-80': leftClick,
 							'hover:scale-106 bg-green3/95 hover:bg-green3': !leftClick,
 						}"
-						class="p-3 rounded-full cursor-default shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+						class="p-[10px] rounded-full cursor-default shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
 					>
 						<svg role="img" height="20" width="20" viewBox="0 0 24 24">
 							<path
