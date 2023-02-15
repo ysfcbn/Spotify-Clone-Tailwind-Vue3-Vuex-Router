@@ -390,13 +390,13 @@ export default {
 					headers: {
 						Accept: 'application/json',
 						'Content-Type': 'application/json',
-						Authorization: 'Bearer ' + (await this.getToken),
+						Authorization: 'Bearer ' + this.getToken,
 					},
 				})
 				.then(({ data }) => {
 					console.log(data.items);
 					this.$store.dispatch('favTracks/getTracks', data);
-					return data.items;
+					this.$store.dispatch('controller/isFavTrack');
 				})
 				.catch(err => console.log(err));
 		},
