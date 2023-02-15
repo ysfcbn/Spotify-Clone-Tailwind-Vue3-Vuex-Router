@@ -9,7 +9,6 @@
 		</div>
 
 		<div class="wrapper-container relative mb-[17rem]">
-
 			<div
 				class="absolute z-30 flex justify-center items-center left-[-18px] h-[13rem]"
 			>
@@ -73,8 +72,8 @@
 							</h3>
 							<img
 								class="h-[128px] w-[128px] object-cover mb-5 absolute rotate-[25deg] translate-x-[18%] translate-y-[-2%] bottom-[-2rem] right-0"
-								src="	https://i.scdn.co/image/ab67706f000000020377baccf69ede3cf1a26eff"
-								alt=""
+								:src="logos.logo1"
+								alt="logo1"
 							/>
 						</div>
 					</a>
@@ -90,8 +89,8 @@
 							</h3>
 							<img
 								class="h-[128px] w-[128px] object-cover mb-5 absolute rotate-[25deg] translate-x-[18%] translate-y-[-2%] bottom-[-2rem] right-0"
-								src="	https://i.scdn.co/image/ab67706f000000020377baccf69ede3cf1a26eff"
-								alt=""
+								:src="logos.logo2"
+								alt="logo2"
 							/>
 						</div>
 					</a>
@@ -106,8 +105,8 @@
 							</h3>
 							<img
 								class="h-[128px] w-[128px] object-cover mb-5 absolute rotate-[25deg] translate-x-[18%] translate-y-[-2%] bottom-[-2rem] right-0"
-								src="	https://i.scdn.co/image/ab67706f000000020377baccf69ede3cf1a26eff"
-								alt=""
+								:src="logos.logo3"
+								alt="logo3"
 							/>
 						</div>
 					</a>
@@ -122,8 +121,8 @@
 							</h3>
 							<img
 								class="h-[128px] w-[128px] object-cover mb-5 absolute rotate-[25deg] translate-x-[18%] translate-y-[-2%] bottom-[-2rem] right-0"
-								src="	https://i.scdn.co/image/ab67706f000000020377baccf69ede3cf1a26eff"
-								alt=""
+								:src="logos.logo4"
+								alt="logo4"
 							/>
 						</div>
 					</a>
@@ -135,13 +134,14 @@
 
 <script>
 //slider
-
+import logos from './logo.js';
 export default {
 	data() {
 		return {
 			scrollWrapper: null,
 			sliderItems: null,
 			scrollVal: null,
+			logos: logos,
 		};
 	},
 	methods: {

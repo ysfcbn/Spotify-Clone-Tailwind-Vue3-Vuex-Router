@@ -106,15 +106,7 @@
 						}"
 						class="w-full relative"
 					>
-						<slot name="imgContainer" :data="data">
-							<div class="w-full relative mb-5">
-								<img
-									class="h-full w-full object-cover"
-									src="image"
-									alt="image"
-								/>
-							</div>
-						</slot>
+						<slot name="imgContainer" :data="data"> </slot>
 						<slot name="playBtn" :data="data">
 							<div
 								v-if="!shows && !follows"
