@@ -25,6 +25,8 @@ export const accessToken = hash => {
 	return reducedHashParams.access_token;
 };
 
+// 'https://spotify-clone-music.netlify.app/login'
+
 // Client_Credential Auth flow
 /* export const getAuth = async (encodedID) => {
 
