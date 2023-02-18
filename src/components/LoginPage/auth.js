@@ -1,6 +1,6 @@
 export const getAuth = client_id => {
 	const REDİRECT_URL = encodeURIComponent(
-		'https://spotify-clone-music.netlify.app/login'
+		`${window.location.origin}/login`
 	);
 	console.log(REDİRECT_URL);
 	const CLIENT_ID = encodeURIComponent(client_id);
