@@ -187,11 +187,12 @@
 									'opacity-100 translate-y-[-0.4rem]':
 										getCurrentlyPlayingTrack?.is_playing &&
 										playlist.uri === getCurrentlyPlayingTrack?.context?.uri,
-									'opacity-0':
+									'opacity-0': !(
 										getCurrentlyPlayingTrack?.is_playing &&
-										playlist.uri !== getCurrentlyPlayingTrack?.context?.uri,
+										playlist.uri === getCurrentlyPlayingTrack?.context?.uri
+									),
 								}"
-								class="bg-dark rounded-full right-0 bottom-0 absolute flex items-center mx-2 group-hover:block group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
+								class="bg-dark1 rounded-full right-0 bottom-0 absolute flex items-center mx-2 group-hover:block group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
 							>
 								<button
 									v-if="playlist?.images[0]?.url"
