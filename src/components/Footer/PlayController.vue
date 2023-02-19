@@ -146,9 +146,11 @@
 		>
 			<div
 				:class="
-					isStarwarsAlbum ? 'mt-[2px] mb:w-[2.3rem] lg:w-[2rem]' : 'w-[1.8rem]'
+					isStarwarsAlbum
+						? 'mt-[2px] mb:w-[2.8rem]  md:w-[2.6rem] lg:w-[2.4rem]'
+						: 'w-[2rem]'
 				"
-				class="text-[0.55rem] font-semibold tracking-widest cursor-default h-5"
+				class="text-[0.6rem] font-semibold tracking-widest cursor-default h-5"
 			>
 				{{ timeParse(trackSeek) }}
 			</div>
@@ -159,7 +161,7 @@
 						? 'w-[5.2rem]'
 						: 'w-[5.3rem]'
 				"
-				class="w-[5.3rem] h-full z-10 flex-none"
+				class="h-full z-10 flex-none"
 			>
 				<button
 					@click="changeBladeIcon"
@@ -201,19 +203,15 @@
 			</div>
 			<div
 				@click="toggleDuration"
-				class="text-[0.55rem] h-5 w-[1rem] font-semibold ml-1 tracking-widest cursor-default"
+				class="text-[0.6rem] w-[1rem] font-semibold ml-[5px] tracking-widest cursor-default"
 			>
-				<div v-if="reverseDuration" class="flex items-center">
+				<div v-if="reverseDuration">
 					<span>
 						{{ timeParse(trackDuration) }}
 					</span>
 				</div>
-
-				<div v-else class="flex items-center">
-					<span> - </span>
-					<span>
-						{{ timeParse(getReverseDuration) }}
-					</span>
+				<div v-else>
+					<span> -{{ timeParse(getReverseDuration) }} </span>
 				</div>
 			</div>
 		</div>
