@@ -191,7 +191,7 @@
       <ul
         v-if="visible2"
         :class="{
-          'w-[16.4rem] left-[12.2rem] ': playlistPage,
+          'w-[16.6rem] left-[12.2rem] ': playlistPage,
           'top-[12.5rem] left-[14.9rem]': TrackPage,
           ' left-[12.1rem]': albumPage,
         }"
