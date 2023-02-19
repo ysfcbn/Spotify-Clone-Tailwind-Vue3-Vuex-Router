@@ -4,7 +4,7 @@
       'top-[18.4rem] left-[18.4rem] p-[4px] ': diskografiPage && firstElement,
       'top-[11.3rem] left-[18.4rem] p-[4px] ': diskografiPage && !firstElement,
     }"
-    class="app--option absolute bg-dark2 top-[4.8rem] left-[10.8rem] p-[4px] w-fit h-fit text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
+    class="app--option absolute z-[999] bg-dark2 top-[4.8rem] left-[10rem] p-[4px] w-fit h-fit text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
   >
     <li
       v-if="isPlayingCurrentSectionTrack"
@@ -117,7 +117,7 @@
       </button>
       <ul
         v-if="visible"
-        :class="{ 'left-[15.65rem] top-[-12.5rem]': TrackPage }"
+        :class="{ 'left-[14.8rem] top-[-12.3rem]': TrackPage }"
         class="z-50 absolute bg-dark2 top-[-14.9rem] left-[12.2rem] p-[4px] h-[25rem] w-fit text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
       >
         <li
@@ -191,13 +191,14 @@
       <ul
         v-if="visible2"
         :class="{
-          'w-[16.2rem] top-[7.4rem] ': playlistPage,
-          'left-[15.55rem] top-[12.65rem]': TrackPage,
+          'w-[16.3rem] left-[12.2rem] ': playlistPage,
+          'top-[12.5rem] left-[14.9rem]': TrackPage,
+          ' left-[12.1rem]': albumPage,
         }"
-        class="z-50 absolute bg-dark2 top-[10rem] left-[14.9rem] p-[4px] h-fit w-[13.3rem] text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
+        class="z-50 absolute bg-dark2 top-[10rem] p-[4px] h-fit w-[13.3rem] text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
       >
         <li
-          @click="copyURL"
+          @click="copyURL((href = currentHref))"
           class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-opacwhite"
         >
           <button class="cursor-default">
@@ -273,9 +274,8 @@ export default {
       this.paylasDropDown = true;
     },
     async addToQueue(uri, id) {
-      this.TrackPage
-        ? await this.$store.dispatch("controller/addItemToQueue", uri)
-        : "";
+      console.log(uri);
+      await this.$store.dispatch("controller/addItemToQueue", uri);
       this.$store.dispatch("controller/modalInfoType", {
         type: "queue",
         status: true,
@@ -301,8 +301,11 @@ export default {
     },
     unFollowAlbumFunc(_, e) {
       this.$emit("unFollowAlbumE", e.target.closest(".app--option").id);
+      this.$emit("toggleAppOptions");
     },
-    copyURL() {
+    copyFunc() {},
+    copyURL(href) {
+      navigator.clipboard.writeText(href);
       this.$store.dispatch("controller/modalInfoType", {
         type: "copyURL",
         status: true,
@@ -321,6 +324,15 @@ export default {
         ? this.$store.getters["playlists/getPlaylist"]?.uri
         : this.albumPage
         ? this.$store.getters["albums/getAlbum"]?.uri
+        : "";
+    },
+    currentHref() {
+      return this.TrackPage
+        ? this.$store.getters["albums/getCurrentTrack"]?.external_urls?.spotify
+        : this.playlistPage
+        ? this.$store.getters["playlists/getPlaylist"]?.external_urls?.spotify
+        : this.albumPage
+        ? this.$store.getters["albums/getAlbum"]?.external_urls?.spotify
         : "";
     },
     isPlayingCurrentSectionTrack() {
