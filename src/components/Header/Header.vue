@@ -344,10 +344,12 @@
 				v-if="!isAuth"
 				class="flex items-center w-[14rem] justify-between mt-2 sm:mx-[1rem] lg:mx-[1.5rem] shrink-0"
 			>
-				<button
+				<a
+					:href="href"
+					target="_blank"
 					class="text-opacwhite5 text-base hover:scale-110 hover:text-white2 cursor-default"
 				>
-					Kaydol</button
+					Kaydol</a
 				><button
 					@click="login"
 					class="py-3 px-8 rounded-full bg-white2 hover:bg-[#f6f6f6] hover:scale-105 cursor-default"
@@ -368,6 +370,7 @@ export default {
 			leftClick: false,
 			historyCounter: 1,
 			albumImg: '',
+			href: 'https://accounts.spotify.com/tr/login?continue=https%3A%2F%2Fopen.spotify.com%2F',
 		};
 	},
 	methods: {
@@ -390,6 +393,7 @@ export default {
 		login() {
 			this.$router.push({ name: 'login' });
 		},
+
 		toggleDropPlaylists() {
 			this.dropPlaylists = !this.dropPlaylists;
 			this.accountOptions ? (this.accountOptions = false) : '';
