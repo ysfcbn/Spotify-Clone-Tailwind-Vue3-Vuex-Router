@@ -191,7 +191,7 @@
       <ul
         v-if="visible2"
         :class="{
-          'w-[16.3rem] left-[12.2rem] ': playlistPage,
+          'w-[16.4rem] left-[12.2rem] ': playlistPage,
           'top-[12.5rem] left-[14.9rem]': TrackPage,
           ' left-[12.1rem]': albumPage,
         }"
@@ -303,7 +303,6 @@ export default {
       this.$emit("unFollowAlbumE", e.target.closest(".app--option").id);
       this.$emit("toggleAppOptions");
     },
-    copyFunc() {},
     copyURL(href) {
       navigator.clipboard.writeText(href);
       this.$store.dispatch("controller/modalInfoType", {
