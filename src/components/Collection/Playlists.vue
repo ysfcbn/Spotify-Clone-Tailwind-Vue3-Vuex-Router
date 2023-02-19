@@ -32,7 +32,7 @@
 								playFavSongs(
 									(uri = {
 										uri: userFavSongsContextUri,
-										index: currentPlayingTrackIndex,
+										index: 0,
 										type: 'collection',
 									})
 								)
@@ -274,11 +274,6 @@ export default {
 		toggleFavSong(_, event) {
 			if (event.target.closest('#playBtn')?.id === 'playBtn') {
 				console.log('toggle Play/Stop Playlists');
-				this.playFavSongs({
-					uri: this.userFavSongsContextUri,
-					index: this.currentPlayingTrackIndex,
-					type: 'collection',
-				});
 			} else this.$router.push('/collection/tracks');
 		},
 
@@ -290,14 +285,6 @@ export default {
 		selectedPlaylist(playlist, event) {
 			if (event.target.closest('#playBtn')?.id === 'playBtn') {
 				console.log('toggle Play/Stop Playlists');
-				this.playContextUri(
-					{
-						uri: playlist.uri,
-						index: this.currentPlayingTrackIndex,
-						type: playlist.type,
-					},
-					playlist.href
-				);
 			} else {
 				this.$router.push({ name: 'playlist', params: { id: playlist.id } });
 			}
@@ -419,7 +406,7 @@ export default {
 				? this.currentAlbum?.indexOf(
 						this.currentAlbum?.find(item => item.id === this.currentTrackID)
 				  )
-				: '';
+				: 0;
 		},
 		currentPlayingTrackIndex() {
 			return this.findCurrentPlayingTrackIndex + 1
