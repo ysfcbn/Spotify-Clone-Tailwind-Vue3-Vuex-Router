@@ -834,16 +834,13 @@ export default {
 
 		async fetchArtistPublications() {
 			await axios
-				.get(
-					'https://api.spotify.com/v1/artists/' + this.id + '/albums?limit=10',
-					{
-						headers: {
-							Accept: 'application/json',
-							'Content-Type': 'application/json',
-							Authorization: 'Bearer ' + this.getToken,
-						},
-					}
-				)
+				.get('https://api.spotify.com/v1/artists/' + this.id + '/albums', {
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+						Authorization: 'Bearer ' + this.getToken,
+					},
+				})
 				.then(({ data }) => {
 					console.log(data);
 					this.$store.dispatch('artists/artistPublications', data);
@@ -855,7 +852,7 @@ export default {
 				.get(
 					'https://api.spotify.com/v1/artists/' +
 						this.id +
-						'/albums?limit=10&include_groups=album,single,compilation',
+						'/albums&include_groups=album,single,compilation',
 					{
 						headers: {
 							Accept: 'application/json',
@@ -875,7 +872,7 @@ export default {
 				.get(
 					'https://api.spotify.com/v1/artists/' +
 						this.id +
-						'/albums?limit=10&include_groups=single',
+						'/albums&include_groups=single',
 					{
 						headers: {
 							Accept: 'application/json',
@@ -895,7 +892,7 @@ export default {
 				.get(
 					'https://api.spotify.com/v1/artists/' +
 						this.id +
-						'/albums?limit=10&include_groups=compilation',
+						'/albums&include_groups=compilation',
 					{
 						headers: {
 							Accept: 'application/json',
