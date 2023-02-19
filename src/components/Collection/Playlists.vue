@@ -22,8 +22,9 @@
 					<div
 						:class="{
 							'opacity-100 translate-y-[-0.4rem]': isPlayingFavSongsContextUri,
+							'opacity-0 ': !isPlayingFavSongsContextUri,
 						}"
-						class="z-10 absolute flex items-center opacity-0 group-hover:opacity-100 transition ease-in duration-200 right-1 bottom-1 p-3 group-hover:block group-hover:translate-y-[-0.5rem]"
+						class="z-10 absolute flex items-center group-hover:opacity-100 transition ease-in duration-200 right-1 bottom-1 p-3 group-hover:block group-hover:translate-y-[-0.5rem]"
 					>
 						<button
 							id="playBtn"
