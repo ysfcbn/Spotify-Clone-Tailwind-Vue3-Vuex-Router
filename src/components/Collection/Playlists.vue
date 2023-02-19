@@ -274,7 +274,7 @@ export default {
 		toggleFavSong(_, event) {
 			if (event.target.closest('#playBtn')?.id === 'playBtn') {
 				console.log('toggle Play/Stop Playlists');
-				this.playContextUri({
+				this.playFavSongs({
 					uri: this.userFavSongsContextUri,
 					index: this.currentPlayingTrackIndex,
 					type: 'collection',
@@ -328,9 +328,12 @@ export default {
 					!this.currentPlayingTrackIndex
 				) {
 					console.log(this.getCurrentlyPlayingTrack.context?.type);
+					uri.index = this.currentPlayingTrackIndex;
 					await this.$store.dispatch('controller/playCurrentTrack', uri);
 				} else {
 					uri.index = this.currentPlayingTrackIndex;
+					uri.type = 'collection';
+					uri.id = this.currentTrackID;
 					await this.$store.dispatch('controller/playSelectedContext', uri);
 				}
 			}
@@ -357,6 +360,7 @@ export default {
 				}
 
 				uri.index = this.currentPlayingTrackIndex;
+				uri.id = this.currentTrackID;
 				console.log(uri);
 				await this.$store.dispatch('controller/playSelectedContext', uri);
 			}
