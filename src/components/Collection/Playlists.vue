@@ -196,7 +196,7 @@
 								class="bg-dark1 rounded-full right-0 bottom-0 absolute flex items-center mx-2 group-hover:block group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
 							>
 								<button
-									v-if="playlist?.images[0]?.url"
+									v-if="playlist.tracks?.total"
 									@click="
 										playContextUri(
 											(uri = {
