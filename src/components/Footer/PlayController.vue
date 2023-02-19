@@ -205,7 +205,7 @@
 				@click="toggleDuration"
 				class="text-[0.6rem] w-[1rem] font-semibold ml-[5px] tracking-widest cursor-default"
 			>
-				<div v-if="reverseDuration">
+				<div v-if="!reverseDuration">
 					<span>
 						{{ timeParse(trackDuration) }}
 					</span>
