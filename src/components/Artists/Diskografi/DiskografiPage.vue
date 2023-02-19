@@ -50,7 +50,21 @@
 			/>
 		</div>
 		<div v-else>
-			<CardView :renderTypes="selectedType" :viewCard="cardView" />
+			<div id="cardIntersect" class="w-full absolute bg-red top-[-4rem]"></div>
+			<div
+				class="relative grid grid-cols-col180 sm:gap-5 grid-rows-auto p-3 mt-2 sm:ml-[0.5rem] lg:ml-[1rem]"
+			>
+				<CardView
+					v-for="(data, i) in selectedType"
+					:key="data.id"
+					:indx="i"
+					:id="data.id"
+					:renderTypes="selectedType"
+					:data="data"
+					:diskografiPage="diskografiPage"
+					:viewCard="cardView"
+				/>
+			</div>
 		</div>
 
 		<section class="sm:pl-5 lg:p-5 lg:ml-[1rem]">

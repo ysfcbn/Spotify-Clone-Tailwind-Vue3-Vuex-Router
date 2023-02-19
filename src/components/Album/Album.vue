@@ -509,21 +509,22 @@ export default {
 			this.$store.dispatch('discography/selectedType', 'all');
 		},
 		async unFollowAlbum() {
+			this.appOptions = false;
 			if (this.isFavAlbum) {
 				await axios
 					.delete('https://api.spotify.com/v1/me/albums?ids=' + this.id, {
 						headers: {
 							Accept: 'application/json',
 							'Content-Type': 'application/json',
-							Authorization: 'Bearer ' + (await this.getToken),
+							Authorization: 'Bearer ' + this.getToken,
 						},
 					})
 					.then(data => {
 						console.log(data);
 
 						if (data.status === 200) {
-							heartBtn.classList.add('animationEmptyHeart');
 							heartBtn.classList.remove('animationGreenHeart');
+							heartBtn.classList.add('animationEmptyHeart');
 							this.$store.dispatch('controller/modalInfoType', {
 								type: 'album',
 								status: false,
@@ -548,14 +549,14 @@ export default {
 				headers: {
 					Accept: 'application/json',
 					'Content-Type': 'application/json',
-					Authorization: 'Bearer ' + (await this.getToken),
+					Authorization: 'Bearer ' + this.getToken,
 				},
 			})
 				.then(data => {
 					console.log(data);
 					if (data.status === 200) {
-						heartBtn.classList.add('animationGreenHeart');
 						heartBtn.classList.remove('animationEmptyHeart');
+						heartBtn.classList.add('animationGreenHeart');
 						this.$store.dispatch('controller/modalInfoType', {
 							type: 'album',
 							status: true,

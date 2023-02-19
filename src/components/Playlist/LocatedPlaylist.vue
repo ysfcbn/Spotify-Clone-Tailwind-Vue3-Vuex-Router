@@ -173,6 +173,8 @@
 						:playlistPage="playlistPage"
 						v-if="appOptions"
 						:appOptions="appOptions"
+						:isFavPlaylist="isFavPlaylist"
+						:unFollowPlaylist="unFollowPlaylist"
 						@toggleAppOptions="toggleAppOptions"
 					>
 					</AppOptions>
@@ -339,6 +341,7 @@ export default {
 			}
 		},
 		async unFollowPlaylist() {
+			this.appOptions = false;
 			if (this.isFavPlaylist) {
 				await axios
 					.delete(

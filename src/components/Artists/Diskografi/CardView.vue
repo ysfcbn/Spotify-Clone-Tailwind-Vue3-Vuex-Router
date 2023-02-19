@@ -1,116 +1,181 @@
 <template>
-  <div
-    id="cardIntersect"
-    class="h-[7rem]] w-full absolute bg-red top-[-4rem]"
-  ></div>
-  <section class="cardWrapper mt-[2rem] sm:mx-[1rem] lg:mx-[2rem]">
-    <div
-      class="relative grid grid-cols-colDiscoCard grid-rows-rowDiscoCard gap-5"
-    >
-      <div
-        @click="openAlbum(_, $event)"
-        v-for="album in renderTypes"
-        :key="album.id"
-        :id="album.id"
-        class="card--container bg-dark1 hover:bg-opacblack1 ease duration-300 w-full h-auto cursor-pointer rounded-md flex-1 isolate p-4 relative"
-      >
-        <div class="h-full group">
-          <div class="w-full mb-5 relative">
-            <img
-              class="h-full w-full object-cover"
-              :src="album?.images[0]?.url"
-              alt=""
-            />
-            <div
-              class="right-0 bottom-0 p-2 absolute flex items-center right-0 bottom-0 py-1 px-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
-            >
-              <button
-                id="playBtn"
-                class="p-3 bg-green3 rounded-full cursor-default lg:group-hover:block hover:scale-110 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
-              >
-                <span>
-                  <svg role="img" height="24" width="24" viewBox="0 0 24 24">
-                    <path
-                      fill="text-black"
-                      d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
-                    ></path>
-                  </svg>
-                </span>
-              </button>
-            </div>
-          </div>
-          <div class="flex items-middle flex-col justify-center">
-            <div class="text-white max-w-full truncate">{{ album.name }}</div>
-            <div class="text-sm text-lightest w-full mt-2">
-              {{ cartAlbumYear(album.release_date) }}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+	<div
+		@click="openSelectedAlbum((album = data), $event)"
+		class="card--container bg-dark1 hover:bg-opacblack1 ease duration-300 w-full h-auto cursor-pointer rounded-md flex-1 p-4 relative"
+	>
+		<div class="h-full group">
+			<div class="w-full mb-5 relative">
+				<img
+					class="h-full w-full object-cover"
+					:src="data?.images[0]?.url"
+					alt=""
+				/>
+				<div
+					:class="{
+						'opacity-100 translate-y-[-0.4rem]': isPlayingContextUri,
+						'opacity-0': !isPlayingContextUri,
+					}"
+					class="bg-dark rounded-full right-0 bottom-0 absolute flex items-center mx-1 group-hover:block group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
+				>
+					<button
+						@mousedown="leftClick = true"
+						@mouseup="leftClick = false"
+						id="playBtn"
+						:class="{
+							' bg-green3/80 scale-80': leftClick,
+							'hover:scale-106 bg-green3/95 hover:bg-green3': !leftClick,
+						}"
+						class="p-[10px] rounded-full cursor-default shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+					>
+						<span>
+							<svg role="img" height="24" width="24" viewBox="0 0 24 24">
+								<path
+									v-if="!isPlayingContextUri"
+									fill="text-black"
+									d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
+								></path>
+								<path
+									v-else
+									fill="text-black"
+									d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
+								></path>
+							</svg>
+						</span>
+					</button>
+				</div>
+			</div>
+			<div class="flex items-middle flex-col justify-center">
+				<div class="text-white max-w-full truncate">{{ data.name }}</div>
+				<div class="text-sm text-lightest w-full mt-2">
+					{{ cartAlbumYear(data.release_date) }}
+				</div>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
-  name: "CardList",
-  props: ["viewCard", "renderTypes"],
-  data() {
-    return {};
-  },
-  methods: {
-    cartAlbumYear(currentSection) {
-      return new Date(currentSection).getFullYear();
-    },
-    openAlbum(_, e) {
-      if (e.target.closest("#playBtn")?.id === "playBtn") {
-        console.log("toggle Play/Stop Users");
-      } else {
-        const albumID = e.target.closest(".card--container").id;
-        this.$router.push({ name: "album", params: { id: albumID } });
-      }
-    },
-  },
+	name: 'CardList',
+	props: ['data', 'diskografiPage', 'renderTypes', 'indx', 'viewCard'],
+	data() {
+		return { leftClick: false };
+	},
+	computed: {
+		getToken() {
+			return this.$store.getters.accessToken;
+		},
+		currentAlbumTracks() {
+			return this.$store.getters['albums/getAlbum']?.tracks?.items;
+		},
+		getCurrentlyPlayingTrack() {
+			return this.$store.getters['controller/getCurrentlyPlayingTrack'];
+		},
+		currentTrackID() {
+			return this.getCurrentlyPlayingTrack?.item?.id;
+		},
+		findCurrentPlayingTrackIndex() {
+			return this.currentAlbumTracks?.indexOf(
+				this.currentAlbumTracks?.find(item => item.id === this.currentTrackID)
+			);
+		},
+		currentPlayingTrackIndex() {
+			return this.findCurrentPlayingTrackIndex + 1
+				? this.findCurrentPlayingTrackIndex
+				: 0;
+		},
+		isPlayingContextUri() {
+			return (
+				this.getCurrentlyPlayingTrack?.context?.uri ===
+					this.renderTypes[this.indx].uri &&
+				this.getCurrentlyPlayingTrack?.is_playing
+			);
+		},
+	},
+	methods: {
+		async openSelectedAlbum(data, e) {
+			const cardID = e.target.closest('.card--container').id;
+			if (e.target.closest('#playBtn')?.id === 'playBtn') {
+				await this.fetchAlbum(data?.href);
+				await this.playContextUri({
+					uri: data.uri,
+					index: this.currentPlayingTrackIndex,
+					type: 'album',
+				});
+			} else {
+				this.$router.push({ name: 'album', params: { id: cardID } });
+			}
+		},
+		async fetchAlbum(href) {
+			await axios
+				.get(href, {
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+						Authorization: 'Bearer ' + this.getToken,
+					},
+				})
+				.then(({ data }) => {
+					this.$store.dispatch('albums/getAlbum', data);
+				})
+				.catch(err => console.log(err));
+		},
+		async playContextUri(uri) {
+			if (this.isPlayingContextUri) {
+				await this.$store.dispatch('controller/pauseCurrentTrack');
+			} else {
+				uri.type = 'album';
+				uri.id = this.currentAlbumTracks[this.currentPlayingTrackIndex]?.id;
+				uri.index = this.currentPlayingTrackIndex;
+				await this.$store.dispatch('controller/playSelectedContext', uri);
+			}
+		},
+		cartAlbumYear(currentSection) {
+			return new Date(currentSection).getFullYear();
+		},
+	},
 
-  mounted() {
-    if (this.viewCard) {
-      console.log("CardList Mounted!");
+	mounted() {
+		if (this.viewCard) {
+			console.log('CardList Mounted!');
 
-      this.header = document.getElementById("header");
-      this.diskoHeader = document.getElementById("diskoHeader");
-      this.CardEl = document.getElementById("cardIntersect");
+			this.header = document.getElementById('header');
+			this.diskoHeader = document.getElementById('diskoHeader');
+			this.CardEl = document.getElementById('cardIntersect');
 
-      this.header.classList.remove("disko-intersec-bg1");
-      this.diskoHeader.classList.remove("list--view-intersect");
+			this.header.classList.remove('disko-intersec-bg1');
+			this.diskoHeader.classList.remove('list--view-intersect');
 
-      this.options = {
-        root: null,
-        threshold: 0.5,
-      };
+			this.options = {
+				root: null,
+				threshold: 0.5,
+			};
 
-      this.observer = new IntersectionObserver((entries, obs) => {
-        if (entries[0].intersectionRatio <= 0.5) {
-          console.log(obs, entries[0].target, entries[0]);
-          this.header.classList.add("disko-intersec-bg1");
+			this.observer = new IntersectionObserver((entries, obs) => {
+				if (entries[0].intersectionRatio <= 0.5) {
+					console.log(obs, entries[0].target, entries[0]);
+					this.header.classList.add('disko-intersec-bg1');
 
-          this.diskoHeader.classList.add("list--view-intersect");
-        } else {
-          console.log(obs, entries[0].target, entries[0]);
+					this.diskoHeader.classList.add('list--view-intersect');
+				} else {
+					console.log(obs, entries[0].target, entries[0]);
 
-          this.header.classList.remove("disko-intersec-bg1");
+					this.header.classList.remove('disko-intersec-bg1');
 
-          this.diskoHeader.classList.remove("list--view-intersect");
-        }
-      }, this.options);
+					this.diskoHeader.classList.remove('list--view-intersect');
+				}
+			}, this.options);
 
-      this.observer.observe(this.CardEl);
-    }
-  },
-  beforeUnmount() {
-    this.observer.unobserve(this.CardEl);
-    this.header.classList.remove("disko-intersec-bg1");
-    this.diskoHeader.classList.remove("list--view-intersect");
-  },
+			this.observer.observe(this.CardEl);
+		}
+	},
+	beforeUnmount() {
+		this.observer.unobserve(this.CardEl);
+		this.header.classList.remove('disko-intersec-bg1');
+		this.diskoHeader.classList.remove('list--view-intersect');
+	},
 };
 </script>
 
