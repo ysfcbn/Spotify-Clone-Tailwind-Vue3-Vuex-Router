@@ -155,13 +155,10 @@ export default {
 
 			this.observer = new IntersectionObserver((entries, obs) => {
 				if (entries[0].intersectionRatio <= 0.5) {
-					console.log(obs, entries[0].target, entries[0]);
 					this.header.classList.add('disko-intersec-bg1');
 
 					this.diskoHeader.classList.add('list--view-intersect');
 				} else {
-					console.log(obs, entries[0].target, entries[0]);
-
 					this.header.classList.remove('disko-intersec-bg1');
 
 					this.diskoHeader.classList.remove('list--view-intersect');
