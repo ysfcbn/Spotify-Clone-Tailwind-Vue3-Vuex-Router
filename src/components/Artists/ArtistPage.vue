@@ -852,7 +852,7 @@ export default {
 				.get(
 					'https://api.spotify.com/v1/artists/' +
 						this.id +
-						'/albums&include_groups=album,single,compilation',
+						'/albums?include_groups=album,single,compilation',
 					{
 						headers: {
 							Accept: 'application/json',
@@ -872,7 +872,7 @@ export default {
 				.get(
 					'https://api.spotify.com/v1/artists/' +
 						this.id +
-						'/albums&include_groups=single',
+						'/albums?include_groups=single',
 					{
 						headers: {
 							Accept: 'application/json',
@@ -892,7 +892,7 @@ export default {
 				.get(
 					'https://api.spotify.com/v1/artists/' +
 						this.id +
-						'/albums&include_groups=compilation',
+						'/albums?include_groups=compilation',
 					{
 						headers: {
 							Accept: 'application/json',
