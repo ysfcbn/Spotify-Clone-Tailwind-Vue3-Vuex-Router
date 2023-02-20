@@ -55,9 +55,9 @@
 						' bg-green3/80 scale-80': leftClick,
 						'hover:scale-106 bg-green3/95 hover:bg-green3': !leftClick,
 					}"
-					class="bg-cover p-3 rounded-full cursor-default shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+					class="bg-cover p-[10px] rounded-full cursor-default shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
 				>
-					<svg role="img" height="24" width="24" viewBox="0 0 24 24">
+					<svg role="img" height="22" width="22" viewBox="0 0 24 24">
 						<path
 							v-if="isPlayingArtistTopTracks"
 							fill="text-black"
@@ -74,8 +74,8 @@
 			<div
 				v-else
 				:class="{
-					'opacity-0': !isPlayingContextUri,
 					'sm:opacity-0 md2:opacity-100  ': isPlayingContextUri,
+					'opacity-0': !isPlayingContextUri,
 				}"
 				class="mx-3 md2:group-hover:opacity-100 transition ease-in duration-150"
 			>
@@ -231,16 +231,7 @@ export default {
 						type: this.contextType,
 						artistID: this.artistID,
 					});
-				} else
-					this.playContextUri(
-						{
-							uri: this.contextUri,
-							index: this.currentPlayingTrackIndex,
-							type: this.contextType,
-							id: this.currentTrackID,
-						},
-						this.item?.context?.href
-					);
+				}
 			} else if (e.target.closest('.item--container')) {
 				console.log(contextID, type);
 				if (type === 'collection') {
@@ -263,7 +254,7 @@ export default {
 					this.typeOfSelectedSection = 'playlist';
 					await this.fetchPlaylist(href);
 					if (
-						this.getCurrentlyPlayingTrack?.context.type ===
+						this.getCurrentlyPlayingTrack?.context?.type ===
 						this.typeOfSelectedSection
 					) {
 						uri.id =
@@ -273,7 +264,7 @@ export default {
 					this.typeOfSelectedSection = 'album';
 					await this.fetchAlbum(href);
 					if (
-						this.getCurrentlyPlayingTrack?.context.type ===
+						this.getCurrentlyPlayingTrack?.context?.type ===
 						this.typeOfSelectedSection
 					) {
 						uri.id = this.currentAlbumTracks[this.currentPlayingTrackIndex]?.id;
@@ -346,26 +337,26 @@ export default {
 		},
 		findCurrentPlayingTrackIndex() {
 			return this.contextType === 'playlist' &&
-				this.contextType === this.getCurrentlyPlayingTrack?.context.type
+				this.contextType === this.getCurrentlyPlayingTrack?.context?.type
 				? this.currentPlaylist?.indexOf(
 						this.currentPlaylist?.find(
 							item => item.track.id === this.currentTrackID
 						)
 				  )
 				: this.contextType === 'album' &&
-				  this.contextType === this.getCurrentlyPlayingTrack?.context.type
+				  this.contextType === this.getCurrentlyPlayingTrack?.context?.type
 				? this.currentAlbumTracks?.indexOf(
 						this.currentAlbumTracks?.find(
 							item => item.id === this.currentTrackID
 						)
 				  )
 				: this.contextType === 'artist' &&
-				  this.contextType === this.getCurrentlyPlayingTrack?.context.type
+				  this.contextType === this.getCurrentlyPlayingTrack?.context?.type
 				? this.artistTopTracks.indexOf(
 						this.artistTopTracks.find(item => item.id === this.currentTrackID)
 				  )
 				: this.contextType === 'collection' &&
-				  this.contextType === this.getCurrentlyPlayingTrack?.context.type
+				  this.contextType === this.getCurrentlyPlayingTrack?.context?.type
 				? this.getFavTracks.indexOf(
 						this.getFavTracks.find(
 							item => item.track.id === this.currentTrackID

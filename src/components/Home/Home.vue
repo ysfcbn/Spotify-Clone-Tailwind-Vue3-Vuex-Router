@@ -45,7 +45,7 @@
 			</div>
 		</section>
 		<div v-if="isAuth">
-			<Card :shows="true" :currentData="favShows">
+			<Card v-if="favShows" :shows="true" :currentData="favShows">
 				<template #cardTitle>Programların</template>
 
 				<template #imgContainer="{ data }">

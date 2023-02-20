@@ -675,7 +675,7 @@ export default {
 		},
 
 		findCurrentPlayingTrackIndex() {
-			return this.getCurrentlyPlayingTrack?.context.type === this.contextType
+			return this.getCurrentlyPlayingTrack?.context?.type === this.contextType
 				? this.playlistTracks.indexOf(
 						this.playlistTracks.find(
 							item => item.track.id === this.currentTrackID
