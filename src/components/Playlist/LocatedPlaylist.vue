@@ -330,7 +330,9 @@ export default {
 			if (this.isPlayingPlaylistContextUri) {
 				await this.$store.dispatch('controller/pauseCurrentTrack');
 			} else {
+				uri.id = this.playlistTracks[this.currentPlayingTrackIndex]?.id;
 				uri.index = this.currentPlayingTrackIndex;
+				uri.type = this.contextType;
 				console.log(
 					'LOCATED PLAYLİST CONTEXT PLAY INDEX',
 					this.currentPlayingTrackIndex

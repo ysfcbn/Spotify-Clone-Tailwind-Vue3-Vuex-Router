@@ -345,9 +345,9 @@ export default {
 				if ((await uri.type) === 'episodes') {
 					this.typeOfSelectedSection = 'episodes';
 				}
-
+				uri.id = this.currentPlaylistTracks[this.currentPlayingTrackIndex]?.id;
+				uri.type = this.typeOfSelectedSection;
 				uri.index = this.currentPlayingTrackIndex;
-				uri.id = this.currentTrackID;
 				console.log(uri);
 				await this.$store.dispatch('controller/playSelectedContext', uri);
 			}
