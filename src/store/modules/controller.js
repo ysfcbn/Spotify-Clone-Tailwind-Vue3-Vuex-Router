@@ -466,15 +466,17 @@ const controllerModule = {
 						offset: { position: await contextUri.index },
 						position_ms:
 							(await contextUri.type) ===
-								getters.getPlaybackState?.context?.type &&
+								getters.getCurrentlyPlayingTrack?.context?.type &&
 							(await contextUri.uri) ===
-								getters.getPlaybackState?.context?.uri &&
-							(await contextUri.id) === getters.getPlaybackState?.item.id
-								? getters.getPlaybackState?.progress_ms
-								: (await contextUri.id) === getters.getPlaybackState?.item.id &&
+								getters.getCurrentlyPlayingTrack?.context?.uri &&
+							(await contextUri.id) ===
+								getters.getCurrentlyPlayingTrack?.item.id
+								? getters.getCurrentlyPlayingTrack?.progress_ms
+								: (await contextUri.id) ===
+										getters.getCurrentlyPlayingTrack?.item.id &&
 								  (await contextUri.type) ===
-										getters.getPlaybackState?.context?.type
-								? getters.getPlaybackState?.progress_ms
+										getters.getCurrentlyPlayingTrack?.context?.type
+								? getters.getCurrentlyPlayingTrack?.progress_ms
 								: 0,
 					},
 					{
