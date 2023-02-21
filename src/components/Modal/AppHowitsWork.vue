@@ -29,7 +29,7 @@
 					</div>
 
 					<div
-						v-show="index !== 4"
+						v-show="index !== 5"
 						class="z-30 flex justify-center items-center absolute right-[16px] h-full"
 					>
 						<button
@@ -149,14 +149,17 @@ export default {
 					description: 'Dont forget to save changes',
 					src: new URL(`../../assets/images/4.png`, import.meta.url).href,
 				},
+				{
+					id: 5,
+					description:
+						'finaly copy your client ID and paste first input field. Before logging in from this application, you must make sure that you are logged into the original spotify and keep it open as long as the application is running.',
+					src: new URL(`../../assets/images/5.png`, import.meta.url).href,
+				},
 			],
 			index: 0,
 			translateFrom: '',
 			translateLeave: '',
 			showImage: true,
-			scrollWrapper: null,
-			sliderItems: null,
-			scrollVal: null,
 		};
 	},
 	methods: {
@@ -192,10 +195,7 @@ export default {
 		},
 	},
 	mounted() {
-		console.log('wrapper mounted');
-		this.scrollWrapper = document.querySelector('.scroll-wrapper');
-		this.scrollVal = document.querySelector('.scroll-wrapper');
-		this.sliderItems = document.querySelectorAll('.slider-items');
+		console.log('how its work mounted');
 	},
 };
 </script>
