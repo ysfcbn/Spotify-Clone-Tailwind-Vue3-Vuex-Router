@@ -1,5 +1,11 @@
 <template>
-	<div class="h-full overflow-x-hidden">
+	<div class="h-screen relative overflow-x-hidden">
+		<AppHowitsWork
+			v-show="showModal"
+			:showModal="showModal"
+			@close="showModal = false"
+		></AppHowitsWork>
+
 		<div class="logo">
 			<div class="flex justify-center items-center">
 				<svg class="w-[12rem] h-[6rem]" role="img" viewBox="0 0 80 24 ">
@@ -11,6 +17,7 @@
 			</div>
 			<hr class="hr" />
 		</div>
+
 		<div class="main-container flex flex-col items-center">
 			<div
 				class="login-cotainer flex flex-col items-center justify-center mt-[2rem]"
@@ -111,13 +118,15 @@
 				<label for="secret_secret" class="text-sm font-semibold"
 					>Secret ID</label
 				>
+
 				<div class="relative w-full grid place-items-center">
 					<input
 						v-model="client_Secret"
 						id="secret_secret"
 						type="text"
 						placeholder="Secret ID"
-						class="border-2 w-full p-2 text-md rounded-md hover:border-dark focus:outline-dark border-gray2 focus:border-4 focus:border-dark font-semibold"
+						disabled="disabled"
+						class="border-2 w-full p-2 text-md rounded-md focus:outline-dark border-gray2/20 focus:border-4 focus:border-dark font-semibold"
 					/>
 					<span
 						:style="{ color: client_Secret.length === 32 ? 'green' : 'gray' }"
@@ -126,9 +135,18 @@
 					>
 				</div>
 
+				<div class="w-full flex justify-content mt-2">
+					<button
+						@click="showModal = true"
+						class="font-semibold w-fit m-auto text-blue3"
+					>
+						How it's Work?
+					</button>
+				</div>
+
 				<button
 					@click.prevent="login"
-					class="w-full mt-[2rem] rounded-full text-black font-semibold bg-green3 text-md uppercase p-3 hover:scale-105 cursor-default mb-2"
+					class="w-full mt-[1rem] rounded-full text-black font-semibold bg-green3 text-md uppercase p-3 hover:scale-105 cursor-default mb-2"
 				>
 					OTURUM AÇ
 				</button>
@@ -151,19 +169,25 @@
 
 <script>
 import { getAuth, accessToken } from '../LoginPage/auth.js';
-import axios from 'axios';
+import AppHowitsWork from '../Modal/AppHowitsWork.vue';
+
 export default {
+	components: [AppHowitsWork],
 	data() {
 		return {
 			maxlenght: 32,
 			client_ID: '',
 			client_Secret: '',
 			encodedID: '',
+			showModal: false,
 		};
 	},
 	methods: {
 		login() {
 			getAuth(this.client_ID);
+		},
+		closeModalFunc(val) {
+			this.showModal = val;
 		},
 	},
 	computed: {
@@ -183,6 +207,7 @@ export default {
 			this.$store.dispatch('getAccessToken', accessToken(window.location.hash));
 		}
 	},
+	components: { AppHowitsWork },
 };
 </script>
 
