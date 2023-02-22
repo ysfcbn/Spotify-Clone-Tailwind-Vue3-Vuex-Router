@@ -7,7 +7,7 @@
 		<transition name="fade">
 			<div
 				v-show="showModal"
-				class="modal flex flex-col items-center relative z-[999] h-[35rem] w-[40rem] max-w-[40rem] mb-10 rounded-lg bg-white gap-y-6"
+				class="modal bg-dark2 flex flex-col items-center relative z-[999] h-[35rem] w-[40rem] max-w-[40rem] mb-10 rounded-lg gap-y-6"
 			>
 				<div class="h-[70%] w-[40rem] p-4 relative">
 					<div class="pb-8 flex items-center absolute w-full h-full">
@@ -63,7 +63,7 @@
 						</div>
 					</div>
 					<div
-						class="w-full h-full bg-dark rounded-lg shadow-[0_1px_15px_1px_rgba(0,0,0,0.4)]"
+						class="w-full h-full bg-dark rounded-lg shadow-[0_1px_15px_4px_rgba(0,0,0,0.9)]"
 					>
 						<transition name="slide" mode="out-in">
 							<img
@@ -83,14 +83,14 @@
 					<div class="px-5">
 						<p
 							v-show="showImage"
-							class="capitalize text-black inline-block flex w-fit font-semibold"
+							class="capitalize text-white inline-block flex w-fit font-semibold"
 						>
 							{{ images[index].description }}
 						</p>
 					</div>
 				</transition>
 				<div class="w-full flex items-center absolute bottom-4 justify-between">
-					<p class="ml-4 text-md font-semibol text-black">
+					<p class="ml-4 text-md font-semibol text-white">
 						This works only for
 						<span class="font-semibold text-podcastGreen5">premium</span>
 						users!
@@ -208,7 +208,10 @@ export default {
 		},
 
 		jumpIndex(index) {
+			this.translateFrom = '';
+			this.translateLeave = '';
 			this.index = index;
+			this.changeImage();
 		},
 	},
 	watch: {
