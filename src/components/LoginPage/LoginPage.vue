@@ -1,11 +1,10 @@
 <template>
 	<div class="h-screen relative overflow-x-hidden">
 		<AppHowitsWork
-			v-show="showModal"
+			:showModalContainer="showModalContainer"
 			:showModal="showModal"
-			@close="showModal = false"
+			@close="closeModalFunc(false)"
 		></AppHowitsWork>
-
 		<div class="logo">
 			<div class="flex justify-center items-center">
 				<svg class="w-[12rem] h-[6rem]" role="img" viewBox="0 0 80 24 ">
@@ -137,7 +136,7 @@
 
 				<div class="w-full flex justify-content mt-2">
 					<button
-						@click="showModal = true"
+						@click="openModal"
 						class="font-semibold w-fit m-auto text-blue3"
 					>
 						How it's Work?
@@ -180,14 +179,23 @@ export default {
 			client_Secret: '',
 			encodedID: '',
 			showModal: false,
+			showModalContainer: false,
 		};
 	},
 	methods: {
 		login() {
 			getAuth(this.client_ID);
 		},
+		openModal() {
+			this.showModal = true;
+			this.showModalContainer = true;
+		},
 		closeModalFunc(val) {
 			this.showModal = val;
+
+			setTimeout(() => {
+				this.showModalContainer = val;
+			}, 300);
 		},
 	},
 	computed: {
@@ -225,5 +233,15 @@ export default {
 	color: rgba(0, 0, 0, 0.5);
 	font-weight: 600;
 	letter-spacing: 2px;
+}
+.fadeContainer-enter-active,
+.fadeContainer-leave-active {
+	transition: all 1s ease-in;
+}
+.fadeContainer-enter-from {
+	opacity: 0;
+}
+.fadeContainer-leave-to {
+	opacity: 0;
 }
 </style>

@@ -2,7 +2,7 @@
 	<div
 		class="flex text-lightest justify-end items-center min-w-[32%] shrink-0 mx-4"
 	>
-		<div v-if="true">
+		<div v-if="false">
 			<button class="cursor-default">
 				<svg
 					class="hover:text-white"
@@ -54,7 +54,7 @@
 				</svg>
 			</button>
 		</div>
-		<div class="mx-1">
+		<div class="ml-2">
 			<button class="cursor-default">
 				<svg
 					@click="muteVolume"
@@ -92,7 +92,7 @@
 		</div>
 		<div
 			id="volume--bar"
-			class="flex items-center mx-1 mb-1 w-[18%] sm:min-w-[4.5rem] max-w-[7rem]"
+			class="flex items-center mx-2 mb-1 w-[18%] sm:min-w-[4.5rem] max-w-[7rem]"
 			@click="setVolumePercent(msg, $event)"
 		>
 			<div class="group flex relative w-full h-1 bg-lightest/40 rounded-full">

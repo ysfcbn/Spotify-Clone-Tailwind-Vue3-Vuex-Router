@@ -71,6 +71,11 @@
 						<span v-if="showModalType?.type === 'error'" class="font-semibold"
 							>Bir Sorun Oluştu</span
 						>
+						<span
+							v-if="showModalType?.type === 'notUnderstand'"
+							class="font-semibold"
+							>Please read all information</span
+						>
 					</div>
 				</div>
 			</div>

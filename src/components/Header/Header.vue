@@ -308,8 +308,8 @@
 							<span class="cursor-default">Profil</span>
 						</button>
 					</li>
-					<li class="w-full p-[10px] hover:bg-dark3">
-						<button @click="logout" class="cursor-default">
+					<li @click="logout" class="w-full p-[10px] hover:bg-dark3">
+						<button class="cursor-default">
 							<span>Oturumu kapat</span>
 						</button>
 					</li>
