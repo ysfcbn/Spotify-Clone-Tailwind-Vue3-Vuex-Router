@@ -83,7 +83,7 @@
           <div class="px-5">
             <p
               v-show="showImage"
-              class="capitalize text-white inline-block flex w-fit font-semibold"
+              class="text-white inline-block flex w-fit font-semibold"
             >
               {{ images[index].description }}
             </p>
@@ -133,7 +133,7 @@ export default {
         },
         {
           id: 1,
-          description: 'choose your App name and click "CREATE" button.',
+          description: 'Choose your App name and click "CREATE" button.',
           src: new URL(`../../assets/images/1.png`, import.meta.url).href,
         },
         {
@@ -157,7 +157,7 @@ export default {
         {
           id: 5,
           description:
-            "finaly copy your client ID and paste first input field. Before logging in from this application, you must make sure that you are logged into the original spotify and keep it open as long as the application is running.",
+            "Finaly copy your client ID and paste first input field. Before logging in from this application, you must make sure that you are logged into the original spotify and keep it open as long as the application is running.",
           src: new URL(`../../assets/images/5.png`, import.meta.url).href,
         },
       ],
