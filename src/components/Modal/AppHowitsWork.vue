@@ -97,7 +97,13 @@
           </p>
           <button
             @click="understand"
+            @mousedown="leftClick = true"
+            @mouseup="leftClick = false"
             class="flex items-center gap-x-2 bg-green3 p-3 mr-4 rounded-full text-textColor/80 hover:text-[#ffffff] hover:bg-green font-semibold capitalize text-sm"
+            :class="{
+              ' bg-green3/80 scale-80': leftClick,
+              'hover:scale-106 bg-green3/95 hover:bg-green3': !leftClick,
+            }"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -164,6 +170,7 @@ export default {
       index: 0,
       translateFrom: "",
       translateLeave: "",
+      leftClick: false,
       showImage: true,
       showedAllInfo: false,
     };
