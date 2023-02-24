@@ -6,11 +6,11 @@
 			<p
 				class="text-white font-extralight text-[12px] uppercase tracking-wider leading-5"
 			>
-				Spotify Önizlemesi
+				PREVIEW OF SPOTIFY
 			</p>
 			<p class="text-opacwhite3 text-[12px] tracking-wide leading-5">
-				Şarkı ve podcast'lere sınırsız erişim ve aralarda çıkan reklamlar için
-				kaydol. Kredi kartına gerek yok.
+				Sign up to get unlimited songs and podcasts with occasional ads. No
+				credit card needed.
 			</p>
 		</div>
 		<button
@@ -21,7 +21,7 @@
 				:href="href"
 				class="text-black text-base font-semibold"
 			>
-				Ücretsiz kaydol</a
+				Sign up free</a
 			>
 		</button>
 	</div>

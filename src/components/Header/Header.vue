@@ -349,12 +349,12 @@
 					target="_blank"
 					class="text-opacwhite5 text-base hover:scale-110 hover:text-white2 cursor-default"
 				>
-					Kaydol</a
+					Sign up</a
 				><button
 					@click="login"
 					class="py-3 px-8 rounded-full bg-white2 hover:bg-[#f6f6f6] hover:scale-105 cursor-default"
 				>
-					<span class="text-black text-base font-semibold">Oturum aç</span>
+					<span class="text-black text-base font-semibold">Log in</span>
 				</button>
 			</div>
 		</div>

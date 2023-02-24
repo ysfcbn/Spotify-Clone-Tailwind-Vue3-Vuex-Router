@@ -17,6 +17,7 @@ const controllerModule = {
 			'Nov',
 			'Dec',
 		],
+		countryCode: '',
 		currentlyPlayingTrack: null,
 		playbackState: null,
 		currentTrackAlbumImage: null,
@@ -45,9 +46,13 @@ const controllerModule = {
 		isClickHeaderBtn: null,
 	},
 	mutations: {
+		countryCode(state, payload) {
+			state.countryCode = payload;
+		},
 		myDevice(state, payload) {
 			state.myDevice = payload;
 		},
+
 		volumePercent(state, payload) {
 			state.volumePercent = payload;
 		},
@@ -132,6 +137,9 @@ const controllerModule = {
 		},
 	},
 	actions: {
+		async countryCode({ commit }, code) {
+			commit('countryCode', await code);
+		},
 		async fetchDevice({ getters, commit, dispatch }) {
 			await axios
 				.get(`https://api.spotify.com/v1/me/player/devices`, {
@@ -696,6 +704,9 @@ const controllerModule = {
 	getters: {
 		getToken(state, getters, rootState, rootGetters) {
 			return rootGetters.accessToken;
+		},
+		getCountryCode(state) {
+			return state.countryCode;
 		},
 		deviceID(state) {
 			return state.device_id;

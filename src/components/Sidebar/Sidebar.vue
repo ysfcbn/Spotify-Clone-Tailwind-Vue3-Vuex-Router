@@ -1,7 +1,7 @@
 <template>
 	<div
-		:class="{ relative: isAuth }"
-		class="sidebar min-w-[17rem] bg-black text-[0.8125rem] mb:text-xs sm3:text-[13px]"
+		:class="{ 'relative min-w-[15.5rem]': isAuth, 'min-w-[14rem]': !isAuth }"
+		class="sidebar bg-black text-[0.8125rem] mb:text-xs sm3:text-[13px]"
 	>
 		<div class="p-5">
 			<svg viewBox="0 0 2100 440">
@@ -31,7 +31,7 @@
 							d="M12.5 3.247a1 1 0 00-1 0L4 7.577V20h4.5v-6a1 1 0 011-1h5a1 1 0 011 1v6H20V7.577l-7.5-4.33zm-2-1.732a3 3 0 013 0l7.5 4.33a2 2 0 011 1.732V21a1 1 0 01-1 1h-6.5a1 1 0 01-1-1v-6h-3v6a1 1 0 01-1 1H3a1 1 0 01-1-1V7.577a2 2 0 011-1.732l7.5-4.33z"
 						></path>
 					</svg> </span
-				><span class="ml-4">Ana sayfa</span>
+				><span class="ml-4">Home</span>
 			</router-link>
 
 			<!-- Ara -->
@@ -53,7 +53,7 @@
 							d="M15.356 10.558c0 2.623-2.16 4.75-4.823 4.75-2.664 0-4.824-2.127-4.824-4.75s2.16-4.75 4.824-4.75c2.664 0 4.823 2.127 4.823 4.75z"
 						></path>
 					</svg> </span
-				><span class="ml-4">Ara</span>
+				><span class="ml-4">Search</span>
 			</router-link>
 
 			<!-- Kitaplığın -->
@@ -78,7 +78,7 @@
 						></path>
 					</svg>
 				</span>
-				<span class="ml-4">Kitaplığın</span>
+				<span class="ml-4">Your Library</span>
 			</router-link>
 
 			<transition-group name="fade-Popup">
@@ -87,10 +87,10 @@
 					v-if="collectionPopup && visible && !isAuth"
 					class="left-[10rem] top-[10.2rem]"
 				>
-					<template #title>Kitaplığının Tadını Çıkart</template>
+					<template #title>Enjoy Your Library</template>
 					<template #description
-						>Kitaplığındaki kayıtlı şarkıları, podcast'leri, sanatçıları ve
-						çalma listelerini görmek için oturum aç.</template
+						>Log in to see saved songs, podcasts, artists, and playlists in Your
+						Library.</template
 					>
 				</AppSignUpPopUp>
 			</transition-group>
@@ -112,7 +112,7 @@
 				>
 					<path d="M14 7H9V2H7v5H2v2h5v5h2V9h5z"></path>
 					<path fill="none" d="M0 0h16v16H0z"></path></svg></span
-			><span class="ml-4">Çalma Listesi Oluştur</span>
+			><span class="ml-4">Create Playlist</span>
 		</button>
 		<transition-group name="fade-Popup">
 			<AppSignUpPopUp
@@ -120,10 +120,8 @@
 				v-if="createPlaylistPopup && visible && !isAuth"
 				class="left-[17rem] top-[14.2rem]"
 			>
-				<template #title>Bir çalma listesi oluştur</template>
-				<template #description
-					>Çalma listeleri oluşturmak ve paylaşmak için oturum aç.</template
-				>
+				<template #title>Create a playlist</template>
+				<template #description>Log in to create and share playlists.</template>
 			</AppSignUpPopUp>
 		</transition-group>
 
@@ -145,7 +143,7 @@
                   2.113 1.168 2.855l4.462 5.223a1.791 1.791 0 0 0 2.726 0l4.435-5.195a4.052 4.052
                   0 0 0 1.195-2.883 4.057 4.057 0 0 0-1.196-2.883z"
 					></path></svg></span
-			><span class="ml-4 flex-start">Beğenilen Şarkılar</span>
+			><span class="ml-4 flex-start">Liked Songs</span>
 			<button
 				id="pause"
 				v-if="isPlayingCollection"
@@ -189,15 +187,15 @@
 				v-if="favoriteSongsPopup && visible && !isAuth"
 				class="left-[18rem] top-[16.8rem]"
 			>
-				<template #title>Beğenilen Şarkılarının tadını çıkar</template>
+				<template #title>Enjoy your Liked Songs</template>
 				<template #description
-					>Beğendiğin tüm şarkıları kolay bir çalma listesinde görmek için
-					oturum aç.</template
+					>Log in to see all the songs you’ve liked in one easy
+					playlist.</template
 				>
 			</AppSignUpPopUp>
 		</transition-group>
 
-		<!-- Bölümlerin -->
+		<!-- Episodes -->
 		<router-link
 			v-if="isAuth"
 			:to="{ name: 'episodes' }"
@@ -217,7 +215,7 @@
 						fill="#1ed760"
 						d="M3.75 0A1.75 1.75 0 002 1.75v12.952c0 1.051 1.22 1.633 2.037.972l3.962-3.208 3.943 3.204c.817.663 2.038.082 2.038-.97V1.75A1.75 1.75 0 0012.23 0H3.75z"
 					></path></svg></span
-			><span class="ml-4 h-full">Bölümlerin</span>
+			><span class="ml-4 h-full">Your Episodes</span>
 			<button
 				v-if="isPlayingEpisodes"
 				class="absolute right-[2rem] bottom-1 cursor-default group flex items-center justify-center w-10"
@@ -259,18 +257,18 @@
 		<!-- My Playlists -->
 		<div
 			v-if="isAuth"
-			class="container-list w-full min-h-0 overflow-y-auto overflow-x-hidden flex"
+			class="container-list w-full min-h-0 overflow-y-scroll overflow-x-hidden flex"
 			:style="{
 				height: setHeight,
 			}"
 		>
-			<div class="mx-6 flex flex-col h-fit mt-2">
+			<div class="mx-6 flex flex-col h-fit pb-2">
 				<router-link
 					v-for="playlist in getUserFavPlaylists"
 					:id="playlist.id"
 					:key="playlist.id"
 					:to="{ name: 'playlist', params: { id: `${playlist.id}` } }"
-					class="text-white w-[14rem] h-fit opacity-70 mb:text-[13px] hover:text-white hover:opacity-100 cursor-default leading-7 truncate"
+					class="text-white w-[12rem] h-fit opacity-70 mb:text-[13px] hover:text-white hover:opacity-100 cursor-default leading-7 truncate"
 				>
 					{{ playlist.name }}
 				</router-link>
@@ -279,12 +277,12 @@
 		<div
 			v-if="isAuth"
 			id="download--app"
-			:class="`absolute mb-1 bottom-0 bg-black w-full h-[3rem] ${
-				!trackImgDisplay ? 'h-[19.8rem] ease-in duration-200' : ''
+			:class="`absolute  bottom-0 bg-black w-full h-[2.5rem] ${
+				!trackImgDisplay ? 'h-[17.8rem] ease-in duration-200' : ''
 			}`"
 		>
 			<button
-				class="group pl-[12px] cursor-pointer flex items-center font-semibold mx-2 relative text-lightest hover:text-white h-[3rem]"
+				class="group pl-[12px] cursor-pointer flex items-center font-semibold mx-2 relative text-lightest hover:text-white h-[1rem]"
 			>
 				<span
 					class="group-hover:text-white flex items-center justify-center rounded-xs py-1.5 shrink-0"
@@ -305,13 +303,13 @@
 							d="M12 6.05a1 1 0 011 1v7.486l1.793-1.793a1 1 0 111.414 1.414L12 18.364l-4.207-4.207a1 1 0 111.414-1.414L11 14.536V7.05a1 1 0 011-1z"
 						></path>
 					</svg> </span
-				><span class="ml-5">Uygulamayı Yükle</span>
+				><span class="ml-5">Install App</span>
 			</button>
 			<div
 				:class="`w-full relative ease-in duration-200 mt-2 ${
 					trackImgDisplay
-						? 'bottom-[-20rem] ease-in duration-200'
-						: 'bottom-[1rem] ease-in duration-200'
+						? 'bottom-[-6px] ease-in duration-200'
+						: 'bottom-[-1px] ease-in duration-200'
 				} `"
 			>
 				<div class="w-full h-full group">
@@ -342,13 +340,13 @@
 					href="https://www.spotify.com/legal/cookies-policy/"
 					target="_blank"
 					rel="noopener"
-					><span class="text-opacwhite6 hover:underline">Çerezler</span></a
+					><span class="text-opacwhite6 hover:underline">Cookies</span></a
 				><a
 					draggable="false"
 					href="https://www.spotify.com/legal/privacy-policy/"
 					target="_blank"
 					rel="noopener"
-					><span class="text-opacwhite6 hover:underline">Gizlilik</span></a
+					><span class="text-opacwhite6 hover:underline">Security</span></a
 				>
 			</div>
 		</div>
@@ -486,7 +484,7 @@ export default {
 	},
 	watch: {
 		trackImgDisplay(newVal, oldVal) {
-			newVal ? (this.dowloadAppHeight = 48) : (this.dowloadAppHeight = 312);
+			newVal ? (this.dowloadAppHeight = 48) : (this.dowloadAppHeight = 280);
 		},
 	},
 

@@ -14,7 +14,7 @@
 					<img class="h-full w-full" :src="albumTrackImage" alt="single" />
 				</div>
 				<div class="flex flex-col text-white font-semibold px-4">
-					<h2 class="text-sm">ŞARKI</h2>
+					<h2 class="text-sm">SONG</h2>
 					<span>
 						<h1
 							class="w-full sm:text-3xl md:text-5xl md2:text-6xl xl:text-7xl tracking-tighter py-2"
@@ -138,7 +138,7 @@
 		<div class="p-5 lg:ml-[1rem] relative lg3:flex">
 			<div v-if="lyrics" class="min-w-[60%] mb-8">
 				<h2 class="text-white text-3xl font-semibold tracking-tighter">
-					Şarkı Sözleri
+					Lyrics
 				</h2>
 				<br />
 				<div class="text-lightest">
@@ -162,7 +162,7 @@
 							class="uppercase text-sm text-opacwhite5"
 							style="font-weight: 700"
 						>
-							Sanatçı
+							Artist
 						</h2>
 						<router-link
 							:to="{
@@ -183,7 +183,7 @@
 		<section class="p-5 lg:ml-[1rem]">
 			<div class="relative mb-2">
 				<div class="h-fit flex flex-col h-[3.8rem]">
-					<span class="text-lightest text-sm">Popüler Parçalar -</span>
+					<span class="text-lightest text-sm">Popular Tracks by</span>
 					<h2
 						class="text-[1.5rem] text-white leading-7 tracking-tight"
 						style="font-weight: 600"
@@ -237,14 +237,14 @@
 				class="m-2 mb-10 text-[0.75rem] text-opacwhite5 hover:text-white leading-7 tracking-widest hover:text-underline-offset-8 font-semibold cursor-default uppercase"
 			>
 				<span v-if="!seeMore">See More</span>
-				<span v-else>daha azını göster</span>
+				<span v-else>Show less</span>
 			</button>
 
 			<Card @click="openAlbumPage(msg, $event)" :currentData="artistTopTracks">
 				<template #cardTitle
-					>{{ currentTrack?.artists[0].name }}- Popüler Müzikleri</template
-				>
-				<template #seeMore>Diskografiye bak</template>
+					>Popular Releases by {{ currentTrack?.artists[0].name }}
+				</template>
+				<template #seeMore>See discography</template>
 				<template #imgContainer="{ data }">
 					<div class="w-full relative mb-5">
 						<img
@@ -265,9 +265,9 @@
 
 			<Card @click="openAlbumPage(msg, $event)" :currentData="popularAlbums">
 				<template #cardTitle
-					>{{ currentTrack?.artists[0].name }} - Popüler Albümleri</template
-				>
-				<template #seeMore>Diskografiye bak</template>
+					>Popular Albums by {{ currentTrack?.artists[0].name }}
+				</template>
+				<template #seeMore>See discography</template>
 				<template #imgContainer="{ data }">
 					<div class="w-full relative mb-5">
 						<img
@@ -288,10 +288,10 @@
 
 			<Card @click="openAlbumPage(msg, $event)" :currentData="popularSingles">
 				<template #cardTitle
-					>{{ currentTrack?.artists[0].name }} - Popüler Single ve
-					EP'leri</template
+					>Popular Singles and EPs by
+					{{ currentTrack?.artists[0].name }}</template
 				>
-				<template #seeMore>Diskografiye bak</template>
+				<template #seeMore>See discography</template>
 				<template #imgContainer="{ data }">
 					<div class="w-full relative mb-5">
 						<img
@@ -325,7 +325,7 @@
 							</div>
 							<div class="flex flex-col gap-y-1">
 								<h2 class="text-xs text-opacwhite5" style="font-weight: 700">
-									{{ currentTrack.album.album_type }}'dan:
+									From the {{ currentTrack.album.album_type }}
 								</h2>
 								<h4
 									class="text-white text-[16px] cursor-ponter hover:underline"

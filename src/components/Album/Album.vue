@@ -18,7 +18,7 @@
 				<div class="flex flex-col text-white px-4 ml-2">
 					<h2
 						style="font-weight: 700"
-						class="uppercase text-sm tracking-tighter"
+						class="uppercase text-xs tracking-tighter"
 					>
 						{{ albumType }}
 					</h2>
@@ -64,7 +64,7 @@
 								albumYear
 							}}</span>
 							<span class=""
-								>{{ currentAlbum?.tracks.items.length }} şarkı,</span
+								>{{ currentAlbum?.tracks.items.length }} songs,</span
 							>
 							<span class="text-sm ml-2 text-opacwhite5">{{
 								totalDuration()
@@ -660,10 +660,10 @@ export default {
 			const result = () => {
 				if (totalMiliSeconds > 3600000) {
 					return hours >= 5
-						? 'yaklaşık ' + hours + ' sa. ' + minutes() + ' dk.'
-						: hours + ' sa. ' + minutes() + ' dk.';
+						? 'about ' + hours + ' hr ' + minutes() + ' min'
+						: hours + ' hr ' + minutes() + ' min';
 				} else {
-					return minutes() + ' dk. ' + seconds + ' sn.';
+					return minutes() + ' min ' + seconds + ' sec';
 				}
 			};
 			return result();

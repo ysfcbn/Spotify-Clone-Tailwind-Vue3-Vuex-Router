@@ -14,7 +14,7 @@
 					@click="notNow"
 					class="py-3 px-8 font-medium hover:scale-105 cursor-default text-white text-md tracking-wider"
 				>
-					Şimdi değil
+					Not Now
 				</button>
 
 				<button
@@ -22,7 +22,7 @@
 					style="font-weight: 600"
 					class="py-3 px-8 rounded-full bg-white hover:scale-105 text-black cursor-default w-fit text-[16px]"
 				>
-					Oturum aç
+					Log in
 				</button>
 			</div>
 		</div>

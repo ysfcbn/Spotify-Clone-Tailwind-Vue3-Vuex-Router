@@ -32,7 +32,7 @@
 					</div>
 				</div>
 				<div class="flex flex-col text-white font-semibold px-4">
-					<h2 class="uppercase">ÇALMA LİSTESİ</h2>
+					<h2 class="uppercase text-xs">Playlist</h2>
 					<span>
 						<h1
 							class="w-full sm:text-3xl md:text-4xl xl:text-5xl tracking-tighter py-2"
@@ -69,13 +69,13 @@
 							</span>
 							<div v-if="playlistFollowers" class="flex flex-nowrap shrink-0">
 								<span class="before:content-['•'] before:mx-2"
-									>{{ playlistFollowers }} beğenme</span
+									>{{ playlistFollowers }} likes</span
 								>
 							</div>
 						</div>
 						<div v-if="totalPlaylistTracks">
 							<span class="before:content-['•'] before:mx-2"
-								>{{ totalPlaylistTracks }} şarkı,</span
+								>{{ totalPlaylistTracks }} songs,</span
 							>
 							<span class="text-sm ml-2 text-opacwhite5">{{
 								totalDuration()
@@ -609,10 +609,10 @@ export default {
 			const result = () => {
 				if (totalMiliSeconds > 3600000) {
 					return hours >= 5
-						? 'yaklaşık ' + hours + ' sa. ' + minutes() + ' dk.'
-						: hours + ' sa. ' + minutes() + ' dk.';
+						? 'about ' + hours + ' hr ' + minutes() + ' min'
+						: hours + ' hr ' + minutes() + ' min';
 				} else {
-					return minutes() + ' dk. ' + seconds + ' sn.';
+					return minutes() + ' min ' + seconds + ' sec';
 				}
 			};
 

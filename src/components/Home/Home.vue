@@ -46,7 +46,7 @@
 		</section>
 		<div v-if="isAuth">
 			<Card v-if="favShows" :shows="true" :currentData="favShows">
-				<template #cardTitle>Programların</template>
+				<template #cardTitle>Your shows</template>
 
 				<template #imgContainer="{ data }">
 					<div class="w-full relative mb-5">
@@ -64,7 +64,7 @@
 			</Card>
 
 			<Card :currentData="currentUserTopArtists" :artists="true">
-				<template #cardTitle>En sevdiğin sanatçılar</template>
+				<template #cardTitle>Your favorite artists </template>
 
 				<template #imgContainer="{ data }">
 					<div class="w-full relative mb-6">
@@ -138,15 +138,15 @@
 							class="text-[1.3rem] text-white leading-7 tracking-tight hover:underline hover:text-underline-offset-8 cursor-pointer"
 							style="font-weight: 700"
 						>
-							Yakında Çalınanlar
+							Recently played
 						</h2>
 					</div>
 					<div class="">
 						<h6
 							style="font-weight: 600"
-							class="h-full mb:text-[10px] md:text-[12px] text-lg leading-10 text-lightest hover:underline hover:text-white uppercase cursor-pointer pb-2 tracking-widest"
+							class="h-full mb:text-[11px] font-semibold leading-10 text-lightest hover:underline hover:text-white cursor-pointer pb-2 tracking-widest"
 						>
-							TÜMÜNÜ GÖSTER
+							Show all
 						</h6>
 					</div>
 				</div>
@@ -169,7 +169,7 @@
 			</section>
 
 			<Card :currentData="recommendationsTracks" :albums="true">
-				<template #cardTitle>Bugün için tavsiye</template>
+				<template #cardTitle>Recommendations for today</template>
 				<template #imgContainer="{ data }">
 					<div class="w-full relative mb-5">
 						<img
@@ -447,6 +447,7 @@ export default {
 			headerHeight: '',
 			playlistID: '',
 			randomIndexs: null,
+			countryCode: '',
 			recentlyPlayedCards: false,
 			typeOfSelectedSection: null,
 			totaldummydata: [],
@@ -879,14 +880,22 @@ export default {
 				.catch(err => console.log(err));
 		},
 		async fetchSeveralPlaylists() {
+			await axios.get('https://ipapi.co/json/').then(({ data }) => {
+				console.log('GEOLOCATİON DATA ==>>', data.country_code);
+				this.countryCode = data.country_code;
+				this.$store.dispatch('controller/countryCode', this.countryCode);
+			});
 			await axios
-				.get('https://api.spotify.com/v1/browse/featured-playlists', {
-					headers: {
-						Accept: 'application/json',
-						'Content-Type': 'application/json',
-						Authorization: 'Bearer ' + this.getToken,
-					},
-				})
+				.get(
+					`https://api.spotify.com/v1/browse/featured-playlists?country=${this.countryCode}`,
+					{
+						headers: {
+							Accept: 'application/json',
+							'Content-Type': 'application/json',
+							Authorization: 'Bearer ' + this.getToken,
+						},
+					}
+				)
 				.then(({ data }) => {
 					this.$store.dispatch('playlists/severalPlaylists', data);
 				})
@@ -930,7 +939,7 @@ export default {
 			await this.randomIndexs?.forEach(item => {
 				axios
 					.get(
-						`https://api.spotify.com/v1/browse/categories/${categoryID[item].id}/playlists?limit=50`,
+						`https://api.spotify.com/v1/browse/categories/${categoryID[item].id}/playlists?limit=50&country=${this.countryCode}`,
 						{
 							headers: {
 								Accept: 'application/json',

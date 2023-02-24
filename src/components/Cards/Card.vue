@@ -15,9 +15,9 @@
 			<div class="">
 				<h6
 					style="font-weight: 600"
-					class="h-full mb:text-[10px] md:text-[12px] text-md leading-10 text-lightest hover:underline uppercase cursor-pointer pb-2 px-2 tracking-widest"
+					class="h-full mb:text-[11px] leading-10 text-lightest hover:underline cursor-pointer pb-2 px-2 tracking-widest font-semibold"
 				>
-					<slot name="seeMore"> TÜMÜNÜ GÖSTER</slot>
+					<slot name="seeMore"> Show all</slot>
 				</h6>
 			</div>
 		</div>
