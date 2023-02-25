@@ -3,8 +3,9 @@
     :class="{
       'top-[18.4rem] left-[18.4rem] p-[4px] ': diskografiPage && firstElement,
       'top-[11.3rem] left-[18.4rem] p-[4px] ': diskografiPage && !firstElement,
+      'left-[9.2rem]': playlistPage || albumPage || TrackPage,
     }"
-    class="app--option absolute z-[999] bg-dark2 top-[4.8rem] left-[10rem] p-[4px] w-fit h-fit text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
+    class="app--option absolute z-[999] bg-dark2 p-[4px] w-fit h-fit text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
   >
     <li
       v-if="isPlayingCurrentSectionTrack"
@@ -129,8 +130,11 @@
       </button>
       <ul
         v-if="visible"
-        :class="{ 'left-[14.8rem] top-[-12.3rem]': TrackPage }"
-        class="z-50 absolute bg-dark2 top-[-14.9rem] left-[12.2rem] p-[4px] h-[25rem] w-fit text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
+        :class="{
+          'left-[14.8rem] top-[-12.2rem]': TrackPage,
+          'left-[9.6rem] top-[-12.3rem]': albumPage,
+        }"
+        class="z-50 absolute bg-dark2 p-[4px] h-[25rem] w-fit text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
       >
         <li
           class="w-full flex items-center justify-start hover:bg-dark3 border-opacwhite mb-1"
@@ -203,11 +207,11 @@
       <ul
         v-if="visible2"
         :class="{
-          'w-[15.5rem] left-[12.2rem] ': playlistPage,
-          'w-[13.3rem] top-[12.5rem] left-[14.9rem]': TrackPage,
-          ' w-[13.3rem] left-[8rem]': albumPage,
+          'w-[15.5rem] left-[11.4em] ': playlistPage,
+          'w-[13.3rem] top-[12.6rem]  left-[14.9rem]': TrackPage,
+          'w-[13.3rem] left-[9.6rem]': albumPage,
         }"
-        class="z-50 absolute bg-dark2 top-[10rem] p-[4px] h-fit text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
+        class="z-50 absolute bg-dark2 p-[4px] h-fit text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
       >
         <li
           @click="copyURL((href = currentHref))"

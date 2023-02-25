@@ -6,7 +6,7 @@
       <div class="w-full mb-5 relative">
         <img
           :class="{
-            ['rounded-full w-full h-full']: track.artist === 'Sanatçı',
+            ['rounded-full w-full h-full']: track.artist === 'Artist',
           }"
           class="object-cover"
           :src="track.img"
