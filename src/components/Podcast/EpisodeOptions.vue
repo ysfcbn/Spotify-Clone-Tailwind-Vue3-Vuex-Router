@@ -10,7 +10,7 @@
       class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 truncate"
     >
       <button class="cursor-default">
-        <span class="text-xs md:text-sm">Sıraya Ekle </span>
+        <span class="text-xs md:text-sm">Add to queue</span>
       </button>
     </li>
 
@@ -19,7 +19,7 @@
       class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3"
     >
       <button @click="removeAddEpisode(msg, $event)" class="cursor-default">
-        <span class="text-xs md:text-sm">Bölümlerin'e kaydet</span>
+        <span class="text-xs md:text-sm">Save to Your Episodes</span>
       </button>
     </li>
     <li
@@ -27,7 +27,7 @@
       class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3"
     >
       <button @click="removeAddEpisode(msg, $event)" class="cursor-default">
-        <span class="text-xs md:text-sm">Bölümlerin'den kaldır</span>
+        <span class="text-xs md:text-sm">Remove from Your Episodesr</span>
       </button>
     </li>
     <li
@@ -44,7 +44,7 @@
       class="group w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-b border-opacwhite"
     >
       <button class="cursor-default flex items-center justify-between w-full">
-        <span class="text-xs md:text-sm">Çalma listesine ekle</span>
+        <span class="text-xs md:text-sm">Add to playlist</span>
         <span class="text-white">
           <svg
             role="img"
@@ -67,7 +67,7 @@
           <input
             v-model="searchEl"
             type="text"
-            placeholder="Çalma listesi ara"
+            placeholder="Find a playlist"
             class="text-sm w-[15.3rem] bg-opacwhite relative rounded-md pl-8 h-8 left-0 focus:outline-none"
           />
           <div class="absolute pl-2">
@@ -110,7 +110,7 @@
           class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-b border-opacwhite"
         >
           <button class="cursor-default">
-            <span class="text-xs md:text-sm">Çalma listesi oluştur</span>
+            <span class="text-xs md:text-sm">Create playlist</span>
           </button>
         </li>
       </ul>
@@ -121,7 +121,7 @@
       class="group w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-b border-opacwhite"
     >
       <button class="cursor-default flex items-center justify-between w-full">
-        <span class="text-xs md:text-sm">Paylaş</span>
+        <span class="text-xs md:text-sm">Share</span>
         <span class="text-white">
           <svg
             role="img"
@@ -142,19 +142,19 @@
           class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-opacwhite"
         >
           <button class="cursor-default">
-            <span class="text-xs md:text-sm">Bölüm bağlantısını kopyala</span>
+            <span class="text-xs md:text-sm">Copy Episode Link</span>
           </button>
         </li>
         <li class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3">
           <button class="cursor-default">
-            <span class="text-xs md:text-sm">Bölümü göm</span>
+            <span class="text-xs md:text-sm">Embed episode</span>
           </button>
         </li>
       </ul>
     </li>
     <li class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3">
       <button class="cursor-default">
-        <span class="text-xs md:text-sm">Masaüstü uygulamasında aç</span>
+        <span class="text-xs md:text-sm">Open in Desktop app</span>
       </button>
     </li>
   </ul>

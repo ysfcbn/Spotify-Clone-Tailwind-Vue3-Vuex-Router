@@ -139,7 +139,7 @@
               v-else-if="ifPlayed && podcastShowPage"
               class="before:content-['·'] before:px-1 pr-2 flex items-center"
             >
-              <span class="px-2"> Çalındı</span>
+              <span class="px-2">Played</span>
 
               <svg
                 role="img"
@@ -474,27 +474,27 @@ export default {
       const result = () => {
         if (played && resume) {
           if (totalMiliSeconds > 3600000) {
-            return hours + " sa. " + minutes() + " dk." + " kaldı";
+            return hours + " hr " + minutes() + " min" + " left";
           } else {
-            return minutes() + " dk. " + seconds + " sn." + " kaldı";
+            return minutes() + " min " + seconds + " sec" + " left";
           }
         } else if (!played && !resume) {
           if (totalMiliSeconds > 3600000) {
-            return hours + " sa. " + minutes() + " dk.";
+            return hours + " hr " + minutes() + " min";
           } else {
-            return minutes() + " dk. " + seconds + " sn.";
+            return minutes() + " min " + seconds + " sec";
           }
         } else if (!played && resume) {
           if (totalMiliSeconds > 3600000) {
-            return hours + " sa. " + minutes() + " dk." + " kaldı";
+            return hours + " hr " + minutes() + " min" + " left";
           } else {
-            return minutes() + " dk. " + seconds + " sn." + " kaldı";
+            return minutes() + " min " + seconds + " sec" + " left";
           }
         } else if (played) {
           if (totalMiliSeconds > 3600000) {
-            return hours + " sa. " + minutes() + " dk.";
+            return hours + " hr " + minutes() + " min";
           } else {
-            return minutes() + " dk. " + seconds + " sn.";
+            return minutes() + " min " + seconds + " sec";
           }
         }
       };
@@ -507,7 +507,7 @@ export default {
         this.getMonths[new Date(this.episode?.release_date).getMonth()];
       const year = new Date(this.episode?.release_date).getFullYear();
       if (new Date().getFullYear() === year) {
-        return `${day} ${month}`;
+        return `${month} ${day}`;
       } else {
         return `${month} ${year}`;
       }
