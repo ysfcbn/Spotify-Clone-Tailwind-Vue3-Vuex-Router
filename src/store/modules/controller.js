@@ -603,8 +603,12 @@ const controllerModule = {
 					console.log(data);
 					if (data.status === 204) {
 						console.log('skipped to Next Track!');
-						dispatch('userQueue');
 						state.queueTrackList.length ? state.queueTrackList.shift() : '';
+						dispatch('userQueue').then(() => {
+							state.queueTrackList.length
+								? state.allQueueList.splice(0, state.queueTrackList.length)
+								: '';
+						});
 
 						dispatch('fetchCurrentlyPlayingTrack');
 						dispatch('clearIntervalFunc');
@@ -643,7 +647,7 @@ const controllerModule = {
 		queueFavTrackIDs({ commit }, payload) {
 			commit('queueFavTrackIDs', payload);
 		},
-		async userQueue({ getters, commit }) {
+		async userQueue({ getters, commit, state }) {
 			await axios
 				.get(`https://api.spotify.com/v1/me/player/queue`, {
 					headers: {
