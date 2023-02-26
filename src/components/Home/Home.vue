@@ -1346,6 +1346,7 @@ export default {
 			this.observer.observe(this.homeEl);
 		}
 		if (this.isAuth) {
+			await this.$store.dispatch('controller/userQueue');
 			await this.$store.dispatch('controller/fetchRecentlyPlayedTracks');
 			this.getCurrentUser ? '' : await this.currentUser();
 			await this.lastListenTracks();
