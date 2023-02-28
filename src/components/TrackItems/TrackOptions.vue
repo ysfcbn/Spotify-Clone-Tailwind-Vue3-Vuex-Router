@@ -11,7 +11,7 @@
   >
     <li
       @click="addToQueue((uri = { uri: uri, index: index }))"
-      class="w-full p-[10px] hover:bg-dark3 border-b border-opacwhite"
+      class="w-full p-[10px] hover:bg-dark3 border-b border-opacwhite1"
     >
       <button class="w-full flex justify-start cursor-default">
         <span class="cursor-default">Add to queue</span>
@@ -76,7 +76,7 @@
         <span>Go to album</span>
       </button>
     </li>
-    <li class="w-full p-[10px] hover:bg-dark3 border-b border-opacwhite">
+    <li class="w-full p-[10px] hover:bg-dark3 border-b border-opacwhite1">
       <button class="cursor-default">
         <span>Show credits</span>
       </button>
@@ -89,7 +89,7 @@
     <li
       @mouseenter="visiblePlaylist = true"
       @mouseleave="visiblePlaylist = false"
-      class="group w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-b border-opacwhite"
+      class="group w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-b border-opacwhite1"
     >
       <button class="cursor-default flex items-center justify-between w-full">
         <span class="text-xs md:text-sm">Add to playlist</span>
@@ -166,22 +166,23 @@
     <li
       @mouseenter="visibleShare = true"
       @mouseleave="visibleShare = false"
-      class="w-full p-[10px] hover:bg-dark3 border-b border-opacwhite flex justify-between"
+      class="group w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-b border-opacwhite1"
     >
-      <button class="cursor-default">
+      <button class="cursor-default flex items-center justify-between w-full">
         <span>Share</span>
+        <span>
+          <svg
+            role="img"
+            height="16"
+            width="16"
+            class="rotate-90"
+            viewBox="0 0 16 16"
+          >
+            <path fill="currentColor" d="M14 10L8 4l-6 6h12z"></path>
+          </svg>
+        </span>
       </button>
-      <span>
-        <svg
-          role="img"
-          height="16"
-          width="16"
-          class="rotate-90"
-          viewBox="0 0 16 16"
-        >
-          <path fill="currentColor" d="M14 10L8 4l-6 6h12z"></path>
-        </svg>
-      </span>
+
       <ul
         v-if="visibleShare"
         class="z-40 absolute bg-dark2 top-[17.8rem] left-[-11.8rem] p-[4px] h-fit w-[12rem] text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"

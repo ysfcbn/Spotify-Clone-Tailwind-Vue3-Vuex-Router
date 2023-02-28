@@ -142,7 +142,7 @@
                 Your Episodes
               </div>
               <div class="text-sm text-lightest w-full truncate leading-7">
-                {{ totalFavEpisodes }} episodes
+                {{ totalFavEpisodes }} {{ episodeCalc }}
               </div>
             </div>
           </div>
@@ -427,6 +427,9 @@ export default {
     },
     totalFavEpisodes() {
       return this.$store.getters["episodes/getFavEpisodes"]?.total;
+    },
+    episodeCalc() {
+      return this.totalFavEpisodes > 1 ? "episodes" : "episode";
     },
   },
   mounted() {

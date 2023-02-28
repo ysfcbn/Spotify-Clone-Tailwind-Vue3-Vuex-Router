@@ -43,7 +43,7 @@
           <span
             :class="{ 'text-green3': this.$route.params.type === 'all' }"
             class="text-xs md:text-sm"
-            >Tümü</span
+            >All</span
           >
           <svg
             v-if="this.$route.params.type === 'all'"
@@ -68,7 +68,7 @@
           <span
             :class="{ 'text-green3': this.$route.params.type === 'albums' }"
             class="text-xs md:text-sm"
-            >Albümler</span
+            >Albums</span
           >
           <svg
             v-if="this.$route.params.type === 'albums'"
@@ -93,7 +93,7 @@
           <span
             :class="{ 'text-green3': this.$route.params.type === 'singles' }"
             class="text-xs md:text-sm w-full flex"
-            >Single'lar ve EP'ler</span
+            >Singles and EPs</span
           >
           <svg
             v-if="this.$route.params.type === 'singles'"
@@ -121,7 +121,7 @@
               'text-green3': this.$route.params.type === 'compilations',
             }"
             class="text-xs md:text-sm"
-            >Derlemeler</span
+            >Compilations</span
           >
           <svg
             v-if="this.$route.params.type === 'compilations'"
@@ -192,13 +192,13 @@ export default {
     },
     activeType() {
       return this.getSelectredType === "all"
-        ? "Tümü"
+        ? "All"
         : this.getSelectredType === "albums"
-        ? "Albümler"
+        ? "Albums"
         : this.getSelectredType === "singles"
-        ? "Single'ler ve EP'ler"
+        ? "Singles and EPs"
         : this.getSelectredType === "compilations"
-        ? "Derlemeler"
+        ? "Compilations"
         : null;
     },
   },

@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="{ 'relative min-w-[15.5rem]': isAuth, 'min-w-[14rem]': !isAuth }"
+    :class="{ 'relative min-w-[16rem]': isAuth, 'min-w-[14rem]': !isAuth }"
     class="sidebar bg-black text-[0.8125rem] mb:text-xs sm3:text-[13px]"
   >
     <div class="p-5">
@@ -278,14 +278,14 @@
       v-if="isAuth"
       id="download--app"
       :class="`absolute  bottom-0 bg-black w-full h-[2.5rem] ${
-        !trackImgDisplay ? 'h-[17.8rem] ease-in duration-200' : ''
+        !trackImgDisplay ? 'h-[18.8rem] ease-in duration-200' : ''
       }`"
     >
       <button
-        class="group pl-[12px] cursor-pointer flex items-center font-semibold mx-2 relative text-lightest hover:text-white h-[1rem]"
+        class="group pl-[12px] cursor-pointer flex items-center font-semibold mt-1 mx-2 relative text-lightest hover:text-white"
       >
         <span
-          class="group-hover:text-white flex items-center justify-center rounded-xs py-1.5 shrink-0"
+          class="group-hover:text-white flex items-center justify-center rounded-xs shrink-0"
         >
           <svg
             role="img"
@@ -303,7 +303,7 @@
               d="M12 6.05a1 1 0 011 1v7.486l1.793-1.793a1 1 0 111.414 1.414L12 18.364l-4.207-4.207a1 1 0 111.414-1.414L11 14.536V7.05a1 1 0 011-1z"
             ></path>
           </svg> </span
-        ><span class="ml-5">Install App</span>
+        ><span class="ml-3 text-[14px]">Install App</span>
       </button>
       <div
         :class="`w-full relative ease-in duration-200 mt-2 ${
@@ -484,7 +484,7 @@ export default {
   },
   watch: {
     trackImgDisplay(newVal, oldVal) {
-      newVal ? (this.dowloadAppHeight = 48) : (this.dowloadAppHeight = 280);
+      newVal ? (this.dowloadAppHeight = 24) : (this.dowloadAppHeight = 290);
     },
   },
 

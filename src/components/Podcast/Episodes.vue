@@ -62,7 +62,7 @@
               <span
                 class="before:content-['•'] before:mx-1 text-sm"
                 style="font-weight: 500"
-                >{{ totalEpisode }} episodes</span
+                >{{ totalEpisode }} {{ episodeCalc }}</span
               >
             </div>
           </div>
@@ -152,6 +152,9 @@ export default {
     },
     totalEpisode() {
       return this.getFavEpisodes.total;
+    },
+    episodeCalc() {
+      return this.totalFavEpisodes > 1 ? "episodes" : "episode";
     },
     userFavEpisodes() {
       return this.getFavEpisodes.items;
