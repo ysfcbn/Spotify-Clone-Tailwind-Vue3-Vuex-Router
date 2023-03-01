@@ -18,13 +18,13 @@
         albumPage ||
         singlePage ||
         userPage ||
+        queuePage ||
+        queuePage2 ||
         TrackPage ||
         artistPage ||
         diskografiPage ||
-        queuePage ||
-        queuePage2 ||
         playlistPage,
-      'lg:grid-cols-colProfile mb:grid-cols-colPresm':
+      'lg:grid-cols-colProfile mb:grid-cols-colPresm md2:grid-cols-colPremd':
         userPage || queuePage || queuePage2,
       'mb:grid-cols-colPreDisco': diskografiPage || albumPage || singlePage,
       'mb:grid-cols-colArtPop': artistPage || TrackPage || TrackPage2,
@@ -141,7 +141,8 @@
     <div
       v-if="!albumPage && !diskografiPage && !singlePage"
       :class="{
-        'sm:ml-[1rem] lg:flex': userPage || queuePage || queuePage2,
+        'sm:ml-[4rem] md2:flex': userPage || queuePage || queuePage2,
+        'md2:flex flex-shrink': !userPage && !queuePage && !queuePage2,
       }"
       class="flex justify-start items-center hidden sm:ml-[2px]"
     >
@@ -167,7 +168,7 @@
     </div>
 
     <div
-      :class="{ 'sm:ml-[1rem]': userPage || queuePage || queuePage2 }"
+      :class="{ 'sm:ml-[1rem]': userPage }"
       class="flex justify-start items-center pr-3"
     >
       <button
@@ -385,14 +386,6 @@ export default {
             "controller/playArtitsTopTracks",
             contextUri
           );
-        }
-        if (this.queuePage) {
-          contextUri.index = this.index;
-          contextUri.id = "track";
-          await this.$store.dispatch(
-            "controller/playArtitsTopTracks",
-            contextUri
-          );
         } else {
           contextUri.type = this.contextType;
           await this.$store.dispatch(
@@ -408,13 +401,13 @@ export default {
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            Authorization: "Bearer " + this.getToken,
+            Authorization: "Bearer " + (await this.getToken),
           },
         })
         .then(({ data }) => {
           console.log(data.items);
           this.$store.dispatch("favTracks/getTracks", data);
-          this.$store.dispatch("controller/isFavTrack");
+          return data.items;
         })
         .catch((err) => console.log(err));
     },
@@ -507,70 +500,53 @@ export default {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: "Bearer " + this.getToken,
+          Authorization: "Bearer " + (await this.getToken),
         },
       })
         .then((data) => {
           console.log(data.status);
-          if (data.status !== 200) {
-            this.$store.dispatch("controller/modalInfoType", {
-              type: "error",
-            });
-          }
           if (data.status === 200)
-            this.$store
-              .dispatch("controller/modalInfoType", {
-                type: "favSong",
-                status: true,
-              })
-              .then(() => {
-                this.fetchFavTracks()
-                  .then(() => {
-                    this.playlistPage
-                      ? this.$store.dispatch("playlists/clearTracksID")
-                      : this.albumPage || this.TrackPage
-                      ? this.$store.dispatch("albums/clearTracksID") &
-                        this.$store.dispatch("albums/clearTracksID2")
-                      : this.userPage
-                      ? this.$store.dispatch("users/clearTracksID")
-                      : this.artistPage
-                      ? this.$store.dispatch("artists/clearTracksID")
-                      : this.diskografiPage
-                      ? this.$store.dispatch("discography/clearTracksID")
-                      : "";
-                    this.findFavTracks();
-                    this.TrackPage ? this.findFavTracks2() : "";
-                  })
-                  .then(() => {
-                    const trackItem = document.getElementById(trackID);
-                    const trackItem2 = document.getElementsByClassName(trackID);
-                    this.addGreenHeartFavTracks(trackItem);
-                    this.TrackPage
-                      ? this.addGreenHeartFavTracks2(trackItem2)
-                      : "";
-                  });
-              });
+            this.$store.dispatch("controller/modalInfoType", {
+              type: "favSong",
+              status: true,
+            });
+          this.fetchFavTracks()
+            .then(() => {
+              this.playlistPage
+                ? this.$store.dispatch("playlists/clearTracksID")
+                : this.albumPage || this.TrackPage
+                ? this.$store.dispatch("albums/clearTracksID") &
+                  this.$store.dispatch("albums/clearTracksID2")
+                : this.userPage
+                ? this.$store.dispatch("users/clearTracksID")
+                : this.artistPage
+                ? this.$store.dispatch("artists/clearTracksID")
+                : this.diskografiPage
+                ? this.$store.dispatch("discography/clearTracksID")
+                : "";
+              this.findFavTracks();
+              this.TrackPage ? this.findFavTracks2() : "";
+            })
+            .then(() => {
+              const trackItem = document.getElementById(trackID);
+              const trackItem2 = document.getElementsByClassName(trackID);
+              this.addGreenHeartFavTracks(trackItem);
+              this.TrackPage ? this.addGreenHeartFavTracks2(trackItem2) : "";
+            });
         })
-        .catch((err) => {
-          console.log(err);
-        });
+        .catch((err) => console.log(err));
     },
     async removeFavTrack(trackID) {
-      await fetch("https://api.spotify.com/v1/me/tracks?ids=" + trackID, {
-        method: "DELETE",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + this.getToken,
-        },
-      })
+      await axios
+        .delete("https://api.spotify.com/v1/me/tracks?ids=" + trackID, {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + (await this.getToken),
+          },
+        })
         .then((data) => {
-          console.log(data.status);
-          if (data.status !== 200) {
-            this.$store.dispatch("controller/modalInfoType", {
-              type: "error",
-            });
-          }
+          console.log(data);
           if (data.status === 200) {
             this.$store.dispatch("controller/modalInfoType", {
               type: "favSong",
@@ -629,9 +605,8 @@ export default {
     closeTrackOptionFunc(val) {
       this.trackOptions = val;
     },
-
     close(e) {
-      if (!this.$el.contains(e.target.closest(".track--container"))) {
+      if (!this.$el.contains(e.target)) {
         this.trackOptions = false;
         this.active = false;
       }

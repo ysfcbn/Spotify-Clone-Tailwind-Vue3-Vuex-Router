@@ -567,14 +567,14 @@ export default {
           )
         );
         if (isDay > 0) {
-          return isDay + " gün önce";
+          return isDay + " days ago";
         } else {
           return totalMiliSeconds < 60000
-            ? seconds + " saniye önce"
+            ? seconds + " seconds ago"
             : totalMiliSeconds > 60000 && totalMiliSeconds < 3600000
-            ? minutes + " dakika önce"
+            ? minutes + " minutes ago"
             : totalMiliSeconds > 3600000
-            ? hours + " saat önce"
+            ? hours + " hours ago"
             : "";
         }
       } else return `${day} ${month} ${year}`;

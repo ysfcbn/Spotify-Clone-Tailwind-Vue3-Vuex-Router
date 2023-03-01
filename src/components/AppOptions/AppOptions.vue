@@ -133,6 +133,7 @@
         :class="{
           'left-[14.8rem] top-[-12.2rem]': TrackPage,
           'left-[9.6rem] top-[-12.3rem]': albumPage,
+          'left-[9.5rem] top-[-15rem]': diskografiPage,
         }"
         class="z-50 absolute bg-dark2 p-[4px] h-[25rem] w-fit text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
       >
@@ -210,6 +211,7 @@
           'w-[15.5rem] left-[11.4em] ': playlistPage,
           'w-[13.3rem] top-[12.6rem]  left-[14.9rem]': TrackPage,
           'w-[13.3rem] left-[9.6rem]': albumPage,
+          'right-[-9.5rem] w-full  top-[10rem]': diskografiPage,
         }"
         class="z-50 absolute bg-dark2 p-[4px] h-fit text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
       >
