@@ -17,7 +17,7 @@
       </button>
     </li>
     <li
-      class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-b border-opacwhite"
+      class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-b border-opacwhite1"
     >
       <button class="cursor-default">
         <span v-if="TrackPage" class="text-xs md:text-sm">
@@ -112,7 +112,7 @@
       v-if="albumPage || singlePage || TrackPage || diskografiPage"
       @mouseenter="visibleFunc"
       @mouseleave="visibleFunc2"
-      class="group w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-b border-opacwhite"
+      class="group w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-b border-opacwhite1"
     >
       <button class="cursor-default flex items-center justify-between w-full">
         <span class="text-xs md:text-sm">Add to playlist</span>
@@ -138,7 +138,7 @@
         class="z-50 absolute bg-dark2 p-[4px] h-[25rem] w-fit text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
       >
         <li
-          class="w-full flex items-center justify-start hover:bg-dark3 border-opacwhite mb-1"
+          class="w-full flex items-center justify-start hover:bg-dark3 border-opacwhite1 mb-1"
         >
           <input
             v-model="searchEl"
@@ -178,7 +178,7 @@
           </button>
         </li>
         <li
-          class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-b border-opacwhite"
+          class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-b border-opacwhite1"
         >
           <button class="cursor-default">
             <span class="text-xs md:text-sm">Create playlist</span>
@@ -189,7 +189,7 @@
     <li
       @mouseenter="visible2 = true"
       @mouseleave="visible2 = false"
-      class="group w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-b border-opacwhite"
+      class="group w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-b border-opacwhite1"
     >
       <button class="cursor-default flex items-center justify-between w-full">
         <span class="text-xs md:text-sm">Share</span>
@@ -217,7 +217,7 @@
       >
         <li
           @click="copyURL((href = currentHref))"
-          class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-opacwhite"
+          class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-opacwhite1"
         >
           <button class="cursor-default">
             <span
@@ -250,7 +250,7 @@
     </li>
     <li
       v-if="playlistPage"
-      class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-b border-opacwhite"
+      class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-b border-opacwhite1"
     >
       <button class="cursor-default">
         <span class="text-xs md:text-sm">About recommendations</span>
