@@ -95,7 +95,7 @@
 
 					<div class="text-2xl font-semibold text-white mb-1 truncate">
 						<span v-if="isFavoriteSongs" style="font-weight: 700"
-							>Beğenilen Şarkılar</span
+							>Liked Songs</span
 						>
 						<span v-if="isArtistPage" style="font-weight: 700">{{
 							artistName
@@ -123,9 +123,7 @@
 						<span v-if="isTrackPage" style="font-weight: 700">{{
 							trackName
 						}}</span>
-						<span v-if="isEpisodesPage" style="font-weight: 700"
-							>Bölümlerin</span
-						>
+						<span v-if="isEpisodesPage" style="font-weight: 700">Episodes</span>
 						<span v-if="isUsersPage" style="font-weight: 700">{{
 							currentUserName
 						}}</span>
@@ -159,26 +157,26 @@
 						to="/collection/playlists"
 						id="playlists"
 						class="py-[11px] px-[16px] text-white rounded-sm cursor-pointer mr-2 shrink-0"
-						>Çalma Listeleri</router-link
+						>Playlists</router-link
 					>
 					<router-link
 						to="/collection/podcasts"
 						id="podcsast"
 						class="py-[11px] px-[16px] text-white rounded-sm cursor-pointer mr-2 hidden sm3:block"
-						>Podcast'ler</router-link
+						>Podcasts</router-link
 					>
 					<router-link
 						to="/collection/artists"
 						id="artists"
 						class="py-[11px] px-[16px] text-white rounded-sm cursor-pointer mr-2 hidden lg2:block"
 					>
-						Sanatçılar
+						Artists
 					</router-link>
 					<router-link
 						to="/collection/albums"
 						id="albums"
 						class="py-[11px] px-[16px] text-white rounded-sm cursor-pointer hidden lg2:block"
-						>Albümler</router-link
+						>Albums</router-link
 					>
 					<button
 						@click="toggleDropPlaylists"
@@ -195,21 +193,21 @@
 								:class="{ active2: activePodcasts }"
 								class="flex justify-start w-full p-[12px] hover:bg-dark3 sm3:hidden"
 							>
-								Podcast'ler
+								Podcasts
 							</router-link>
 							<router-link
 								to="/collection/artists"
 								:class="{ active2: activeArtists }"
 								class="flex justify-start w-full p-[12px] hover:bg-dark3`"
 							>
-								Sanatçılar
+								Artists
 							</router-link>
 							<router-link
 								to="/collection/albums"
 								:class="{ active2: activeAlbums }"
 								class="flex justify-start w-full p-[12px] hover:bg-dark3`"
 							>
-								Albümler
+								Albums
 							</router-link>
 						</div>
 						<span class="mr-2">{{ currentSec }}</span>
@@ -268,7 +266,7 @@
 
 			<div
 				v-if="isAuth"
-				@click="toggleAccount"
+				@click="toggleDropDown"
 				id="account--Icon"
 				class="w-fit flex items-center text-white font-semibold shrink-0 mb-2 sm:mx-[1rem] lg:mx-[2rem] mt-3 p-[2px] bg-black rounded-full cursor-pointer hover:bg-opacblack4 relative"
 			>
@@ -277,10 +275,11 @@
 					class="absolute bg-dark2 top-[2.7rem] right-0 p-[4px] h-fit w-[11rem] text-opacwhite3 whitespace-normal rounded cursor-default shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
 				>
 					<li
+						@click="goAccountPage"
 						class="flex items-center justify-between w-full p-[10px] hover:bg-dark3"
 					>
 						<button class="cursor-default">
-							<a href="#" class="cursor-default">Hesap</a>
+							<a href="#" class="cursor-default">Account</a>
 						</button>
 						<span>
 							<svg
@@ -301,16 +300,73 @@
 						></span>
 					</li>
 					<li
-						@click="toggleProfile(currentUserID)"
+						@click="goProfile(currentUserID)"
 						class="w-full p-[10px] hover:bg-dark3"
 					>
 						<button>
-							<span class="cursor-default">Profil</span>
+							<span class="cursor-default">Profile</span>
 						</button>
 					</li>
-					<li class="w-full p-[10px] hover:bg-dark3">
-						<button @click="logout" class="cursor-default">
-							<span>Oturumu kapat</span>
+					<li
+						@click="goSupportPage"
+						class="flex items-center justify-between w-full p-[10px] hover:bg-dark3"
+					>
+						<button class="cursor-default">
+							<a href="#" class="cursor-default">Support</a>
+						</button>
+						<span>
+							<svg
+								role="img"
+								height="16"
+								width="16"
+								viewBox="0 0 16 16"
+								class="Svg-sc-1bi12j5-0 jgfuCe"
+							>
+								<path
+									fill="currentColor"
+									d="M1 2.75A.75.75 0 011.75 2H7v1.5H2.5v11h10.219V9h1.5v6.25a.75.75 0 01-.75.75H1.75a.75.75 0 01-.75-.75V2.75z"
+								></path>
+								<path
+									fill="currentColor"
+									d="M15 1v4.993a.75.75 0 11-1.5 0V3.56L8.78 8.28a.75.75 0 01-1.06-1.06l4.72-4.72h-2.433a.75.75 0 010-1.5H15z"
+								></path></svg
+						></span>
+					</li>
+					<li
+						@click="goDownloadPage"
+						class="flex items-center justify-between w-full p-[10px] hover:bg-dark3"
+					>
+						<button class="cursor-default">
+							<a href="#" class="cursor-default">Download</a>
+						</button>
+						<span>
+							<svg
+								role="img"
+								height="16"
+								width="16"
+								viewBox="0 0 16 16"
+								class="Svg-sc-1bi12j5-0 jgfuCe"
+							>
+								<path
+									fill="currentColor"
+									d="M1 2.75A.75.75 0 011.75 2H7v1.5H2.5v11h10.219V9h1.5v6.25a.75.75 0 01-.75.75H1.75a.75.75 0 01-.75-.75V2.75z"
+								></path>
+								<path
+									fill="currentColor"
+									d="M15 1v4.993a.75.75 0 11-1.5 0V3.56L8.78 8.28a.75.75 0 01-1.06-1.06l4.72-4.72h-2.433a.75.75 0 010-1.5H15z"
+								></path></svg
+						></span>
+					</li>
+					<li
+						class="w-full p-[10px] hover:bg-dark3 border-b border-lightest/20"
+					>
+						<button>
+							<span class="cursor-default">Settings</span>
+						</button>
+					</li>
+					<li @click="logout" class="w-full p-[10px] hover:bg-dark3">
+						<button class="cursor-default">
+							<span>Log out</span>
 						</button>
 					</li>
 				</ul>
@@ -344,15 +400,17 @@
 				v-if="!isAuth"
 				class="flex items-center w-[14rem] justify-between mt-2 sm:mx-[1rem] lg:mx-[1.5rem] shrink-0"
 			>
-				<button
+				<a
+					:href="href"
+					target="_blank"
 					class="text-opacwhite5 text-base hover:scale-110 hover:text-white2 cursor-default"
 				>
-					Kaydol</button
+					Sign up</a
 				><button
 					@click="login"
 					class="py-3 px-8 rounded-full bg-white2 hover:bg-[#f6f6f6] hover:scale-105 cursor-default"
 				>
-					<span class="text-black text-base font-semibold">Oturum aç</span>
+					<span class="text-black text-base font-semibold">Log in</span>
 				</button>
 			</div>
 		</div>
@@ -368,6 +426,7 @@ export default {
 			leftClick: false,
 			historyCounter: 1,
 			albumImg: '',
+			href: 'https://accounts.spotify.com/tr/login?continue=https%3A%2F%2Fopen.spotify.com%2F',
 		};
 	},
 	methods: {
@@ -390,18 +449,27 @@ export default {
 		login() {
 			this.$router.push({ name: 'login' });
 		},
+
 		toggleDropPlaylists() {
 			this.dropPlaylists = !this.dropPlaylists;
 			this.accountOptions ? (this.accountOptions = false) : '';
 		},
-		toggleAccount() {
+		toggleDropDown() {
 			this.accountOptions = !this.accountOptions;
 			this.dropPlaylists ? (this.dropPlaylists = false) : '';
 		},
-		toggleProfile(currentUserID) {
+		goProfile(currentUserID) {
 			this.$router.push({ name: 'user', params: { id: currentUserID } });
 		},
-
+		goAccountPage() {
+			window.open('https://www.spotify.com/account/overview');
+		},
+		goSupportPage() {
+			window.open('https://support.spotify.com/');
+		},
+		goDownloadPage() {
+			window.open('https://www.spotify.com/download/windows/');
+		},
 		goBack() {
 			this.$router.back();
 		},
@@ -445,12 +513,12 @@ export default {
 		},
 		currentSec() {
 			return this.$route.fullPath === '/collection/playlists'
-				? 'Çalma Listeleri'
+				? 'Playlists'
 				: this.$route.fullPath === '/collection/podcasts'
-				? 'Podcastler'
+				? 'Podcasts'
 				: this.$route.fullPath === '/collection/artists'
-				? 'Sanatçılar'
-				: 'Albümler';
+				? 'Artists'
+				: 'Albums';
 		},
 
 		isHeaderBtnActive() {
@@ -608,10 +676,10 @@ a.active2 {
 }
 
 .fav-songs-intersec-bg1 {
-	background-color: #35685b;
+	background-color: rgba(36, 22, 73, 0.6) !important;
 }
 .fav-songs-intersec-bg2 {
-	background-color: #35685b;
+	background-color: rgb(36, 22, 73) !important;
 }
 
 .profile-intersec-bg1 {

@@ -4,7 +4,7 @@
       <h2
         class="text-[1.5rem] text-white leading-7 tracking-tighter font-semibold"
       >
-        Yakındaki aramalar
+        Recent searches
       </h2>
     </div>
   </div>
@@ -45,7 +45,7 @@ export default {
         },
         {
           name: "Fazıl Say",
-          artist: "Sanatçı",
+          artist: "Artist",
           id: 4,
           img: "https://i.scdn.co/image/ab6761610000f17827edf3bf7aa851010a60f9b6",
         },
@@ -63,7 +63,7 @@ export default {
         },
         {
           name: "Adele",
-          artist: "Sanatçı",
+          artist: "Artist",
           id: 5,
           img: "https://i.scdn.co/image/ab6761610000f17868f6e5892075d7f22615bd17",
         },

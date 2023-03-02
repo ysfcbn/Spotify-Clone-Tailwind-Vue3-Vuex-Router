@@ -26,13 +26,16 @@
             </svg>
           </div>
         </div>
-        <div class="flex flex-col text-white font-semibold px-4">
-          <h2 class="">ÇALMA LİSTESİ</h2>
+        <div
+          style="font-weight: 700"
+          class="flex flex-col text-xs text-white px-4"
+        >
+          <h2 class="">PLAYLIST</h2>
           <span>
             <h1
               class="w-full sm:text-3xl md:text-5xl xl:text-8xl tracking-tighter py-2"
             >
-              Bölümlerin
+              Your Episodes
             </h1>
 
             <h2 id="info"></h2>
@@ -56,8 +59,10 @@
                 >
               </span>
 
-              <span class="before:content-['•'] before:mx-1"
-                >{{ totalEpisode }} bölüm</span
+              <span
+                class="before:content-['•'] before:mx-1 text-sm"
+                style="font-weight: 500"
+                >{{ totalEpisode }} {{ episodeCalc }}</span
               >
             </div>
           </div>
@@ -147,6 +152,9 @@ export default {
     },
     totalEpisode() {
       return this.getFavEpisodes.total;
+    },
+    episodeCalc() {
+      return this.totalFavEpisodes > 1 ? "episodes" : "episode";
     },
     userFavEpisodes() {
       return this.getFavEpisodes.items;

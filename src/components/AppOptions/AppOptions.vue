@@ -3,8 +3,9 @@
     :class="{
       'top-[18.4rem] left-[18.4rem] p-[4px] ': diskografiPage && firstElement,
       'top-[11.3rem] left-[18.4rem] p-[4px] ': diskografiPage && !firstElement,
+      'left-[9.2rem]': playlistPage || albumPage || TrackPage,
     }"
-    class="app--option absolute bg-dark2 top-[4.8rem] left-[10.8rem] p-[4px] w-fit h-fit text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
+    class="app--option absolute z-[999] bg-dark2 p-[4px] w-fit h-fit text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
   >
     <li
       v-if="isPlayingCurrentSectionTrack"
@@ -12,24 +13,24 @@
       class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 truncate"
     >
       <button class="cursor-default">
-        <span class="text-xs md:text-sm"> Sıraya Ekle </span>
+        <span class="text-xs md:text-sm">Add to queue</span>
       </button>
     </li>
     <li
-      class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-b border-opacwhite"
+      class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-b border-opacwhite1"
     >
       <button class="cursor-default">
         <span v-if="TrackPage" class="text-xs md:text-sm">
-          Şarkı radyosuna git
+          Go to track radio
         </span>
         <span
           v-if="albumPage || singlePage || diskografiPage"
           class="text-xs md:text-sm"
         >
-          Sanatçı radyosuna git
+          Go to Artist radio
         </span>
         <span v-if="playlistPage" class="text-xs md:text-sm">
-          Çalma listesi radyosuna git
+          Go to playlist radio
         </span>
       </button>
     </li>
@@ -38,13 +39,13 @@
       class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3"
     >
       <button v-if="TrackPage" class="cursor-default">
-        <span class="text-xs md:text-sm"> Katkıda bulunanları göster </span>
+        <span class="text-xs md:text-sm">Show credits</span>
       </button>
       <button
         v-if="playlistPage"
         class="flex items-center justify-between w-full cursor-default text-white"
       >
-        <span class="text-xs md:text-sm justify-start"> Bildir </span>
+        <span class="text-xs md:text-sm justify-start">Report</span>
         <svg role="img" height="16" width="16" viewBox="0 0 16 16">
           <path
             fill="currentColor"
@@ -63,7 +64,7 @@
     >
       <button class="cursor-default">
         <span v-if="!TrackPage" class="text-xs md:text-sm">
-          Beğenilen Şarkılarına kaydet
+          Save to your Liked Songs
         </span>
         <span v-else class="text-xs md:text-sm"
           >Beğenilen Şarkılar listesinden kaldır</span
@@ -83,15 +84,27 @@
       </button>
     </li>
     <li
-      v-if="!TrackPage && !diskografiPage"
+      v-if="albumPage"
       @click="unFollowAlbum"
       class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3"
     >
       <button v-if="!isFavAlbum" class="cursor-default">
-        <span class="text-xs md:text-sm"> Kitaplığına Ekle </span>
+        <span class="text-xs md:text-sm">Add to Your Library</span>
       </button>
       <button v-else class="cursor-default">
-        <span class="text-xs md:text-sm"> Kitaplığından Kaldır </span>
+        <span class="text-xs md:text-sm">Remove from Your Library</span>
+      </button>
+    </li>
+    <li
+      v-if="playlistPage"
+      @click="unFollowPlaylist"
+      class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3"
+    >
+      <button v-if="!isFavPlaylist" class="cursor-default">
+        <span class="text-xs md:text-sm">Add to Your Library</span>
+      </button>
+      <button v-else class="cursor-default">
+        <span class="text-xs md:text-sm">Remove from Your Library</span>
       </button>
     </li>
 
@@ -99,10 +112,10 @@
       v-if="albumPage || singlePage || TrackPage || diskografiPage"
       @mouseenter="visibleFunc"
       @mouseleave="visibleFunc2"
-      class="group w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-b border-opacwhite"
+      class="group w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-b border-opacwhite1"
     >
       <button class="cursor-default flex items-center justify-between w-full">
-        <span class="text-xs md:text-sm"> Çalma listesine ekle </span>
+        <span class="text-xs md:text-sm">Add to playlist</span>
         <span class="text-white">
           <svg
             role="img"
@@ -117,16 +130,20 @@
       </button>
       <ul
         v-if="visible"
-        :class="{ 'left-[15.65rem] top-[-12.5rem]': TrackPage }"
-        class="z-50 absolute bg-dark2 top-[-14.9rem] left-[12.2rem] p-[4px] h-[25rem] w-fit text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
+        :class="{
+          'left-[14.8rem] top-[-12.2rem]': TrackPage,
+          'left-[9.6rem] top-[-12.3rem]': albumPage,
+          'left-[9.5rem] top-[-15rem]': diskografiPage,
+        }"
+        class="z-50 absolute bg-dark2 p-[4px] h-[25rem] w-fit text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
       >
         <li
-          class="w-full flex items-center justify-start hover:bg-dark3 border-opacwhite mb-1"
+          class="w-full flex items-center justify-start hover:bg-dark3 border-opacwhite1 mb-1"
         >
           <input
             v-model="searchEl"
             type="text"
-            placeholder="Çalma listesi ara"
+            placeholder="Find playlist"
             class="text-sm w-[15.3rem] bg-opacwhite relative rounded-md pl-8 h-8 left-0 focus:outline-none"
           />
           <div class="absolute pl-2">
@@ -161,10 +178,10 @@
           </button>
         </li>
         <li
-          class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-b border-opacwhite"
+          class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-b border-opacwhite1"
         >
           <button class="cursor-default">
-            <span class="text-xs md:text-sm"> Çalma listesi oluştur </span>
+            <span class="text-xs md:text-sm">Create playlist</span>
           </button>
         </li>
       </ul>
@@ -172,10 +189,10 @@
     <li
       @mouseenter="visible2 = true"
       @mouseleave="visible2 = false"
-      class="group w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-b border-opacwhite"
+      class="group w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-b border-opacwhite1"
     >
       <button class="cursor-default flex items-center justify-between w-full">
-        <span class="text-xs md:text-sm"> Paylaş </span>
+        <span class="text-xs md:text-sm">Share</span>
         <span class="text-white">
           <svg
             role="img"
@@ -191,26 +208,28 @@
       <ul
         v-if="visible2"
         :class="{
-          'w-[16.2rem] top-[7.4rem] ': playlistPage,
-          'left-[15.55rem] top-[12.65rem]': TrackPage,
+          'w-[15.5rem] left-[11.4em] ': playlistPage,
+          'w-[13.3rem] top-[12.6rem]  left-[14.9rem]': TrackPage,
+          'w-[13.3rem] left-[9.6rem]': albumPage,
+          'right-[-9.5rem] w-full  top-[10rem]': diskografiPage,
         }"
-        class="z-50 absolute bg-dark2 top-[10rem] left-[14.9rem] p-[4px] h-fit w-[13.3rem] text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
+        class="z-50 absolute bg-dark2 p-[4px] h-fit text-opacwhite3 whitespace-normal rounded shadow-[0px_15px_15px_1px_rgba(0,0,0,0.4)]"
       >
         <li
-          @click="copyURL"
-          class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-opacwhite"
+          @click="copyURL((href = currentHref))"
+          class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-opacwhite1"
         >
           <button class="cursor-default">
             <span
               v-if="albumPage || singlePage || diskografiPage"
               class="text-xs md:text-sm"
-              >Albüm bağlantısını kopyala</span
+              >Copy Album Link</span
             >
             <span v-if="TrackPage" class="text-xs md:text-sm"
-              >Şarkının bağlantısını kopyala</span
+              >Copy Song Link</span
             >
             <span v-if="playlistPage" class="text-xs md:text-sm"
-              >Çalma listesinin bağlantısını kopyala</span
+              >Copy link to playlist</span
             >
           </button>
         </li>
@@ -219,11 +238,11 @@
             <span
               v-if="albumPage || singlePage || diskografiPage"
               class="text-xs md:text-sm"
-              >Albümü göm</span
+              >Embed Album</span
             >
-            <span v-if="TrackPage" class="text-xs md:text-sm">Parçayı göm</span>
+            <span v-if="TrackPage" class="text-xs md:text-sm">Embed track</span>
             <span v-if="playlistPage" class="text-xs md:text-sm"
-              >Çalma listesini göm</span
+              >Embed playlist</span
             >
           </button>
         </li>
@@ -231,15 +250,15 @@
     </li>
     <li
       v-if="playlistPage"
-      class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-b border-opacwhite"
+      class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3 border-b border-opacwhite1"
     >
       <button class="cursor-default">
-        <span class="text-xs md:text-sm">Öneriler hakkında </span>
+        <span class="text-xs md:text-sm">About recommendations</span>
       </button>
     </li>
     <li class="w-full flex justify-start p-[6px] md:p-[8px] hover:bg-dark3">
       <button class="cursor-default">
-        <span class="text-xs md:text-sm">Masaüstü uygulamasında aç</span>
+        <span class="text-xs md:text-sm">Open in Desktop app</span>
       </button>
     </li>
   </ul>
@@ -255,7 +274,9 @@ export default {
     "TrackPage",
     "playlistPage",
     "isFavAlbum",
+    "isFavPlaylist",
     "unFollowAlbum",
+    "unFollowPlaylist",
     "diskografiPage",
     "firstElement",
   ],
@@ -273,9 +294,8 @@ export default {
       this.paylasDropDown = true;
     },
     async addToQueue(uri, id) {
-      this.TrackPage
-        ? await this.$store.dispatch("controller/addItemToQueue", uri)
-        : "";
+      console.log(uri);
+      await this.$store.dispatch("controller/addItemToQueue", uri);
       this.$store.dispatch("controller/modalInfoType", {
         type: "queue",
         status: true,
@@ -301,8 +321,11 @@ export default {
     },
     unFollowAlbumFunc(_, e) {
       this.$emit("unFollowAlbumE", e.target.closest(".app--option").id);
+      this.$emit("toggleAppOptions");
     },
-    copyURL() {
+
+    copyURL(href) {
+      navigator.clipboard.writeText(href);
       this.$store.dispatch("controller/modalInfoType", {
         type: "copyURL",
         status: true,
@@ -321,6 +344,15 @@ export default {
         ? this.$store.getters["playlists/getPlaylist"]?.uri
         : this.albumPage
         ? this.$store.getters["albums/getAlbum"]?.uri
+        : "";
+    },
+    currentHref() {
+      return this.TrackPage
+        ? this.$store.getters["albums/getCurrentTrack"]?.external_urls?.spotify
+        : this.playlistPage
+        ? this.$store.getters["playlists/getPlaylist"]?.external_urls?.spotify
+        : this.albumPage
+        ? this.$store.getters["albums/getAlbum"]?.external_urls?.spotify
         : "";
     },
     isPlayingCurrentSectionTrack() {

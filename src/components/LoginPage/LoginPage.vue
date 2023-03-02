@@ -1,5 +1,10 @@
 <template>
-	<div class="h-full overflow-x-hidden">
+	<div class="h-screen relative overflow-x-hidden">
+		<AppHowitsWork
+			:showModalContainer="showModalContainer"
+			:showModal="showModal"
+			@close="closeModalFunc(false)"
+		></AppHowitsWork>
 		<div class="logo">
 			<div class="flex justify-center items-center">
 				<svg class="w-[12rem] h-[6rem]" role="img" viewBox="0 0 80 24 ">
@@ -11,12 +16,13 @@
 			</div>
 			<hr class="hr" />
 		</div>
+
 		<div class="main-container flex flex-col items-center">
 			<div
 				class="login-cotainer flex flex-col items-center justify-center mt-[2rem]"
 			>
 				<p class="text-black text-[14px] mb-2" style="font-weight: 700">
-					Devam etmek için Spotify'da oturum aç.
+					To continue, log in to Spotify.
 				</p>
 
 				<div class="loginBtns flex flex-col items-center gap-y-3 text-[16px]">
@@ -31,7 +37,7 @@
 								></path>
 							</svg>
 						</span>
-						FACEBOOK İLE DEVAM ET
+						CONTINUE WITH FACEBOOK
 					</button>
 					<button
 						class="cursor-default text-white/90 bg-dark4 border border-gray2 hover:border-dark rounded-full py-3 w-[28rem] tracking-widest font-semibold flex items-center justify-center"
@@ -49,7 +55,7 @@
 									d="M273.81 52.973C313.806.257 369.41 0 369.41 0s8.271 49.562-31.463 97.306c-42.426 50.98-90.649 42.638-90.649 42.638s-9.055-40.094 26.512-86.971zM252.385 174.662c20.576 0 58.764-28.284 108.471-28.284 85.562 0 119.222 60.883 119.222 60.883s-65.833 33.659-65.833 115.331c0 92.133 82.01 123.885 82.01 123.885s-57.328 161.357-134.762 161.357c-35.565 0-63.215-23.967-100.688-23.967-38.188 0-76.084 24.861-100.766 24.861C89.33 608.73 0 455.666 0 332.628c0-121.052 75.612-184.554 146.533-184.554 46.105 0 81.883 26.588 105.852 26.588z"
 								/></svg
 						></span>
-						APPLE İLE DEVAM ET
+						CONTINUE WITH APPLE
 					</button>
 					<button
 						class="cursor-default text-gray border border-gray2 hover:border-dark rounded-full py-3 w-[28rem] tracking-widest font-semibold flex items-center justify-center"
@@ -78,13 +84,13 @@
 									d="m419.404 58.936-82.933 67.896C313.136 112.246 285.552 103.82 256 103.82c-66.729 0-123.429 42.957-143.965 102.724l-83.397-68.276h-.014C71.23 56.123 157.06 0 256 0c62.115 0 119.068 22.126 163.404 58.936z"
 								/></svg
 						></span>
-						GOOGLE İLE DEVAM ET
+						CONTINUE WITH GOOGLE
 					</button>
 				</div>
 				<div class="mt-4 flex items-center">
 					<hr class="hrs w-[11.5rem]" />
 					<span class="text-black text-sm font-semibold mx-4 uppercase"
-						>Veya</span
+						>OR</span
 					>
 					<hr class="hrs w-[11.5rem]" />
 				</div>
@@ -111,13 +117,15 @@
 				<label for="secret_secret" class="text-sm font-semibold"
 					>Secret ID</label
 				>
+
 				<div class="relative w-full grid place-items-center">
 					<input
 						v-model="client_Secret"
 						id="secret_secret"
 						type="text"
 						placeholder="Secret ID"
-						class="border-2 w-full p-2 text-md rounded-md hover:border-dark focus:outline-dark border-gray2 focus:border-4 focus:border-dark font-semibold"
+						disabled="disabled"
+						class="border-2 w-full p-2 text-md rounded-md focus:outline-dark border-gray2/20 focus:border-4 focus:border-dark font-semibold"
 					/>
 					<span
 						:style="{ color: client_Secret.length === 32 ? 'green' : 'gray' }"
@@ -126,22 +134,31 @@
 					>
 				</div>
 
+				<div class="w-full flex justify-content mt-2">
+					<button
+						@click="openModal"
+						class="font-semibold w-fit m-auto text-blue3"
+					>
+						How it's Work?
+					</button>
+				</div>
+
 				<button
 					@click.prevent="login"
-					class="w-full mt-[2rem] rounded-full text-black font-semibold bg-green3 text-md uppercase p-3 hover:scale-105 cursor-default mb-2"
+					class="w-full mt-[1rem] rounded-full text-black font-semibold bg-green3 text-md uppercase p-3 hover:scale-105 cursor-default mb-2"
 				>
-					OTURUM AÇ
+					LOG IN
 				</button>
 				<hr class="hrs w-full" />
 				<div class="flex flex-col items-center gap-y-4">
 					<p class="text-black text-[20px]" style="font-weight: 700">
-						Hesabın yok mu?
+						Don't have an account?
 					</p>
 
 					<button
 						class="cursor-default text-md text-gray border border-gray2 hover:border-dark rounded-full py-3 w-[28rem] tracking-widest font-semibold flex items-center justify-center uppercase"
 					>
-						spotify için kaydol
+						SIGN UP FOR SPOTIFY
 					</button>
 				</div>
 			</div>
@@ -151,19 +168,34 @@
 
 <script>
 import { getAuth, accessToken } from '../LoginPage/auth.js';
-import axios from 'axios';
+import AppHowitsWork from '../Modal/AppHowitsWork.vue';
+
 export default {
+	components: [AppHowitsWork],
 	data() {
 		return {
 			maxlenght: 32,
 			client_ID: '',
 			client_Secret: '',
 			encodedID: '',
+			showModal: false,
+			showModalContainer: false,
 		};
 	},
 	methods: {
 		login() {
 			getAuth(this.client_ID);
+		},
+		openModal() {
+			this.showModal = true;
+			this.showModalContainer = true;
+		},
+		closeModalFunc(val) {
+			this.showModal = val;
+
+			setTimeout(() => {
+				this.showModalContainer = val;
+			}, 300);
 		},
 	},
 	computed: {
@@ -183,6 +215,7 @@ export default {
 			this.$store.dispatch('getAccessToken', accessToken(window.location.hash));
 		}
 	},
+	components: { AppHowitsWork },
 };
 </script>
 
@@ -200,5 +233,15 @@ export default {
 	color: rgba(0, 0, 0, 0.5);
 	font-weight: 600;
 	letter-spacing: 2px;
+}
+.fadeContainer-enter-active,
+.fadeContainer-leave-active {
+	transition: all 1s ease-in;
+}
+.fadeContainer-enter-from {
+	opacity: 0;
+}
+.fadeContainer-leave-to {
+	opacity: 0;
 }
 </style>

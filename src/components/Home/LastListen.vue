@@ -4,12 +4,32 @@
 		@click="openItem(msg, $event)"
 		class="item--container group mb:h-[3.8rem] lg1:h-[4.5rem] min-w-[200px] flex items-center transition-colors duration-300 bg-opacwhite1 hover:bg-opacwhite2 relative rounded-md cursor-pointer box-border overflow-hidden"
 	>
-		<div class="h-full shrink-0">
+		<div v-if="contextImage" class="h-full shrink-0">
 			<img
 				class="mb:h-full object-cover rounded-l-sm"
 				:src="contextImage"
 				alt="image"
 			/>
+		</div>
+		<div
+			v-else
+			class="relative py-[50%] px-[1.9rem] w-fit mb-5 relative flex items-start bg-light justify-center rounded-md"
+		>
+			<svg
+				height="40"
+				width="40"
+				viewBox="0 0 70 70"
+				class="absolute flex items-center -translate-y-[10%]"
+			>
+				<path
+					fill="#808080"
+					d="M52.16,0.249c-0.217-0.19-0.503-0.275-0.788-0.241l-31,4C19.873,4.072,19.5,4.497,19.5,5v6v28.623
+	C17.674,37.428,14.773,36,11.5,36c-5.514,0-10,4.037-10,9s4.486,9,10,9s10-4.037,10-9v-33.12l29-3.742v22.485
+	C48.674,28.428,45.773,27,42.5,27c-5.514,0-10,4.037-10,9s4.486,9,10,9s10-4.037,10-9V7V1C52.5,0.712,52.376,0.438,52.16,0.249z
+	 M11.5,52c-4.411,0-8-3.141-8-7s3.589-7,8-7s8,3.141,8,7S15.911,52,11.5,52z M42.5,43c-4.411,0-8-3.141-8-7s3.589-7,8-7s8,3.141,8,7
+	S46.911,43,42.5,43z M21.5,5.878l29-3.741v3.983l-29,3.741V5.878z"
+				></path>
+			</svg>
 		</div>
 		<div class="h-full w-full flex items-center justify-between">
 			<div class="relative left-5 md3:w-[65%] lg:w-[70%]">
@@ -35,9 +55,9 @@
 						' bg-green3/80 scale-80': leftClick,
 						'hover:scale-106 bg-green3/95 hover:bg-green3': !leftClick,
 					}"
-					class="bg-cover p-3 rounded-full cursor-default shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+					class="bg-cover p-[10px] rounded-full cursor-default shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
 				>
-					<svg role="img" height="24" width="24" viewBox="0 0 24 24">
+					<svg role="img" height="22" width="22" viewBox="0 0 24 24">
 						<path
 							v-if="isPlayingArtistTopTracks"
 							fill="text-black"
@@ -54,8 +74,8 @@
 			<div
 				v-else
 				:class="{
-					'opacity-0': !isPlayingContextUri,
 					'sm:opacity-0 md2:opacity-100  ': isPlayingContextUri,
+					'opacity-0': !isPlayingContextUri,
 				}"
 				class="mx-3 md2:group-hover:opacity-100 transition ease-in duration-150"
 			>
@@ -108,7 +128,7 @@ export default {
 			artistImage: null,
 			leftClick: false,
 			artistID: null,
-			collectionName: 'Beğenilen Şarkılar',
+			collectionName: 'Liked Songs',
 		};
 	},
 	methods: {
@@ -122,7 +142,8 @@ export default {
 					},
 				})
 				.then(({ data }) => {
-					this.playlistImage = data.images[0].url;
+					console.log(data);
+					this.playlistImage = data.images[0]?.url;
 					this.playlistName = data.name;
 					this.$store.dispatch('playlists/getPlaylist', data);
 				})
@@ -210,16 +231,7 @@ export default {
 						type: this.contextType,
 						artistID: this.artistID,
 					});
-				} else
-					this.playContextUri(
-						{
-							uri: this.contextUri,
-							index: this.currentPlayingTrackIndex,
-							type: this.contextType,
-							id: this.currentTrackID,
-						},
-						this.item?.context?.href
-					);
+				}
 			} else if (e.target.closest('.item--container')) {
 				console.log(contextID, type);
 				if (type === 'collection') {
@@ -242,7 +254,7 @@ export default {
 					this.typeOfSelectedSection = 'playlist';
 					await this.fetchPlaylist(href);
 					if (
-						this.getCurrentlyPlayingTrack?.context.type ===
+						this.getCurrentlyPlayingTrack?.context?.type ===
 						this.typeOfSelectedSection
 					) {
 						uri.id =
@@ -252,7 +264,7 @@ export default {
 					this.typeOfSelectedSection = 'album';
 					await this.fetchAlbum(href);
 					if (
-						this.getCurrentlyPlayingTrack?.context.type ===
+						this.getCurrentlyPlayingTrack?.context?.type ===
 						this.typeOfSelectedSection
 					) {
 						uri.id = this.currentAlbumTracks[this.currentPlayingTrackIndex]?.id;
@@ -325,26 +337,26 @@ export default {
 		},
 		findCurrentPlayingTrackIndex() {
 			return this.contextType === 'playlist' &&
-				this.contextType === this.getCurrentlyPlayingTrack?.context.type
+				this.contextType === this.getCurrentlyPlayingTrack?.context?.type
 				? this.currentPlaylist?.indexOf(
 						this.currentPlaylist?.find(
 							item => item.track.id === this.currentTrackID
 						)
 				  )
 				: this.contextType === 'album' &&
-				  this.contextType === this.getCurrentlyPlayingTrack?.context.type
+				  this.contextType === this.getCurrentlyPlayingTrack?.context?.type
 				? this.currentAlbumTracks?.indexOf(
 						this.currentAlbumTracks?.find(
 							item => item.id === this.currentTrackID
 						)
 				  )
 				: this.contextType === 'artist' &&
-				  this.contextType === this.getCurrentlyPlayingTrack?.context.type
+				  this.contextType === this.getCurrentlyPlayingTrack?.context?.type
 				? this.artistTopTracks.indexOf(
 						this.artistTopTracks.find(item => item.id === this.currentTrackID)
 				  )
 				: this.contextType === 'collection' &&
-				  this.contextType === this.getCurrentlyPlayingTrack?.context.type
+				  this.contextType === this.getCurrentlyPlayingTrack?.context?.type
 				? this.getFavTracks.indexOf(
 						this.getFavTracks.find(
 							item => item.track.id === this.currentTrackID
@@ -388,3 +400,4 @@ export default {
 </script>
 
 <style></style>
+//sadasdasdasd

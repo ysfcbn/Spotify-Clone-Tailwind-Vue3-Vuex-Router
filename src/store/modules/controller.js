@@ -17,6 +17,7 @@ const controllerModule = {
 			'Nov',
 			'Dec',
 		],
+		countryCode: '',
 		currentlyPlayingTrack: null,
 		playbackState: null,
 		currentTrackAlbumImage: null,
@@ -38,6 +39,9 @@ const controllerModule = {
 		isArtistContext: null,
 		currentTrackIsFav: '',
 		userQueue: [],
+		allQueueList: [],
+		queueFavTrackIDs: [],
+		queueTrackList: [],
 		recentlyPlayedTracks: null,
 		lastListenCards: null,
 		modalInfoType: null,
@@ -45,9 +49,13 @@ const controllerModule = {
 		isClickHeaderBtn: null,
 	},
 	mutations: {
+		countryCode(state, payload) {
+			state.countryCode = payload;
+		},
 		myDevice(state, payload) {
 			state.myDevice = payload;
 		},
+
 		volumePercent(state, payload) {
 			state.volumePercent = payload;
 		},
@@ -57,6 +65,12 @@ const controllerModule = {
 		},
 		toggleShuffle(state, payload) {
 			state.shuffle = payload;
+		},
+		queueFavTrackIDs(state, payload) {
+			state.queueFavTrackIDs.push(payload);
+		},
+		clearQueueTracksID(state) {
+			state.queueFavTrackIDs = [];
 		},
 		playerPercent(state, payload) {
 			state.playerProgress = payload;
@@ -107,6 +121,15 @@ const controllerModule = {
 		userQueue(state, payload) {
 			state.userQueue = payload;
 		},
+		allQueueList(state, payload) {
+			state.allQueueList = payload;
+		},
+		queueTrackList(state, payload) {
+			state.queueTrackList.push(payload);
+		},
+		clearQueueTrackList(state) {
+			state.queueTrackList = [];
+		},
 		recentlyPlayedTracks(state, payload) {
 			state.recentlyPlayedTracks = payload;
 		},
@@ -132,6 +155,9 @@ const controllerModule = {
 		},
 	},
 	actions: {
+		async countryCode({ commit }, code) {
+			commit('countryCode', await code);
+		},
 		async fetchDevice({ getters, commit, dispatch }) {
 			await axios
 				.get(`https://api.spotify.com/v1/me/player/devices`, {
@@ -338,6 +364,7 @@ const controllerModule = {
 				})
 				.catch(err => console.log(err));
 		},
+
 		async playCurrentTrack({ getters, dispatch, commit }) {
 			if (!getters.getPlaybackState?.item?.uri) return;
 			await fetch(`https://api.spotify.com/v1/me/player/play`, {
@@ -466,15 +493,17 @@ const controllerModule = {
 						offset: { position: await contextUri.index },
 						position_ms:
 							(await contextUri.type) ===
-								getters.getPlaybackState?.context?.type &&
+								getters.getCurrentlyPlayingTrack?.context?.type &&
 							(await contextUri.uri) ===
-								getters.getPlaybackState?.context?.uri &&
-							(await contextUri.id) === getters.getPlaybackState?.item.id
-								? getters.getPlaybackState?.progress_ms
-								: (await contextUri.id) === getters.getPlaybackState?.item.id &&
+								getters.getCurrentlyPlayingTrack?.context?.uri &&
+							(await contextUri.id) ===
+								getters.getCurrentlyPlayingTrack?.item.id
+								? getters.getCurrentlyPlayingTrack?.progress_ms
+								: (await contextUri.id) ===
+										getters.getCurrentlyPlayingTrack?.item.id &&
 								  (await contextUri.type) ===
-										getters.getPlaybackState?.context?.type
-								? getters.getPlaybackState?.progress_ms
+										getters.getCurrentlyPlayingTrack?.context?.type
+								? getters.getCurrentlyPlayingTrack?.progress_ms
 								: 0,
 					},
 					{
@@ -491,6 +520,7 @@ const controllerModule = {
 						console.log('context started');
 						dispatch('fetchCurrentlyPlayingTrack')
 							.then(() => {
+								dispatch('userQueue');
 								console.log(getters.currentTrackID);
 								console.log(
 									'context type=>',
@@ -560,7 +590,7 @@ const controllerModule = {
 				.catch(err => console.log(err));
 		},
 
-		async skipToNextTrack({ getters, dispatch, commit }) {
+		async skipToNextTrack({ getters, dispatch, commit, state }) {
 			await fetch(
 				`https://api.spotify.com/v1/me/player/next?device_id=${getters.deviceID}`,
 				{
@@ -576,6 +606,13 @@ const controllerModule = {
 					console.log(data);
 					if (data.status === 204) {
 						console.log('skipped to Next Track!');
+						state.queueTrackList.length ? state.queueTrackList.shift() : '';
+						dispatch('userQueue').then(() => {
+							state.queueTrackList.length
+								? state.allQueueList.splice(0, state.queueTrackList.length)
+								: '';
+						});
+
 						dispatch('fetchCurrentlyPlayingTrack');
 						dispatch('clearIntervalFunc');
 						commit('clearLastProgressMS');
@@ -600,6 +637,7 @@ const controllerModule = {
 					console.log(data);
 					if (data.status === 204) {
 						console.log('skipped to Previous Track!');
+						dispatch('userQueue');
 						dispatch('fetchCurrentlyPlayingTrack');
 						dispatch('clearIntervalFunc');
 						commit('clearLastProgressMS');
@@ -609,7 +647,10 @@ const controllerModule = {
 				.catch(err => console.log(err));
 		},
 
-		async userQueue({ getters, commit }) {
+		queueFavTrackIDs({ commit }, payload) {
+			commit('queueFavTrackIDs', payload);
+		},
+		async userQueue({ getters, commit, state }) {
 			await axios
 				.get(`https://api.spotify.com/v1/me/player/queue`, {
 					headers: {
@@ -621,10 +662,11 @@ const controllerModule = {
 				.then(({ data }) => {
 					console.log(data, '!!!USER QUEUE!!!!');
 					commit('userQueue', data);
+					commit('allQueueList', data.queue);
 				})
 				.catch(err => console.log(err));
 		},
-		async addItemToQueue({ getters, dispatch }, uri) {
+		async addItemToQueue({ getters, dispatch, state, commit }, uri) {
 			fetch(
 				`https://api.spotify.com/v1/me/player/queue?uri=${uri}&device_id=${getters.deviceID}`,
 				{
@@ -648,7 +690,13 @@ const controllerModule = {
 							type: 'queue',
 							status: true,
 						});
-						dispatch('userQueue');
+						dispatch('userQueue').then(() => {
+							let queueListLength = state.queueTrackList.length;
+							commit('queueTrackList', state.userQueue.queue[queueListLength]);
+							state.queueTrackList.length
+								? state.allQueueList.splice(0, state.queueTrackList.length)
+								: '';
+						});
 					}
 				})
 				.catch(err => console.log(err));
@@ -694,6 +742,9 @@ const controllerModule = {
 	getters: {
 		getToken(state, getters, rootState, rootGetters) {
 			return rootGetters.accessToken;
+		},
+		getCountryCode(state) {
+			return state.countryCode;
 		},
 		deviceID(state) {
 			return state.device_id;
@@ -742,13 +793,24 @@ const controllerModule = {
 		getRepeatMode(state) {
 			return state.repeatMode;
 		},
+		getQueueFavTrackIDs(state) {
+			return state.queueFavTrackIDs;
+		},
 		getCurrentlyPlayingTrack(state) {
 			return state.currentlyPlayingTrack;
 		},
 		getPlaybackState(state) {
 			return state.playbackState;
 		},
-
+		getUserQueue(state) {
+			return state.userQueue;
+		},
+		getQueueTrackList(state) {
+			return state.queueTrackList;
+		},
+		getAllQueueList(state) {
+			return state.allQueueList;
+		},
 		getCurrentTrackAlbumImage(state) {
 			return state.currentTrackAlbumImage;
 		},

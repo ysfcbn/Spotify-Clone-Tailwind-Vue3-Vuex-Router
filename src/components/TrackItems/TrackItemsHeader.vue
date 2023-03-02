@@ -21,12 +21,12 @@
 				>
 					#
 				</div>
-				<div>BAŞLIK</div>
+				<div>Title</div>
 				<div v-if="!albumPage && !diskografiPage" class="hidden md2:block">
-					ALBÜM
+					Album
 				</div>
 				<div v-if="!albumPage && !diskografiPage" class="hidden lg2:block">
-					TARİH EKLENDİ
+					Date added
 				</div>
 				<div
 					:class="{

@@ -117,8 +117,8 @@
 						:diskografiPage="diskografiPage"
 						:firstElement="firstElement"
 						:isFavAlbum="isFavAlbum(renderTypes[indx].id)"
-						@unFollowAlbumE="optionUnfollowID"
 						:appOptions="appOptions"
+						@unFollowAlbumE="optionUnfollowID"
 						@toggleAppOptions="toggleAppOptions"
 					/>
 				</div>

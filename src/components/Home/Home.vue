@@ -45,8 +45,8 @@
 			</div>
 		</section>
 		<div v-if="isAuth">
-			<Card :shows="true" :currentData="favShows">
-				<template #cardTitle>Programların</template>
+			<Card v-if="favShows" :shows="true" :currentData="favShows">
+				<template #cardTitle>Your shows</template>
 
 				<template #imgContainer="{ data }">
 					<div class="w-full relative mb-5">
@@ -64,7 +64,7 @@
 			</Card>
 
 			<Card :currentData="currentUserTopArtists" :artists="true">
-				<template #cardTitle>En sevdiğin sanatçılar</template>
+				<template #cardTitle>Your favorite artists </template>
 
 				<template #imgContainer="{ data }">
 					<div class="w-full relative mb-6">
@@ -105,7 +105,7 @@
 								' bg-green3/80 scale-80': leftClick,
 								'hover:scale-106 bg-green3/95 hover:bg-green3': !leftClick,
 							}"
-							class="p-[10px] rounded-full cursor-default shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+							class="p-[11px] rounded-full cursor-default shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
 						>
 							<h1 class="text-white"></h1>
 							<svg role="img" height="20" width="20" viewBox="0 0 24 24">
@@ -138,15 +138,15 @@
 							class="text-[1.3rem] text-white leading-7 tracking-tight hover:underline hover:text-underline-offset-8 cursor-pointer"
 							style="font-weight: 700"
 						>
-							Yakında Çalınanlar
+							Recently played
 						</h2>
 					</div>
 					<div class="">
 						<h6
 							style="font-weight: 600"
-							class="h-full mb:text-[10px] md:text-[12px] text-lg leading-10 text-lightest hover:underline hover:text-white uppercase cursor-pointer pb-2 tracking-widest"
+							class="h-full mb:text-[11px] font-semibold leading-10 text-lightest hover:underline hover:text-white cursor-pointer pb-2 tracking-widest"
 						>
-							TÜMÜNÜ GÖSTER
+							Show all
 						</h6>
 					</div>
 				</div>
@@ -169,7 +169,7 @@
 			</section>
 
 			<Card :currentData="recommendationsTracks" :albums="true">
-				<template #cardTitle>Bugün için tavsiye</template>
+				<template #cardTitle>Recommendations for today</template>
 				<template #imgContainer="{ data }">
 					<div class="w-full relative mb-5">
 						<img
@@ -211,7 +211,7 @@
 								' bg-green3/80 scale-80': leftClick,
 								'hover:scale-106 bg-green3/95 hover:bg-green3': !leftClick,
 							}"
-							class="p-[10px] rounded-full cursor-default shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+							class="p-[11px] rounded-full cursor-default shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
 						>
 							<h1 class="text-white"></h1>
 							<svg role="img" height="20" width="20" viewBox="0 0 24 24">
@@ -279,7 +279,7 @@
 								' bg-green3/80 scale-80': leftClick,
 								'hover:scale-106 bg-green3/95 hover:bg-green3 ': !leftClick,
 							}"
-							class="p-[10px] rounded-full cursor-default shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+							class="p-[11px] rounded-full cursor-default shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
 						>
 							<h1 class="text-white"></h1>
 							<svg role="img" height="20" width="20" viewBox="0 0 24 24">
@@ -352,7 +352,7 @@
 								' bg-green3/80 scale-80': leftClick,
 								'hover:scale-106 bg-green3/95 hover:bg-green3 ': !leftClick,
 							}"
-							class="p-[10px] rounded-full cursor-default shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+							class="p-[11px] rounded-full cursor-default shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
 						>
 							<h1 class="text-white"></h1>
 							<svg role="img" height="20" width="20" viewBox="0 0 24 24">
@@ -399,11 +399,11 @@
 				</template>
 				<template #playBtn>
 					<div
-						class="right-0 bottom-0 absolute flex items-center py-1 px-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
+						class="right-0 bottom-0 absolute flex items-center mx-1 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
 					>
 						<button
 							id="playBtn"
-							class="p-[10px] bg-green3 rounded-full cursor-default lg:group-hover:block hover:scale-110 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+							class="p-[11px] bg-green3 rounded-full cursor-default lg:group-hover:block hover:scale-106 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
 						>
 							<h1 class="text-white"></h1>
 							<svg role="img" height="24" width="24" viewBox="0 0 24 24">
@@ -447,6 +447,7 @@ export default {
 			headerHeight: '',
 			playlistID: '',
 			randomIndexs: null,
+			countryCode: '',
 			recentlyPlayedCards: false,
 			typeOfSelectedSection: null,
 			totaldummydata: [],
@@ -879,14 +880,22 @@ export default {
 				.catch(err => console.log(err));
 		},
 		async fetchSeveralPlaylists() {
+			await axios.get('https://ipapi.co/json/').then(({ data }) => {
+				console.log('GEOLOCATİON DATA ==>>', data.country_code);
+				this.countryCode = data.country_code;
+				this.$store.dispatch('controller/countryCode', this.countryCode);
+			});
 			await axios
-				.get('https://api.spotify.com/v1/browse/featured-playlists', {
-					headers: {
-						Accept: 'application/json',
-						'Content-Type': 'application/json',
-						Authorization: 'Bearer ' + this.getToken,
-					},
-				})
+				.get(
+					`https://api.spotify.com/v1/browse/featured-playlists?country=${this.countryCode}`,
+					{
+						headers: {
+							Accept: 'application/json',
+							'Content-Type': 'application/json',
+							Authorization: 'Bearer ' + this.getToken,
+						},
+					}
+				)
 				.then(({ data }) => {
 					this.$store.dispatch('playlists/severalPlaylists', data);
 				})
@@ -930,7 +939,7 @@ export default {
 			await this.randomIndexs?.forEach(item => {
 				axios
 					.get(
-						`https://api.spotify.com/v1/browse/categories/${categoryID[item].id}/playlists?limit=50`,
+						`https://api.spotify.com/v1/browse/categories/${categoryID[item].id}/playlists?limit=50&country=${this.countryCode}`,
 						{
 							headers: {
 								Accept: 'application/json',
@@ -1337,6 +1346,7 @@ export default {
 			this.observer.observe(this.homeEl);
 		}
 		if (this.isAuth) {
+			await this.$store.dispatch('controller/userQueue');
 			await this.$store.dispatch('controller/fetchRecentlyPlayedTracks');
 			this.getCurrentUser ? '' : await this.currentUser();
 			await this.lastListenTracks();

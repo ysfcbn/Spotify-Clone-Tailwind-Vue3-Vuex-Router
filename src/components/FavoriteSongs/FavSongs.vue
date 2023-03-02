@@ -15,14 +15,14 @@
             alt="fav"
           />
         </div>
-        <div class="flex flex-col text-white font-semibold px-4">
-          <h2 class="">ÇALMA LİSTESİ</h2>
+        <div class="flex flex-col text-white text-xs font-semibold px-4">
+          <h2 class="">PLAYLIST</h2>
           <span>
             <h1
               class="w-full sm:text-3xl md:text-4xl lg1:text-6xl xl:text-8xl tracking-tighter py-2"
               style="font-weight: 700"
             >
-              Beğenilen Şarkılar
+              Liked Songs
             </h1>
           </span>
           <div
@@ -42,7 +42,7 @@
               </span>
 
               <span class="before:content-['•'] before:mx-2"
-                >{{ totalTrack }} <span class="ml-1">şarkı</span></span
+                >{{ totalTrack }} <span class="ml-1">songs</span></span
               >
             </div>
           </div>
@@ -262,14 +262,14 @@ export default {
           )
         );
         if (isDay > 0) {
-          return isDay + " gün önce";
+          return isDay + " days ago";
         } else {
           return totalMiliSeconds < 60000
-            ? seconds + " saniye önce"
+            ? seconds + " seconds ago"
             : totalMiliSeconds > 60000 && totalMiliSeconds < 3600000
-            ? minutes + " dakika önce"
+            ? minutes + " minutes ago"
             : totalMiliSeconds > 3600000
-            ? hours + " saat önce"
+            ? hours + " hours ago"
             : "";
         }
       } else return `${day} ${month} ${year}`;

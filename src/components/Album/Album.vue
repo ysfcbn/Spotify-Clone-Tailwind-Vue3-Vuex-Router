@@ -16,10 +16,7 @@
 					/>
 				</div>
 				<div class="flex flex-col text-white px-4 ml-2">
-					<h2
-						style="font-weight: 700"
-						class="uppercase text-sm tracking-tighter"
-					>
+					<h2 style="font-weight: 700" class="uppercase text-xs tracking-tight">
 						{{ albumType }}
 					</h2>
 					<span>
@@ -63,8 +60,11 @@
 							<span class="ml-1 after:content-['•'] after:mx-1">{{
 								albumYear
 							}}</span>
-							<span class=""
-								>{{ currentAlbum?.tracks.items.length }} şarkı,</span
+							<span v-if="currentAlbum?.tracks.items.length > 1" class=""
+								>{{ currentAlbum?.tracks.items.length }} songs,</span
+							>
+							<span v-else class=""
+								>{{ currentAlbum?.tracks.items.length }} song,</span
 							>
 							<span class="text-sm ml-2 text-opacwhite5">{{
 								totalDuration()
@@ -509,21 +509,22 @@ export default {
 			this.$store.dispatch('discography/selectedType', 'all');
 		},
 		async unFollowAlbum() {
+			this.appOptions = false;
 			if (this.isFavAlbum) {
 				await axios
 					.delete('https://api.spotify.com/v1/me/albums?ids=' + this.id, {
 						headers: {
 							Accept: 'application/json',
 							'Content-Type': 'application/json',
-							Authorization: 'Bearer ' + (await this.getToken),
+							Authorization: 'Bearer ' + this.getToken,
 						},
 					})
 					.then(data => {
 						console.log(data);
 
 						if (data.status === 200) {
-							heartBtn.classList.add('animationEmptyHeart');
 							heartBtn.classList.remove('animationGreenHeart');
+							heartBtn.classList.add('animationEmptyHeart');
 							this.$store.dispatch('controller/modalInfoType', {
 								type: 'album',
 								status: false,
@@ -548,14 +549,14 @@ export default {
 				headers: {
 					Accept: 'application/json',
 					'Content-Type': 'application/json',
-					Authorization: 'Bearer ' + (await this.getToken),
+					Authorization: 'Bearer ' + this.getToken,
 				},
 			})
 				.then(data => {
 					console.log(data);
 					if (data.status === 200) {
-						heartBtn.classList.add('animationGreenHeart');
 						heartBtn.classList.remove('animationEmptyHeart');
+						heartBtn.classList.add('animationGreenHeart');
 						this.$store.dispatch('controller/modalInfoType', {
 							type: 'album',
 							status: true,
@@ -659,10 +660,10 @@ export default {
 			const result = () => {
 				if (totalMiliSeconds > 3600000) {
 					return hours >= 5
-						? 'yaklaşık ' + hours + ' sa. ' + minutes() + ' dk.'
-						: hours + ' sa. ' + minutes() + ' dk.';
+						? 'about ' + hours + ' hr ' + minutes() + ' min'
+						: hours + ' hr ' + minutes() + ' min';
 				} else {
-					return minutes() + ' dk. ' + seconds + ' sn.';
+					return minutes() + ' min ' + seconds + ' sec';
 				}
 			};
 			return result();
@@ -940,7 +941,6 @@ export default {
 	unmounted() {
 		this.$store.dispatch('controller/closeHeaderBtn');
 		this.$store.dispatch('albums/clearTracksID');
-		this.$store.dispatch('albums/clearAlbum');
 		this.$store.dispatch('controller/isPlayingHeaderBtn', null);
 	},
 };

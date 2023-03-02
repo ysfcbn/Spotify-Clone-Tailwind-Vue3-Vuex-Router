@@ -28,7 +28,7 @@
 							</svg>
 						</span>
 						<span class="text-[13px] leading-4 w-[8.2rem] flex justify-end"
-							>Doğrulanmış Sanatçı</span
+							>Verified Artist</span
 						>
 					</div>
 
@@ -40,7 +40,7 @@
 
 					<div>
 						<span class="mr-2">
-							Aylık {{ currentArtist?.followers?.total }} dinleyici
+							{{ currentArtistMonthlyListeners }} monthly listeners
 						</span>
 					</div>
 				</div>
@@ -103,16 +103,16 @@
 								'w-[8rem] border-white': currentArtistIsFav,
 								'hover:border-white border-opacwhite2': !currentArtistIsFav,
 							}"
-							class="border cursor-default w-[5.5rem] h-fit text-white px-2 py-1 rounded-[5px]"
+							class="border cursor-default w-[5.5rem] h-fit text-white px-2 py-2 rounded-[5px] flex items-center justify-center"
 						>
 							<span
 								v-if="currentArtistIsFav"
-								class="text-sm"
+								class="text-xs self-center"
 								style="font-weight: 600"
-								>TAKİP EDİLİYOR</span
+								>FOLLOWING</span
 							>
-							<span v-else class="text-sm" style="font-weight: 600">
-								TAKİP ET</span
+							<span v-else class="text-xs self-center" style="font-weight: 600">
+								FOLLOW</span
 							>
 						</button>
 					</div>
@@ -135,7 +135,7 @@
 						<h2
 							class="text-[1.5rem] text-white leading-7 tracking-tight hover:underline hover:text-underline-offset-8 font-semibold cursor-pointer"
 						>
-							Popüler
+							Popular
 						</h2>
 					</div>
 				</div>
@@ -180,10 +180,10 @@
 			</div>
 			<button
 				@click="seeMoreFunc"
-				class="m-4 sm:text-[10px] sm3:text-[0.75rem] text-opacwhite5 hover:text-white leading-7 tracking-widest hover:text-underline-offset-8 font-semibold cursor-default uppercase mb-8"
+				class="m-4 sm:text-[11px] sm3:text-[0.75rem] text-opacwhite5 hover:text-white leading-7 tracking-widest hover:text-underline-offset-8 font-semibold cursor-default mb-8"
 			>
 				<span v-if="!seeMore">See More</span>
-				<span v-else>daha azını göster</span>
+				<span v-else>Show less</span>
 			</button>
 
 			<Card
@@ -198,7 +198,7 @@
 				:compilations="compilations"
 				:currentData="diskografiList"
 			>
-				<template #cardTitle>Diskografi</template>
+				<template #cardTitle>Discography</template>
 				<template #seeMore>
 					<router-link
 						@click="openDiscografi"
@@ -206,8 +206,8 @@
 							name: 'discography',
 							params: { id: currentArtist?.id, type: this.type },
 						}"
-						class="uppercase text-lightest"
-						>HEPSİNİ GÖR</router-link
+						class="text-lightest"
+						>Show all</router-link
 					>
 				</template>
 				<template #imgContainer="{ data }">
@@ -280,7 +280,7 @@
 			</Card>
 
 			<Card :currentData="frontOfYou">
-				<template #cardTitle>Karşınızda {{ currentArtist?.name }}</template>
+				<template #cardTitle>Featuring {{ currentArtist?.name }}</template>
 				<template #imgContainer="{ data }">
 					<img
 						class="h-full w-full object-cover"
@@ -351,7 +351,7 @@
 			</Card>
 
 			<Card :artists="true" :currentData="fansLove?.artists">
-				<template #cardTitle>Hayranlarının hoşlandığı</template>
+				<template #cardTitle>Fans also like</template>
 				<template #imgContainer="{ data }">
 					<img
 						class="h-full w-full object-cover rounded-[100%] shadow-[0px_10px_16px_8px_rgba(0,0,0,0.4)]"
@@ -424,7 +424,7 @@
 			>
 				<div class="col-span-4 min-w-[516px]">
 					<h2 class="text-[1.5rem] mb-[20px] text-white font-semibold">
-						Hakkında
+						About
 					</h2>
 					<div class="col-span-4">
 						<button
@@ -590,6 +590,14 @@ export default {
 		},
 		currentArtistUri() {
 			return this.currentArtist?.uri;
+		},
+		countryFormat() {
+			return this.$store.getters['controller/getCountryCode'];
+		},
+		currentArtistMonthlyListeners() {
+			return new Intl.NumberFormat(this.countryFormat).format(
+				this.currentArtist?.followers?.total
+			);
 		},
 		artistImage() {
 			return this.currentArtist?.images[0]?.url;
@@ -834,16 +842,13 @@ export default {
 
 		async fetchArtistPublications() {
 			await axios
-				.get(
-					'https://api.spotify.com/v1/artists/' + this.id + '/albums?limit=10',
-					{
-						headers: {
-							Accept: 'application/json',
-							'Content-Type': 'application/json',
-							Authorization: 'Bearer ' + this.getToken,
-						},
-					}
-				)
+				.get('https://api.spotify.com/v1/artists/' + this.id + '/albums', {
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+						Authorization: 'Bearer ' + this.getToken,
+					},
+				})
 				.then(({ data }) => {
 					console.log(data);
 					this.$store.dispatch('artists/artistPublications', data);
@@ -855,7 +860,7 @@ export default {
 				.get(
 					'https://api.spotify.com/v1/artists/' +
 						this.id +
-						'/albums?limit=10&include_groups=album,single,compilation',
+						'/albums?include_groups=album,single,compilation',
 					{
 						headers: {
 							Accept: 'application/json',
@@ -875,7 +880,7 @@ export default {
 				.get(
 					'https://api.spotify.com/v1/artists/' +
 						this.id +
-						'/albums?limit=10&include_groups=single',
+						'/albums?include_groups=single',
 					{
 						headers: {
 							Accept: 'application/json',
@@ -895,7 +900,7 @@ export default {
 				.get(
 					'https://api.spotify.com/v1/artists/' +
 						this.id +
-						'/albums?limit=10&include_groups=compilation',
+						'/albums?include_groups=compilation',
 					{
 						headers: {
 							Accept: 'application/json',
