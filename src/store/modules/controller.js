@@ -69,6 +69,9 @@ const controllerModule = {
 		queueFavTrackIDs(state, payload) {
 			state.queueFavTrackIDs.push(payload);
 		},
+		clearQueueTracksID(state) {
+			state.queueFavTrackIDs = [];
+		},
 		playerPercent(state, payload) {
 			state.playerProgress = payload;
 		},
@@ -375,39 +378,10 @@ const controllerModule = {
 			})
 				.then(data => {
 					console.log(data);
+					dispatch('fetchCurrentlyPlayingTrack');
 					if (data.status === 204) {
 						console.log('Playback started');
 						dispatch('fetchCurrentlyPlayingTrack');
-						commit('lastProgressMS', getters.getCurrentProgress);
-						commit('lastReverseProgressMS', getters.getLastReverseProgressMS);
-						dispatch('clearIntervalFunc');
-						dispatch('setIntervalFunc');
-					}
-				})
-				.catch(err => console.log(err));
-		},
-		async playSelectedTrack({ getters, dispatch }, uri) {
-			await axios
-				.put(
-					`https://api.spotify.com/v1/me/player/play?device_id=${getters.deviceID}`,
-					{
-						uris: [uri.uri],
-						position_ms:
-							uri.id === getters.getPlaybackState?.item.id
-								? getters.getPlaybackState.progress_ms
-								: 0,
-					},
-					{
-						headers: {
-							Accept: 'application/json',
-							'Content-Type': 'application/json',
-							Authorization: 'Bearer ' + getters.getToken,
-						},
-					}
-				)
-				.then(data => {
-					if (data.status === 204) {
-						console.log(getters.currentTrackID);
 						commit('lastProgressMS', getters.getCurrentProgress);
 						commit('lastReverseProgressMS', getters.getLastReverseProgressMS);
 						dispatch('clearIntervalFunc');
@@ -427,6 +401,7 @@ const controllerModule = {
 			})
 				.then(data => {
 					console.log(data);
+					dispatch('fetchCurrentlyPlayingTrack');
 					if (data.status === 204) {
 						console.log('Playback paused');
 						dispatch('fetchCurrentlyPlayingTrack');
@@ -462,6 +437,7 @@ const controllerModule = {
 				)
 				.then(data => {
 					if (data.status === 204) {
+						dispatch('fetchCurrentlyPlayingTrack');
 						dispatch('fetchCurrentlyPlayingTrack')
 							.then(() => {
 								console.log(getters.currentTrackID);
@@ -515,24 +491,19 @@ const controllerModule = {
 					console.log(data);
 					if (data.status === 204) {
 						console.log('context started');
-						dispatch('fetchCurrentlyPlayingTrack')
-							.then(() => {
-								dispatch('userQueue');
-								console.log(getters.currentTrackID);
-								console.log(
-									'context type=>',
-									getters.getPlaybackState?.context?.type
-								);
-								commit('lastProgressMS', getters.getCurrentProgress);
-								commit(
-									'lastReverseProgressMS',
-									getters.getLastReverseProgressMS
-								);
-								commit('isArtistContext', false);
-								dispatch('clearIntervalFunc');
-								dispatch('setIntervalFunc');
-							})
-							.catch(err => console.log(err));
+						dispatch('fetchCurrentlyPlayingTrack');
+						dispatch('fetchCurrentlyPlayingTrack');
+						dispatch('userQueue');
+						console.log(getters.currentTrackID);
+						console.log(
+							'context type=>',
+							getters.getPlaybackState?.context?.type
+						);
+						commit('lastProgressMS', getters.getCurrentProgress);
+						commit('lastReverseProgressMS', getters.getLastReverseProgressMS);
+						commit('isArtistContext', false);
+						dispatch('clearIntervalFunc');
+						dispatch('setIntervalFunc');
 					}
 				})
 				.catch(err => console.log(err));
@@ -582,6 +553,7 @@ const controllerModule = {
 					if (data.status === 204) {
 						console.log('Selected Track Seek To Position');
 						dispatch('fetchCurrentlyPlayingTrack');
+						dispatch('fetchCurrentlyPlayingTrack');
 					}
 				})
 				.catch(err => console.log(err));
@@ -602,6 +574,11 @@ const controllerModule = {
 				.then(data => {
 					console.log(data);
 					if (data.status === 204) {
+						dispatch('fetchCurrentlyPlayingTrack');
+						dispatch('fetchCurrentlyPlayingTrack');
+						dispatch('clearIntervalFunc');
+						commit('clearLastProgressMS');
+						dispatch('setIntervalFunc');
 						console.log('skipped to Next Track!');
 						state.queueTrackList.length ? state.queueTrackList.shift() : '';
 						dispatch('userQueue').then(() => {
@@ -609,11 +586,6 @@ const controllerModule = {
 								? state.allQueueList.splice(0, state.queueTrackList.length)
 								: '';
 						});
-
-						dispatch('fetchCurrentlyPlayingTrack');
-						dispatch('clearIntervalFunc');
-						commit('clearLastProgressMS');
-						dispatch('setIntervalFunc');
 					}
 				})
 				.catch(err => console.log(err));
@@ -635,6 +607,7 @@ const controllerModule = {
 					if (data.status === 204) {
 						console.log('skipped to Previous Track!');
 						dispatch('userQueue');
+						dispatch('fetchCurrentlyPlayingTrack');
 						dispatch('fetchCurrentlyPlayingTrack');
 						dispatch('clearIntervalFunc');
 						commit('clearLastProgressMS');
