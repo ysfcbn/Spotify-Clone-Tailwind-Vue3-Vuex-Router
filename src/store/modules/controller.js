@@ -550,9 +550,9 @@ const controllerModule = {
 				}
 			)
 				.then(data => {
+					dispatch('fetchCurrentlyPlayingTrack');
 					if (data.status === 204) {
 						console.log('Selected Track Seek To Position');
-						dispatch('fetchCurrentlyPlayingTrack');
 						dispatch('fetchCurrentlyPlayingTrack');
 					}
 				})
@@ -573,8 +573,8 @@ const controllerModule = {
 			)
 				.then(data => {
 					console.log(data);
+					dispatch('fetchCurrentlyPlayingTrack');
 					if (data.status === 204) {
-						dispatch('fetchCurrentlyPlayingTrack');
 						dispatch('fetchCurrentlyPlayingTrack');
 						dispatch('clearIntervalFunc');
 						commit('clearLastProgressMS');
@@ -604,10 +604,10 @@ const controllerModule = {
 			)
 				.then(data => {
 					console.log(data);
+					dispatch('fetchCurrentlyPlayingTrack');
 					if (data.status === 204) {
 						console.log('skipped to Previous Track!');
 						dispatch('userQueue');
-						dispatch('fetchCurrentlyPlayingTrack');
 						dispatch('fetchCurrentlyPlayingTrack');
 						dispatch('clearIntervalFunc');
 						commit('clearLastProgressMS');
