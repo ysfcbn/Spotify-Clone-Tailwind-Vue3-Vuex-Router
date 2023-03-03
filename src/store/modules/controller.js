@@ -492,18 +492,24 @@ const controllerModule = {
 					if (data.status === 204) {
 						console.log('context started');
 						dispatch('fetchCurrentlyPlayingTrack');
-						dispatch('fetchCurrentlyPlayingTrack');
-						dispatch('userQueue');
-						console.log(getters.currentTrackID);
-						console.log(
-							'context type=>',
-							getters.getPlaybackState?.context?.type
-						);
-						commit('lastProgressMS', getters.getCurrentProgress);
-						commit('lastReverseProgressMS', getters.getLastReverseProgressMS);
-						commit('isArtistContext', false);
-						dispatch('clearIntervalFunc');
-						dispatch('setIntervalFunc');
+						dispatch('fetchCurrentlyPlayingTrack')
+							.then(() => {
+								dispatch('userQueue');
+								console.log(getters.currentTrackID);
+								console.log(
+									'context type=>',
+									getters.getPlaybackState?.context?.type
+								);
+								commit('lastProgressMS', getters.getCurrentProgress);
+								commit(
+									'lastReverseProgressMS',
+									getters.getLastReverseProgressMS
+								);
+								commit('isArtistContext', false);
+								dispatch('clearIntervalFunc');
+								dispatch('setIntervalFunc');
+							})
+							.catch(err => console.log(err));
 					}
 				})
 				.catch(err => console.log(err));
@@ -574,6 +580,11 @@ const controllerModule = {
 				.then(data => {
 					console.log(data);
 					dispatch('fetchCurrentlyPlayingTrack');
+					dispatch('userQueue').then(() => {
+						state.queueTrackList.length
+							? state.allQueueList.splice(0, state.queueTrackList.length)
+							: '';
+					});
 					if (data.status === 204) {
 						dispatch('fetchCurrentlyPlayingTrack');
 						dispatch('clearIntervalFunc');
@@ -605,6 +616,7 @@ const controllerModule = {
 				.then(data => {
 					console.log(data);
 					dispatch('fetchCurrentlyPlayingTrack');
+					dispatch('userQueue');
 					if (data.status === 204) {
 						console.log('skipped to Previous Track!');
 						dispatch('userQueue');
@@ -660,6 +672,7 @@ const controllerModule = {
 							type: 'queue',
 							status: true,
 						});
+						dispatch('userQueue');
 						dispatch('userQueue').then(() => {
 							let queueListLength = state.queueTrackList.length;
 							commit('queueTrackList', state.userQueue.queue[queueListLength]);

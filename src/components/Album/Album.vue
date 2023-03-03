@@ -944,7 +944,6 @@ export default {
 		this.$store.dispatch('controller/isPlayingHeaderBtn', null);
 	},
 };
-//asdasd
 </script>
 
 <style scoped lang="scss">
