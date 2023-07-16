@@ -1,5 +1,4 @@
 <template>
-  <!-- deneme content -->
   <router-view v-if="isLoginPage" name="loginPage"> </router-view>
   <AppInfoModal></AppInfoModal>
 
