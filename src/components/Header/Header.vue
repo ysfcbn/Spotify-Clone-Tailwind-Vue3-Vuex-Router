@@ -243,7 +243,8 @@
               <input
                 placeholder="What do you want to listen to ?"
                 type="text"
-                ref="searchBar"
+                ref="input"
+                @blur="$refs.input.focus()"
                 class="w-[22.8rem] rounded-full p-[10px] px-12 bg-light/70 text-white hover:bg-light focus:outline-white"
                 v-model="inputField"
                 @change="change"
@@ -269,16 +270,11 @@
               </svg>
             </span>
             <span
+              @click="clean"
               v-if="inputField.length"
               class="absolute flex self-center text-white top-3 right-3"
             >
-              <svg
-                role="img"
-                height="14"
-                width="14"
-                viewBox="0 0 16 16"
-                @click="clean"
-              >
+              <svg role="img" height="14" width="14" viewBox="0 0 16 16">
                 <path
                   fill="currentColor"
                   d="M1.47 1.47a.75.75 0 011.06 0L8 6.94l5.47-5.47a.75.75 0 111.06 1.06L9.06 8l5.47 5.47a.75.75 0 11-1.06 1.06L8 9.06l-5.47 5.47a.75.75 0 01-1.06-1.06L6.94 8 1.47 2.53a.75.75 0 010-1.06z"
@@ -462,11 +458,16 @@ export default {
         !this.isClickHeaderBtn
       );
     },
+
     change() {
       console.log(this.inputField);
     },
+    focusInput() {
+      this.$refs.input.$el.focus();
+    },
     clean() {
       this.inputField = "";
+      this.$router.push({ name: "search" });
     },
     logout() {
       this.$store.dispatch("logout");
@@ -541,7 +542,10 @@ export default {
     },
 
     isSearchVisible() {
-      return this.$route.fullPath === "/search";
+      return (
+        this.$route.fullPath === "/search" ||
+        this.$route.fullPath === `/search/${this.inputField}`
+      );
     },
     currentSec() {
       return this.$route.fullPath === "/collection/playlists"
@@ -667,6 +671,13 @@ export default {
     $route() {
       this.accountOptions = false;
       this.dropPlaylists = false;
+    },
+    inputField(newVal, _) {
+      if (newVal) {
+        this.$router.push({ name: "searchResult", params: { q: newVal } });
+      } else {
+        this.$router.push({ name: "search" });
+      }
     },
   },
   mounted() {
