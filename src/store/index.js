@@ -1,6 +1,7 @@
 import { createStore } from 'vuex';
 import controllerModule from './modules/controller.js';
 import playlistModule from './modules/playlists.js';
+import searchItemModule from './modules/searchItem.js';
 import albumModule from './modules/albums.js';
 import favTracksModule from './modules/favTracks.js';
 import artistModule from './modules/artists';
@@ -23,6 +24,7 @@ const store = createStore({
 		users: userModule,
 		genres: genreModule,
 		discography: discographyModule,
+		searchItem: searchItemModule,
 	},
 	state: {
 		accessToken: null,

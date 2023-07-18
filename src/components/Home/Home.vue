@@ -1291,6 +1291,7 @@ export default {
 	},
 	async created() {
 		console.log('Home Mounted');
+		console.log(this.$route);
 		this.home = true;
 		this.isAuth;
 		const isAuth = await this.isAuth;
