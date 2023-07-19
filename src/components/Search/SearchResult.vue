@@ -44,7 +44,9 @@
 				</button>
 			</div>
 			<div class="w-full bg-dark items-stretch grid grid-cols-8 mt-4 gap-6">
-				<div class="col-span-4">
+				<div
+					class="sm:col-span-4 sm:col-start-1 sm:col-span-7 md2:row-start-1 md2:col-start-1"
+				>
 					<h2 class="text-white pb-2 text-xl font-semibold">Top Result</h2>
 					<div
 						class="relative min-w-[18rem] flex flex-col bg-dark2 rounded-lg group hover:bg-opacwhite1/20 ease duration-300 py-2"
@@ -93,49 +95,57 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-span-4">
+				<div
+					class="lg2:col-span-4 sm:row-start-2 sm:col-span-7 md2:row-start-1"
+				>
 					<h2 class="text-white pb-2 text-xl font-semibold">Songs</h2>
-					<div
-						class="relative flex h-full bg-dark2 rounded-lg group hover:bg-opacwhite1/20 ease duration-300"
-					>
-						<TrackItems
-							v-for="track in getSongs"
-							:key="track.id"
-							:id="track.id"
-							:track="track"
-							:uri="track.uri"
-						>
-							<template #index></template>
-							<template #trackImg>
-								<img
-									class="object-fit w-[40px] h-[40px]"
-									:src="track.album.images[2]?.url"
-									alt=""
-								/>
-							</template>
-							<template #trackName>{{ track.name }}</template>
-							<template #artist
-								><router-link
-									class="hover:underline"
-									v-for="artist in track.artists"
-									:key="artist.id"
-									:to="{ name: 'artist', params: { id: `${artist.id}` } }"
-								>
-									{{
-										track.artists.length > 1
-											? artist.name ===
-											  track.artists[track.artists.length - 1].name
-												? artist.name
-												: artist.name + ', '
-											: artist.name
-									}}
-								</router-link></template
+					<div class="relative flex h-full rounded-lg">
+						<div class="overflow-hidden wrapper">
+							<TrackItems
+								v-for="(track, i) in getSongs"
+								:key="track.id"
+								:id="track.id"
+								:track="track"
+								:uri="track.uri"
+								:artistPage="false"
+								:itemUri="track.uri"
+								:artistTopTrackUris="artistTopTrackUris"
+								:trackID="track.id"
+								:contextType="contextType"
+								:index="i"
+								:margin="true"
 							>
-							<template #albumName>{{ track.album.name }}</template>
-							<template #duration>{{
-								trackDuration((duration = track.duration_ms))
-							}}</template>
-						</TrackItems>
+								<template #trackImg>
+									<img
+										class="object-fit w-[40px] h-[40px]"
+										:src="track.album.images[2]?.url"
+										alt=""
+									/>
+								</template>
+								<template #trackName>{{ track.name }}</template>
+								<template #artist
+									><router-link
+										class="hover:underline"
+										v-for="artist in track.artists"
+										:key="artist.id"
+										:to="{ name: 'artist', params: { id: `${artist.id}` } }"
+									>
+										{{
+											track.artists.length > 1
+												? artist.name ===
+												  track.artists[track.artists.length - 1].name
+													? artist.name
+													: artist.name + ', '
+												: artist.name
+										}}
+									</router-link></template
+								>
+
+								<template #duration>{{
+									trackDuration((duration = track.duration_ms))
+								}}</template>
+							</TrackItems>
+						</div>
 					</div>
 				</div>
 			</div>
