@@ -297,7 +297,7 @@ export default {
 				})
 				.catch(err => console.log(err));
 		},
-		async fetchArtist(href = this.item.context.href, selectedArtist = false) {
+		async fetchArtist(href = this.getTopResult?.href) {
 			await axios
 				.get(href, {
 					headers: {
@@ -307,11 +307,28 @@ export default {
 					},
 				})
 				.then(({ data }) => {
-					this.artistImage = data.images[1].url;
-					if (selectedArtist) {
-						console.log(data);
-						this.$store.dispatch('artists/currentArtist', data);
+					console.log(data);
+					this.$store.dispatch('artists/currentArtist', data);
+				})
+				.catch(err => console.log(err));
+		},
+		async fetchArtistTopTracks(artistID) {
+			await axios
+				.get(
+					'https://api.spotify.com/v1/artists/' +
+						artistID +
+						'/top-tracks?market=US',
+					{
+						headers: {
+							Accept: 'application/json',
+							'Content-Type': 'application/json',
+							Authorization: 'Bearer ' + this.getToken,
+						},
 					}
+				)
+				.then(({ data }) => {
+					console.log(data);
+					this.$store.dispatch('artists/topTracks', data.tracks);
 				})
 				.catch(err => console.log(err));
 		},
@@ -336,26 +353,6 @@ export default {
 			if (e.target.closest('#playBtn')?.id === 'playBtn') {
 				console.log('toggle Play/Stop Users');
 				console.log(cardID);
-				if (this.topResultType === 'artist') {
-					this.artistID = cardID;
-					this.$store.dispatch('artists/currentArtist', data);
-					await this.playContextUri(
-						{
-							uri: data?.uri,
-							index: this.currentPlayingTrackIndex,
-							type: this.topResultType,
-						},
-						this.data?.href
-					);
-				} else
-					await this.playContextUri(
-						{
-							uri: data?.uri,
-							index: this.currentPlayingTrackIndex,
-							type: this.topResultType,
-						},
-						this.data?.href
-					);
 			} else {
 				this.$router.push({ name: data.type, params: { id: data.id } });
 			}
@@ -378,7 +375,13 @@ export default {
 					await this.fetchAlbum(href);
 
 					uri.id = this.currentAlbumTracks[this.currentPlayingTrackIndex]?.id;
+				} else if ((await uri.type) === 'artist') {
+					await this.fetchArtist(href);
+					await this.fetchArtistTopTracks(this.getTopResult?.id);
+
+					uri.id = this.artistTopTracks[this.currentPlayingTrackIndex]?.id;
 				}
+
 				uri.index = this.currentPlayingTrackIndex;
 				console.log(uri);
 				await this.$store.dispatch('controller/playSelectedContext', uri);
