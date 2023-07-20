@@ -145,6 +145,8 @@
 			v-if="!albumPage && !diskografiPage && !singlePage"
 			:class="{
 				'sm:ml-[4rem] md2:flex': userPage || queuePage || queuePage2,
+				'md2:flex flex-shrink':
+					!userPage && !queuePage && !queuePage2 && !searchResult,
 				'lg:flex flex-shrink': searchResult,
 			}"
 			class="flex justify-start items-center hidden sm:ml-[2px]"

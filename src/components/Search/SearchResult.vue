@@ -46,28 +46,32 @@
 			<div class="grid grid-cols-10 mt-4 gap-6">
 				<div
 					:id="getTopResult?.id"
-					@click="selectedCard((type = getTopResult?.type), $event)"
-					class="min-w-[22rem] max-w-[28rem] lg1:col-span-4 sm:col-span-4 sm:col-start-1 sm:col-span-7 lg1:row-start-1 lg1:col-start-1 cursor-pointer"
+					@click="openCard((data = getTopResult), $event)"
+					class="card--container min-w-[22rem] max-w-[28rem] lg1:col-span-4 sm:col-span-4 sm:col-start-1 sm:col-span-7 lg1:row-start-1 lg1:col-start-1 cursor-pointer"
 				>
 					<h2 class="cursor-default text-white pb-4 text-2xl font-semibold">
 						Top Result
 					</h2>
 					<div
-						class="relative flex flex-col bg-dark2 rounded-lg group hover:bg-opacwhite1/20 ease duration-300 py-2"
+						class="relative flex flex-col bg-dark1 rounded-lg group hover:bg-opacwhite/10 ease duration-300 gap-3 py-4"
 					>
 						<div
 							v-if="topResultType !== 'episode' && topResultType !== 'show'"
-							class="right-2 bottom-2 absolute flex items-center py-1 px-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
+							:class="{
+								'opacity-100 translate-y-[-0.4rem]': isPlayingContextUri,
+								'opacity-0': !isPlayingContextUri,
+							}"
+							class="bg-dark rounded-full right-2 bottom-2 absolute flex items-center mx-2 group-hover:block group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
 						>
 							<button
 								@click="
 									playContextUri(
 										(uri = {
-											uri: playlist.uri,
+											uri: getTopResult.uri,
 											index: 0,
-											type: 'playlist',
+											type: getTopResult.type,
 										}),
-										(href = playlist.href)
+										(href = getTopResult.href)
 									)
 								"
 								@mousedown="leftClick = true"
@@ -81,7 +85,7 @@
 							>
 								<svg role="img" height="24" width="24" viewBox="0 0 24 24">
 									<path
-										v-if="false"
+										v-if="isPlayingContextUri"
 										fill="text-black"
 										d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
 									></path>
@@ -93,28 +97,31 @@
 								</svg>
 							</button>
 						</div>
-						<div class="ml-4 mt-2 self-start w-20 h-20">
+						<div class="ml-4 mt-2 w-20 h-20">
 							<img
 								:class="[
 									topResultType === 'artist'
-										? 'rounded-full shadow-[0_6px_20px_5px_rgba(0,0,0,0.8)]'
-										: 'rounded-lg shadow-[0_8px_40px_10px_rgba(0,0,0,0.2)]',
+										? 'rounded-full shadow-[0_2px_20px_5px_rgba(0,0,0,0.8)]'
+										: 'rounded-lg shadow-[0_1px_20px_10px_rgba(0,0,0,0.5)]',
 								]"
 								class="w-20 h-20"
 								:src="topResultImage"
 								alt="deneme"
 							/>
 						</div>
-						<div class="p-4 w-[90%]">
-							<h2 class="text-white font-semibold text-2xl line-clamp-1">
+						<div class="p-3 w-full">
+							<h2
+								style="font-weight: 700"
+								class="text-white text-[1.9rem] line-clamp-1 leading-10 tracking-tighter"
+							>
 								{{ getTopResult?.name }}
 							</h2>
 						</div>
-						<div class="flex items-center w-[70%]">
-							<div class="pl-4 flex flex-wrap items-center gap-1 h-[2rem]">
+						<div class="flex items-center w-[70%] h-[1rem]">
+							<div class="pl-4 flex flex-wrap items-center gap-1">
 								<div
 									v-if="topResultType === 'episode'"
-									class="flex items-center justify- text-opacwhite1/50 text-sm"
+									class="flex items-center justify- text-lightest text-[11px] tracking-tighter font-semibold"
 								>
 									<p class="">{{ currentReleaseDate() }}</p>
 									<p class="before:content-['·'] before:px-1">
@@ -123,7 +130,7 @@
 								</div>
 								<div
 									v-if="topResultType === 'show'"
-									class="text-opacwhite1/50 text-sm"
+									class="text-lightest text-sm"
 								>
 									<p class="">{{ getTopResult?.publisher }}</p>
 								</div>
@@ -131,7 +138,7 @@
 									v-show="
 										topResultType === 'track' || topResultType === 'album'
 									"
-									class="hover:underline text-opacwhite/60 text-xs block"
+									class="hover:underline text-opacwhite/60 text-sm block"
 									v-for="artist in getTopResult?.artists"
 									:key="artist.id"
 									:to="{ name: 'artist', params: { id: `${artist.id}` } }"
@@ -161,7 +168,7 @@
 									:class="{
 										'ml-1': topResultType !== 'artist',
 									}"
-									class="w-fit rounded-full bg-dark1 text-white text-xs px-3 py-1 capitalize"
+									class="w-fit rounded-full bg-dark text-white text-xs px-3 py-1 capitalize"
 								>
 									{{ topResultTypeName }}
 								</p>
@@ -237,6 +244,7 @@ export default {
 			selectedType: '',
 			firstBox: '',
 			leftClick: false,
+			typeOfSelectedSection: null,
 		};
 	},
 	methods: {
@@ -264,16 +272,117 @@ export default {
 			let firstBox = { ...this.getSearchResult[this.selectedType].items[0] };
 			this.$store.dispatch('searchItem/topResult', firstBox);
 		},
+		topSongs() {
+			let songs = this.getSearchResult.tracks.items.slice(0, 4);
+			this.$store.dispatch('searchItem/songs', songs);
+		},
 		selectedCard(type, event) {
 			if (event.target.closest('#playBtn')?.id === 'playBtn') {
 				console.log('toggle Play/Stop Playlists');
 			} else {
-				this.$router.push({ name: type, params: { id: type.id } });
+				this.$router.push({ name: type.type, params: { id: type.id } });
 			}
 		},
-		topSongs() {
-			let songs = this.getSearchResult.tracks.items.slice(0, 4);
-			this.$store.dispatch('searchItem/songs', songs);
+		async fetchPlaylist(href = this.getTopResult?.href) {
+			await axios
+				.get(href, {
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+						Authorization: 'Bearer ' + this.getToken,
+					},
+				})
+				.then(({ data }) => {
+					this.$store.dispatch('playlists/getPlaylist', data);
+				})
+				.catch(err => console.log(err));
+		},
+		async fetchArtist(href = this.item.context.href, selectedArtist = false) {
+			await axios
+				.get(href, {
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+						Authorization: 'Bearer ' + this.getToken,
+					},
+				})
+				.then(({ data }) => {
+					this.artistImage = data.images[1].url;
+					if (selectedArtist) {
+						console.log(data);
+						this.$store.dispatch('artists/currentArtist', data);
+					}
+				})
+				.catch(err => console.log(err));
+		},
+		async fetchAlbum(href) {
+			await axios
+				.get(href, {
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+						Authorization: 'Bearer ' + this.getToken,
+					},
+				})
+				.then(({ data }) => {
+					this.$store.dispatch('albums/getAlbum', data);
+				})
+				.catch(err => console.log(err));
+		},
+		async openCard(data, e) {
+			console.log(data);
+			const cardID = e.target.closest('.card--container').id;
+			if (e.target.closest('#artistName')?.id === 'artistName') return;
+			if (e.target.closest('#playBtn')?.id === 'playBtn') {
+				console.log('toggle Play/Stop Users');
+				console.log(cardID);
+				if (this.topResultType === 'artist') {
+					this.artistID = cardID;
+					this.$store.dispatch('artists/currentArtist', data);
+					await this.playContextUri(
+						{
+							uri: data?.uri,
+							index: this.currentPlayingTrackIndex,
+							type: this.topResultType,
+						},
+						this.data?.href
+					);
+				} else
+					await this.playContextUri(
+						{
+							uri: data?.uri,
+							index: this.currentPlayingTrackIndex,
+							type: this.topResultType,
+						},
+						this.data?.href
+					);
+			} else {
+				this.$router.push({ name: data.type, params: { id: data.id } });
+			}
+		},
+		async playContextUri(uri, href) {
+			if (this.isPlayingContextUri) {
+				await this.$store.dispatch('controller/pauseCurrentTrack');
+				console.log(this.currentTrackID);
+			} else {
+				if ((await uri.type) === 'playlist') {
+					await this.fetchPlaylist(href);
+					console.log(this.currentTrackID);
+					console.log(uri);
+
+					uri.id =
+						this.currentPlaylist[this.currentPlayingTrackIndex]?.track.id;
+				} else if ((await uri.type) === 'album') {
+					console.log(this.currentTrackID);
+					console.log(uri);
+					await this.fetchAlbum(href);
+
+					uri.id = this.currentAlbumTracks[this.currentPlayingTrackIndex]?.id;
+				}
+				uri.index = this.currentPlayingTrackIndex;
+				console.log(uri);
+				await this.$store.dispatch('controller/playSelectedContext', uri);
+			}
 		},
 		//Episode
 		currentReleaseDate() {
@@ -351,6 +460,69 @@ export default {
 
 		getMonths() {
 			return this.$store.getters['controller/getMonths'];
+		},
+
+		isArtistCard() {
+			return this.item?.context?.type === 'artist';
+		},
+
+		currentAlbumTracks() {
+			return this.$store.getters['albums/getAlbum']?.tracks?.items;
+		},
+		currentPlaylist() {
+			return this.$store.getters['playlists/getPlaylist']?.tracks?.items;
+		},
+		artistTopTracks() {
+			return this.$store.getters['artists/getTopTracks'];
+		},
+		artistTopTrackUris() {
+			return this.artistTopTracks.map(item => item.uri);
+		},
+		getCurrentlyPlayingTrack() {
+			return this.$store.getters['controller/getCurrentlyPlayingTrack'];
+		},
+		currentTrackID() {
+			return this.getCurrentlyPlayingTrack?.item?.id;
+		},
+
+		findCurrentPlayingTrackIndex() {
+			return this.topResultType === 'playlist'
+				? this.currentPlaylist?.indexOf(
+						this.currentPlaylist?.find(
+							item => item.track.id === this.currentTrackID
+						)
+				  )
+				: this.topResultType === 'album'
+				? this.currentAlbumTracks?.indexOf(
+						this.currentAlbumTracks?.find(
+							item => item.id === this.currentTrackID
+						)
+				  )
+				: this.topResultType === 'artist'
+				? this.artistTopTracks.indexOf(
+						this.artistTopTracks.find(item => item.id === this.currentTrackID)
+				  )
+				: '';
+		},
+		currentPlayingTrackIndex() {
+			return this.findCurrentPlayingTrackIndex + 1
+				? this.findCurrentPlayingTrackIndex
+				: 0;
+		},
+
+		isPlayingArtistTopTracks() {
+			return (
+				this.getCurrentlyPlayingTrack?.item?.artists[0].id ===
+					this.item?.track.artists[0].id &&
+				!this.getCurrentlyPlayingTrack?.context &&
+				this.getCurrentlyPlayingTrack?.is_playing
+			);
+		},
+		isPlayingContextUri() {
+			return (
+				this.getCurrentlyPlayingTrack?.context?.uri ===
+					this.getTopResult?.uri && this.getCurrentlyPlayingTrack?.is_playing
+			);
 		},
 	},
 	watch: {
