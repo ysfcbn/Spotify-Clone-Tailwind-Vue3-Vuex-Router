@@ -112,7 +112,12 @@
 						<div class="p-3 w-full">
 							<h2
 								style="font-weight: 700"
-								class="text-white text-[1.9rem] line-clamp-1 leading-10 tracking-tighter"
+								:class="[
+									this.topResultType === 'artist'
+										? 'text-[3rem] '
+										: 'text-[2rem] ',
+								]"
+								class="text-white line-clamp-1 leading-10 tracking-tighter"
 							>
 								{{ getTopResult?.name }}
 							</h2>
@@ -193,6 +198,7 @@
 								:trackID="track.id"
 								:index="i"
 								:margin="true"
+								:contextType="track.type"
 							>
 								<template #trackImg>
 									<img

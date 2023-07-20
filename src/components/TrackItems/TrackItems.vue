@@ -56,7 +56,7 @@
 					<span
 						:class="{
 							invisible: isPlaying,
-							' text-green3': addTextGreen,
+							'text-green3': addTextGreen,
 							'group-hover:visible text-white': !isPlaying,
 						}"
 						class="text-lg group-hover:invisible"
