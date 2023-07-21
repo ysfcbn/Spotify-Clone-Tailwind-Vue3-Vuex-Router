@@ -417,7 +417,7 @@ const controllerModule = {
 					{
 						uris: [uri.uri],
 						position_ms:
-							uri.id === getters.getPlaybackState?.item.id
+							uri.id === getters.getPlaybackState?.item?.id
 								? getters.getPlaybackState.progress_ms
 								: 0,
 					},
@@ -432,6 +432,7 @@ const controllerModule = {
 				.then(data => {
 					if (data.status === 204) {
 						console.log(getters.currentTrackID);
+						dispatch('fetchCurrentlyPlayingTrack');
 						dispatch('fetchCurrentlyPlayingTrack');
 						commit('lastProgressMS', getters.getCurrentProgress);
 						commit('lastReverseProgressMS', getters.getLastReverseProgressMS);

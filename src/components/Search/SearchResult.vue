@@ -352,6 +352,21 @@ export default {
 				})
 				.catch(err => console.log(err));
 		},
+		async fetchTrack(href) {
+			return await axios
+				.get(href, {
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+						Authorization: 'Bearer ' + this.getToken,
+					},
+				})
+				.then(({ data }) => {
+					console.log(data);
+					this.$store.dispatch('albums/currentTrack', data);
+				})
+				.catch(err => console.log(err));
+		},
 		async openCard(data, e) {
 			console.log(data);
 			const cardID = e.target.closest('.card--container').id;
@@ -361,6 +376,17 @@ export default {
 				console.log(cardID);
 			} else {
 				this.$router.push({ name: data.type, params: { id: data.id } });
+			}
+		},
+		async playArtistTopTracks(uri) {
+			console.log(uri);
+			console.log(uri.index);
+			console.log(this.findCurrentPlayingTrackIndex);
+			if (this.isPlayingArtistTopTracks) {
+				await this.$store.dispatch('controller/pauseCurrentTrack');
+			} else {
+				uri.index = await this.currentPlayingTrackIndex;
+				await this.$store.dispatch('controller/playArtitsTopTracks', uri);
 			}
 		},
 		async playContextUri(uri, href) {
@@ -386,11 +412,24 @@ export default {
 					await this.fetchArtistTopTracks(this.getTopResult?.id);
 
 					uri.id = this.artistTopTracks[this.currentPlayingTrackIndex]?.id;
+					await this.playArtistTopTracks({
+						uri: this.artistTopTrackUris,
+						index: this.currentPlayingTrackIndex,
+						type: this.topResultType,
+						artistID: this.getTopResult?.id,
+					});
+				} else if ((await uri.type) === 'track') {
+					await this.fetchTrack(href);
+					uri.id = this.getTopResult?.id;
 				}
 
 				uri.index = this.currentPlayingTrackIndex;
 				console.log(uri);
-				await this.$store.dispatch('controller/playSelectedContext', uri);
+				uri.type === 'track'
+					? await this.$store.dispatch('controller/playSelectedTrack', uri)
+					: uri.type !== 'artist'
+					? await this.$store.dispatch('controller/playSelectedContext', uri)
+					: '';
 			}
 		},
 		//Episode
@@ -471,10 +510,6 @@ export default {
 			return this.$store.getters['controller/getMonths'];
 		},
 
-		isArtistCard() {
-			return this.item?.context?.type === 'artist';
-		},
-
 		currentAlbumTracks() {
 			return this.$store.getters['albums/getAlbum']?.tracks?.items;
 		},
@@ -522,16 +557,19 @@ export default {
 		isPlayingArtistTopTracks() {
 			return (
 				this.getCurrentlyPlayingTrack?.item?.artists[0].id ===
-					this.item?.track.artists[0].id &&
+					this.getTopResult?.id &&
 				!this.getCurrentlyPlayingTrack?.context &&
 				this.getCurrentlyPlayingTrack?.is_playing
 			);
 		},
 		isPlayingContextUri() {
-			return (
-				this.getCurrentlyPlayingTrack?.context?.uri ===
-					this.getTopResult?.uri && this.getCurrentlyPlayingTrack?.is_playing
-			);
+			return this.topResultType === 'artist'
+				? this.isPlayingArtistTopTracks
+				: this.topResultType !== 'track'
+				? this.getCurrentlyPlayingTrack?.context?.uri ===
+						this.getTopResult?.uri && this.getCurrentlyPlayingTrack?.is_playing
+				: this.getCurrentlyPlayingTrack?.item?.uri === this.getTopResult?.uri &&
+				  this.getCurrentlyPlayingTrack?.is_playing;
 		},
 	},
 	watch: {
