@@ -234,6 +234,149 @@
 					</div>
 				</div>
 			</div>
+
+			<Card
+				v-if="topResultType === 'artist'"
+				:currentData="featuredSpotify"
+				:severalPlaylist="true"
+				class="mt-6"
+			>
+				<template #cardTitle>Featured {{ getTopResult?.name }}</template>
+
+				<template #imgContainer="{ data }">
+					<div class="w-full relative mb-5">
+						<img
+							class="h-full w-full object-cover"
+							:src="data?.images[0]?.url"
+							alt="image"
+						/>
+					</div>
+				</template>
+				<template #firstTitle="{ data }">{{ data?.name }}</template>
+				<template #secondTitle="{ data }"
+					><span>By {{ data?.owner?.display_name }}</span>
+				</template>
+				<template #playBtn="{ data }">
+					<div
+						:class="
+							data?.uri === getCurrentlyPlayingTrack?.context?.uri &&
+							getCurrentlyPlayingTrack?.is_playing
+								? 'opacity-100 translate-y-[-0.4rem]'
+								: 'opacity-0'
+						"
+						class="bg-dark1 rounded-full right-0 bottom-0 absolute flex items-center mx-2 group-hover:block group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
+					>
+						<button
+							@click="
+								playContextUri(
+									(uri = {
+										uri: data?.uri,
+										index: currentPlayingTrackIndex,
+										type: data?.type,
+									}),
+									(href = data?.href)
+								)
+							"
+							@mousedown="leftClick = true"
+							@mouseup="leftClick = false"
+							id="playBtn"
+							:class="{
+								' bg-green3/80 scale-80': leftClick,
+								'hover:scale-106 bg-green3/95 hover:bg-green3 ': !leftClick,
+							}"
+							class="p-[11px] rounded-full cursor-default shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+						>
+							<h1 class="text-white"></h1>
+							<svg role="img" height="20" width="20" viewBox="0 0 24 24">
+								<path
+									v-if="
+										data?.uri === getCurrentlyPlayingTrack?.context?.uri &&
+										getCurrentlyPlayingTrack?.is_playing
+									"
+									fill="text-black"
+									d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
+								></path>
+								<path
+									v-else
+									fill="text-black"
+									d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
+								></path>
+							</svg>
+						</button>
+					</div>
+				</template>
+			</Card>
+
+			<Card
+				class="my-6"
+				:currentData="getSearchResult?.artists?.items"
+				:artists="true"
+			>
+				<template #cardTitle>Artists</template>
+
+				<template #imgContainer="{ data }">
+					<div class="w-full relative mb-6">
+						<img
+							class="h-full w-full object-cover rounded-full shadow-[0px_5px_12px_10px_rgba(0,0,0,0.3)]"
+							:src="data?.images[0]?.url"
+							alt="image"
+						/>
+					</div>
+				</template>
+				<template #firstTitle="{ data }">{{ data?.name }}</template>
+				<template #secondTitle="{ data }"
+					><span class="capitalize">{{ data?.type }}</span>
+				</template>
+				<template #playBtn="{ data }">
+					<div
+						:class="
+							currentPlayingTrackArtistIDs === data?.id &&
+							getCurrentlyPlayingTrack?.is_playing &&
+							!getCurrentlyPlayingTrack?.context &&
+							isArtistContext
+								? 'opacity-100 translate-y-[-0.4rem]'
+								: 'opacity-0'
+						"
+						class="bg-dark1 rounded-full right-0 bottom-0 absolute flex items-center mx-2 group-hover:block group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
+					>
+						<button
+							@click="
+								playArtistTopTracksFunc(
+									(artistID = data?.id),
+									(href = data?.href)
+								)
+							"
+							@mousedown="leftClick = true"
+							@mouseup="leftClick = false"
+							id="playBtn"
+							:class="{
+								' bg-green3/80 scale-80': leftClick,
+								'hover:scale-106 bg-green3/95 hover:bg-green3': !leftClick,
+							}"
+							class="p-[11px] rounded-full cursor-default shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+						>
+							<h1 class="text-white"></h1>
+							<svg role="img" height="20" width="20" viewBox="0 0 24 24">
+								<path
+									v-if="
+										currentPlayingTrackArtistIDs === data?.id &&
+										getCurrentlyPlayingTrack?.is_playing &&
+										!getCurrentlyPlayingTrack?.context &&
+										isArtistContext
+									"
+									fill="text-black"
+									d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
+								></path>
+								<path
+									v-else
+									fill="text-black"
+									d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
+								></path>
+							</svg>
+						</button>
+					</div>
+				</template>
+			</Card>
 		</div>
 	</div>
 </template>
@@ -241,23 +384,25 @@
 <script>
 import axios from 'axios';
 import TrackItems from '../TrackItems/TrackItems.vue';
+import Card from '../Cards/Card.vue';
 
 export default {
 	name: 'PlaylistPage',
-	components: { TrackItems },
+	components: { TrackItems, Card },
 	data() {
 		return {
 			selectedType: '',
 			firstBox: '',
 			leftClick: false,
 			typeOfSelectedSection: null,
+			clickedArtist: null,
 		};
 	},
 	methods: {
 		async fetchSearchItem() {
 			await axios
 				.get(
-					`https://api.spotify.com/v1/search?q=${this.searchItem}&type=${this.types}`,
+					`https://api.spotify.com/v1/search?q=${this.searchItem}&type=${this.types}&limit=10`,
 					{
 						headers: {
 							Accept: 'application/json',
@@ -338,6 +483,17 @@ export default {
 				})
 				.catch(err => console.log(err));
 		},
+		async playArtistTopTracksFunc(artistID, href) {
+			this.clickedArtist = artistID;
+			await this.fetchArtist(href);
+			await this.fetchArtistTopTracks(artistID);
+			await this.playArtistTopTracks({
+				uri: await this.artistTopTrackUris,
+				index: await this.currentPlayingTrackIndex,
+				type: 'artist',
+				artistID: artistID,
+			});
+		},
 		async fetchAlbum(href) {
 			await axios
 				.get(href, {
@@ -382,7 +538,7 @@ export default {
 			console.log(uri);
 			console.log(uri.index);
 			console.log(this.findCurrentPlayingTrackIndex);
-			if (this.isPlayingArtistTopTracks) {
+			if (this.isPlayingArtistTopTracksCard) {
 				await this.$store.dispatch('controller/pauseCurrentTrack');
 			} else {
 				uri.index = await this.currentPlayingTrackIndex;
@@ -483,6 +639,12 @@ export default {
 		getSearchResult() {
 			return this.$store.getters['searchItem/getSearchResultArr'];
 		},
+		featuredSpotify() {
+			return this.getSearchResult?.playlists?.items.reduce((acc, item) => {
+				item.owner.display_name === 'Spotify' ? acc.push(item) : '';
+				return acc;
+			}, []);
+		},
 		getTopResult() {
 			return this.$store.getters['searchItem/getTopResult'];
 		},
@@ -522,13 +684,21 @@ export default {
 		artistTopTrackUris() {
 			return this.artistTopTracks.map(item => item.uri);
 		},
+
 		getCurrentlyPlayingTrack() {
 			return this.$store.getters['controller/getCurrentlyPlayingTrack'];
 		},
 		currentTrackID() {
 			return this.getCurrentlyPlayingTrack?.item?.id;
 		},
-
+		currentPlayingTrackArtistIDs() {
+			return this.getCurrentlyPlayingTrack?.item?.artists
+				.map(item => item.id)
+				.find(ID => ID === this.getCurrentArtistID);
+		},
+		getCurrentArtistID() {
+			return this.$store.getters['artists/getCurrentArtist']?.id;
+		},
 		findCurrentPlayingTrackIndex() {
 			return this.topResultType === 'playlist'
 				? this.currentPlaylist?.indexOf(
@@ -542,7 +712,7 @@ export default {
 							item => item.id === this.currentTrackID
 						)
 				  )
-				: this.topResultType === 'artist'
+				: this.topResultType === 'artist' || this.clickedArtist
 				? this.artistTopTracks.indexOf(
 						this.artistTopTracks.find(item => item.id === this.currentTrackID)
 				  )
@@ -556,10 +726,20 @@ export default {
 
 		isPlayingArtistTopTracks() {
 			return (
-				this.getCurrentlyPlayingTrack?.item?.artists[0].id ===
-					this.getTopResult?.id &&
+				this.currentPlayingTrackArtistIDs === this.getTopResult?.id &&
 				!this.getCurrentlyPlayingTrack?.context &&
 				this.getCurrentlyPlayingTrack?.is_playing
+			);
+		},
+		isArtistContext() {
+			return this.$store.getters['controller/isArtistContext'];
+		},
+		isPlayingArtistTopTracksCard() {
+			return (
+				this.currentPlayingTrackArtistIDs === this.clickedArtist &&
+				!this.getCurrentlyPlayingTrack?.context &&
+				this.getCurrentlyPlayingTrack?.is_playing &&
+				this.isArtistContext
 			);
 		},
 		isPlayingContextUri() {
@@ -575,6 +755,7 @@ export default {
 	watch: {
 		topResultType(val) {
 			console.log(val);
+			console.log(this.featuredSpotify);
 		},
 	},
 	async mounted() {

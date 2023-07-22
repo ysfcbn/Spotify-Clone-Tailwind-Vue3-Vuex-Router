@@ -622,7 +622,7 @@ const controllerModule = {
 				})
 				.catch(err => console.log(err));
 		},
-		async skipToPrevTrack({ getters, dispatch }) {
+		async skipToPrevTrack({ getters, dispatch, commit }) {
 			fetch(
 				`https://api.spotify.com/v1/me/player/previous?device_id=${getters.deviceID}`,
 				{
