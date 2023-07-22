@@ -1347,6 +1347,13 @@ export default {
 			this.observer.observe(this.homeEl);
 		}
 		if (this.isAuth) {
+			await this.$store.dispatch('controller/fetchCurrentlyPlayingTrack');
+
+			if (this.getCurrentlyPlayingTrack?.context) {
+				this.getCurrentlyPlayingTrack?.context?.type === 'album'
+					? this.fetchAlbum(this.getCurrentlyPlayingTrack?.context?.href)
+					: this.fetchPlaylist(this.getCurrentlyPlayingTrack?.context?.href);
+			}
 			await this.$store.dispatch('controller/userQueue');
 			await this.$store.dispatch('controller/fetchRecentlyPlayedTracks');
 			this.getCurrentUser ? '' : await this.currentUser();
