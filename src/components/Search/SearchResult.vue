@@ -554,6 +554,28 @@
 						><span>{{ data?.publisher }}</span>
 					</template>
 				</Card>
+				<Card :episodes="true" :currentData="getSearchResult?.episodes?.items">
+					<template #cardTitle>Episodes</template>
+
+					<template #imgContainer="{ data }">
+						<div class="w-full relative mb-5">
+							<img
+								class="h-full w-full object-cover rounded-md"
+								:src="data?.images[0]?.url"
+								alt="image"
+							/>
+						</div>
+					</template>
+					<template #firstTitle="{ data }">{{ data?.name }}</template>
+					<template #secondTitle="{ data }">
+						<span class="text-xs">{{
+							currentReleaseDate(data.release_date)
+						}}</span>
+						<span class="text-xs before:content-['·'] before:pr-1">
+							<span> {{ totalDuration(data?.duration_ms) }}</span>
+						</span>
+					</template>
+				</Card>
 			</div>
 		</div>
 	</div>
@@ -767,7 +789,13 @@ export default {
 			}
 		},
 		//Episode
-		currentReleaseDate() {
+		currentReleaseDate(date = 0) {
+			if (date) {
+				const day = new Date(date).getDate();
+
+				const month = this.getMonths[new Date(date).getMonth()];
+				return `${month} ${day} `;
+			}
 			const day = new Date(this.getTopResult?.release_date).getDate();
 
 			const month =

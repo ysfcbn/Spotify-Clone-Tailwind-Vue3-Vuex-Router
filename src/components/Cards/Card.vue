@@ -109,7 +109,7 @@
 						<slot name="imgContainer" :data="data"> </slot>
 						<slot name="playBtn" :data="data">
 							<div
-								v-if="!shows && !follows && !topResultShows"
+								v-if="!shows && !follows && !topResultShows && !episodes"
 								class="right-0 bottom-0 absolute flex items-center py-1 px-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
 							>
 								<button
@@ -183,6 +183,7 @@ export default {
 		'follows',
 		'shows',
 		'topResultShows',
+		'episodes',
 		'genrePage',
 		'popPublications',
 		'albums',
@@ -242,6 +243,9 @@ export default {
 				}
 				if (this.topResultShows) {
 					this.$router.push({ name: 'show', params: { id: cardID } });
+				}
+				if (this.episodes) {
+					this.$router.push({ name: 'episode', params: { id: cardID } });
 				}
 			} else if (this.artists) {
 				this.$router.push({ name: 'artist', params: { id: cardID } });
