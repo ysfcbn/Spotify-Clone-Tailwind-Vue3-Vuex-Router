@@ -255,7 +255,9 @@
 					</template>
 					<template #firstTitle="{ data }">{{ data?.name }}</template>
 					<template #secondTitle="{ data }"
-						><span>By {{ data?.owner?.display_name }}</span>
+						><span class="text-[13px] font-semibold"
+							>By {{ data?.owner?.display_name }}</span
+						>
 					</template>
 					<template #playBtn="{ data }">
 						<div
@@ -326,12 +328,15 @@
 					</template>
 					<template #firstTitle="{ data }">{{ data?.name }}</template>
 					<template #secondTitle="{ data }"
-						><span class="capitalize">{{ data?.type }}</span>
+						><span class="capitalize text-[13px] font-semibold">{{
+							data?.type
+						}}</span>
 					</template>
 					<template #playBtn="{ data }">
 						<div
 							:class="
-								currentPlayingTrackArtistIDs === data?.id &&
+								this.getCurrentlyPlayingTrack?.item?.artists[0]?.id ===
+									data?.id &&
 								getCurrentlyPlayingTrack?.is_playing &&
 								!getCurrentlyPlayingTrack?.context &&
 								isArtistContext
@@ -360,7 +365,8 @@
 								<svg role="img" height="20" width="20" viewBox="0 0 24 24">
 									<path
 										v-if="
-											currentPlayingTrackArtistIDs === data?.id &&
+											getCurrentlyPlayingTrack?.item?.artists[0]?.id ===
+												data?.id &&
 											getCurrentlyPlayingTrack?.is_playing &&
 											!getCurrentlyPlayingTrack?.context &&
 											isArtistContext
@@ -392,12 +398,12 @@
 					</template>
 					<template #firstTitle="{ data }">{{ data?.name }}</template>
 					<template #secondTitle="{ data }"
-						><span class="capitalize text-[0.8rem] font-semibold">{{
+						><span class="capitalize text-[13px] font-semibold">{{
 							new Date(data?.release_date).getFullYear() + ' • '
 						}}</span>
 						<span>
 							<router-link
-								class="hover:underline inline-block text-[0.8rem] font-semibold"
+								class="hover:underline inline-block text-[13px] font-semibold"
 								v-for="artist in data?.artists"
 								:key="artist.id"
 								:to="{ name: 'artist', params: { id: `${artist.id}` } }"
@@ -481,7 +487,11 @@
 					</template>
 					<template #firstTitle="{ data }">{{ data?.name }}</template>
 					<template #secondTitle="{ data }"
-						><span>{{ data?.description }}</span>
+						><span class="text-[13px] font-semibold">{{
+							data?.description
+								? data?.description
+								: 'By ' + data?.owner?.display_name
+						}}</span>
 					</template>
 					<template #playBtn="{ data }">
 						<div
@@ -551,7 +561,9 @@
 					</template>
 					<template #firstTitle="{ data }">{{ data?.name }}</template>
 					<template #secondTitle="{ data }"
-						><span>{{ data?.publisher }}</span>
+						><span class="text-[13px] font-semibold">{{
+							data?.publisher
+						}}</span>
 					</template>
 				</Card>
 				<Card :episodes="true" :currentData="getSearchResult?.episodes?.items">
@@ -568,10 +580,12 @@
 					</template>
 					<template #firstTitle="{ data }">{{ data?.name }}</template>
 					<template #secondTitle="{ data }">
-						<span class="text-xs">{{
+						<span class="text-[13px] font-semibold">{{
 							currentReleaseDate(data.release_date)
 						}}</span>
-						<span class="text-xs before:content-['·'] before:pr-1">
+						<span
+							class="text-[13px] font-semibold before:content-['·'] before:pr-1"
+						>
 							<span> {{ totalDuration(data?.duration_ms) }}</span>
 						</span>
 					</template>
@@ -899,11 +913,7 @@ export default {
 		currentTrackID() {
 			return this.getCurrentlyPlayingTrack?.item?.id;
 		},
-		currentPlayingTrackArtistIDs() {
-			return this.getCurrentlyPlayingTrack?.item?.artists
-				.map(item => item.id)
-				.find(ID => ID === this.getCurrentArtistID);
-		},
+
 		getCurrentArtistID() {
 			return this.$store.getters['artists/getCurrentArtist']?.id;
 		},
@@ -936,7 +946,8 @@ export default {
 
 		isPlayingArtistTopTracks() {
 			return (
-				this.currentPlayingTrackArtistIDs === this.getTopResult?.id &&
+				this.getCurrentlyPlayingTrack?.item?.artists[0]?.id ===
+					this.getTopResult?.id &&
 				!this.getCurrentlyPlayingTrack?.context &&
 				this.getCurrentlyPlayingTrack?.is_playing
 			);
@@ -946,7 +957,8 @@ export default {
 		},
 		isPlayingArtistTopTracksCard() {
 			return (
-				this.currentPlayingTrackArtistIDs === this.clickedArtist &&
+				this.getCurrentlyPlayingTrack?.item?.artists[0]?.id ===
+					this.clickedArtist &&
 				!this.getCurrentlyPlayingTrack?.context &&
 				this.getCurrentlyPlayingTrack?.is_playing &&
 				this.isArtistContext
