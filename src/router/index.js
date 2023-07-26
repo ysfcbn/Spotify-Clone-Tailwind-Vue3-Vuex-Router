@@ -28,7 +28,7 @@ const router = createRouter({
 		},
 		{
 			name: 'searchResult',
-			path: '/search/:q',
+			path: '/search/:q/:type',
 			component: () => import('../components/Search/SearchResult.vue'),
 		},
 		{

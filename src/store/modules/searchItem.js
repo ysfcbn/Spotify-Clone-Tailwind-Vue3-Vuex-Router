@@ -6,6 +6,7 @@ const searchItemModule = {
 		searchResultArr: null,
 		topResult: null,
 		songs: null,
+		searchCategoryType: 'all',
 	},
 	mutations: {
 		searchItem(state, payload) {
@@ -19,6 +20,9 @@ const searchItemModule = {
 		},
 		songs(state, payload) {
 			state.songs = payload;
+		},
+		searchCategoryType(state, payload) {
+			state.searchCategoryType = payload;
 		},
 	},
 	actions: {
@@ -50,6 +54,9 @@ const searchItemModule = {
 		},
 		getSongs(state) {
 			return state.songs;
+		},
+		getSearchCategoryType(state) {
+			return state.searchCategoryType;
 		},
 	},
 };

@@ -1,39 +1,7 @@
 <template>
 	<div class="Search-Result p-4 lg:ml-[1rem] mx-4">
 		<div class="relative">
-			<div class="flex items-center justify-start text-sm overflow-x-auto">
-				<button
-					class="w-fit h-fit rounded-full px-3 py-[6px] cursor-default bg-dark2 transition duration-200"
-				>
-					<span class="text-white">All</span>
-				</button>
-				<button
-					class="w-fit h-fit rounded-full px-3 py-[6px] mx-2 cursor-default bg-dark2 hover:bg-dark3/70 transition duration-200"
-				>
-					<span class="text-white">Playlists</span>
-				</button>
-				<button
-					class="min-w-fit h-fit rounded-full px-3 py-[6px] cursor-default bg-dark2 hover:bg-dark3/70 transition duration-200"
-				>
-					<span class="text-white">Podcasts & Shows</span>
-				</button>
-				<button
-					class="w-fit h-fit rounded-full px-3 py-[6px] cursor-default bg-dark2 hover:bg-dark3/70 transition duration-200 mx-2"
-				>
-					<span class="text-white">Artists</span>
-				</button>
-				<button
-					class="w-fit h-fit rounded-full px-3 py-[6px] cursor-default bg-dark2 hover:bg-dark3/70 transition duration-200 mx-2"
-				>
-					<span class="text-white">Songs</span>
-				</button>
-
-				<button
-					class="w-fit h-fit rounded-full px-3 py-[6px] cursor-default bg-dark2 hover:bg-dark3/70 transition duration-200 mx-2"
-				>
-					<span class="text-white">Albums</span>
-				</button>
-			</div>
+			<SearchCategory></SearchCategory>
 			<div class="grid grid-cols-10 mt-4 gap-6">
 				<div
 					:id="getTopResult?.id"
@@ -591,10 +559,11 @@
 import axios from 'axios';
 import TrackItems from '../TrackItems/TrackItems.vue';
 import Card from '../Cards/Card.vue';
+import SearchCategory from './SearchCategory.vue';
 
 export default {
 	name: 'PlaylistPage',
-	components: { TrackItems, Card },
+	components: { TrackItems, Card, SearchCategory },
 	data() {
 		return {
 			selectedType: '',

@@ -246,7 +246,6 @@
 								ref="input"
 								class="w-[22.8rem] rounded-full p-[10px] px-12 bg-light/70 text-white hover:bg-light focus:outline-white"
 								v-model="inputField"
-								@change="change"
 							/>
 						</form>
 						<span
@@ -533,13 +532,18 @@ export default {
 				this.$route.fullPath === '/collection/albums'
 			);
 		},
-
+		inputFieldFormula() {
+			return this.inputField.replaceAll(' ', '%20');
+		},
 		isSearchVisible() {
 			return (
 				this.$route.fullPath === '/search' ||
 				this.$route.fullPath ===
-					`/search/${this.inputField.replaceAll(' ', '%20')}`
+					`/search/${this.inputFieldFormula}/${this.getSearchCategoryType}`
 			);
+		},
+		getSearchCategoryType() {
+			return this.$store.getters['searchItem/getSearchCategoryType'];
 		},
 		currentSec() {
 			return this.$route.fullPath === '/collection/playlists'
@@ -675,13 +679,23 @@ export default {
 				}, 100);
 			}
 		},
-		inputField(newVal, _) {
-			if (newVal) {
+		inputField(newVal, oldVal) {
+			if (newVal !== oldVal) {
 				console.log(this.inputField);
 				this.$store.dispatch('searchItem/searchItem', this.inputField);
-				this.$router.push({ name: 'searchResult', params: { q: newVal } });
+				this.$router.push({
+					name: 'searchResult',
+					params: { q: newVal, type: this.getSearchCategoryType },
+				});
 			} else {
 				this.$router.push({ name: 'search' });
+			}
+		},
+		getSearchCategoryType(newVal, oldVal) {
+			if (newVal !== oldVal) {
+				this.$router.push({
+					params: { type: this.getSearchCategoryType },
+				});
 			}
 		},
 	},
