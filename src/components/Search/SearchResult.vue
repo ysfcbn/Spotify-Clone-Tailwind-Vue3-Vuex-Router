@@ -27,16 +27,7 @@
 				>
 					<span class="text-white">Songs</span>
 				</button>
-				<button
-					class="w-fit h-fit rounded-full px-3 py-[6px] cursor-default bg-dark2 hover:bg-dark3/70 transition duration-200 mx-2"
-				>
-					<span class="text-white">Profiles</span>
-				</button>
-				<button
-					class="min-w-fit h-fit rounded-full px-3 py-[6px] cursor-default bg-dark2 hover:bg-dark3/70 transition duration-200 mx-2"
-				>
-					<span class="text-white">Genres & Moods</span>
-				</button>
+
 				<button
 					class="w-fit h-fit rounded-full px-3 py-[6px] cursor-default bg-dark2 hover:bg-dark3/70 transition duration-200 mx-2"
 				>
@@ -58,8 +49,9 @@
 						<div
 							v-if="topResultType !== 'episode' && topResultType !== 'show'"
 							:class="{
-								'opacity-100 translate-y-[-0.4rem]': isPlayingContextUri,
-								'opacity-0': !isPlayingContextUri,
+								'opacity-100 translate-y-[-0.4rem]':
+									isPlayingContextUriFirstBox,
+								'opacity-0': !isPlayingContextUriFirstBox,
 							}"
 							class="bg-dark rounded-full right-2 bottom-2 absolute flex items-center mx-2 group-hover:block group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
 						>
@@ -85,7 +77,7 @@
 							>
 								<svg role="img" height="24" width="24" viewBox="0 0 24 24">
 									<path
-										v-if="isPlayingContextUri"
+										v-if="isPlayingContextUriFirstBox"
 										fill="text-black"
 										d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
 									></path>
@@ -507,7 +499,7 @@
 								@click="
 									playContextUri(
 										(uri = {
-											uri: data?.uri,
+											uri: data.uri,
 											index: currentPlayingTrackIndex,
 											type: data?.type,
 										}),
@@ -641,13 +633,7 @@ export default {
 			let songs = this.getSearchResult.tracks.items.slice(0, 4);
 			this.$store.dispatch('searchItem/songs', songs);
 		},
-		selectedCard(type, event) {
-			if (event.target.closest('#playBtn')?.id === 'playBtn') {
-				console.log('toggle Play/Stop Playlists');
-			} else {
-				this.$router.push({ name: type.type, params: { id: type.id } });
-			}
-		},
+
 		async fetchPlaylist(href = this.getTopResult?.href) {
 			await axios
 				.get(href, {
@@ -740,14 +726,10 @@ export default {
 
 		async openCard(data, e) {
 			console.log(data);
-			const cardID = e.target.closest('.card--container').id;
 			if (e.target.closest('#artistName')?.id === 'artistName') return;
-			if (e.target.closest('#playBtn')?.id === 'playBtn') {
-				console.log('toggle Play/Stop Users');
-				console.log(cardID);
-			} else {
-				this.$router.push({ name: data.type, params: { id: data.id } });
-			}
+			if (e.target.closest('#playBtn')?.id === 'playBtn') return;
+
+			this.$router.push({ name: data.type, params: { id: data.id } });
 		},
 		async playArtistTopTracks(uri) {
 			console.log(uri);
@@ -762,23 +744,30 @@ export default {
 		},
 		async playContextUri(uri, href) {
 			console.log(uri);
-			this.typeOfSelectedSection = uri.type;
-			if (this.isPlayingContextUri) {
+			if (
+				uri.uri === this.getCurrentlyPlayingTrack?.context?.uri &&
+				this.getCurrentlyPlayingTrack?.is_playing
+			) {
 				await this.$store.dispatch('controller/pauseCurrentTrack');
-				console.log(this.currentTrackID);
 			} else {
 				if ((await uri.type) === 'playlist') {
+					this.typeOfSelectedSection = 'playlist';
+
 					await this.fetchPlaylist(href);
 					console.log(this.currentTrackID);
 					console.log(uri);
 					uri.id =
 						this.currentPlaylist[this.currentPlayingTrackIndex]?.track.id;
 				} else if ((await uri.type) === 'album') {
+					this.typeOfSelectedSection = 'album';
+
 					console.log(this.currentTrackID);
 					console.log(uri);
 					await this.fetchAlbum(href);
 					uri.id = this.currentAlbumTracks[this.currentPlayingTrackIndex]?.id;
 				} else if ((await uri.type) === 'artist') {
+					this.typeOfSelectedSection = 'artist';
+
 					await this.fetchArtist(href);
 					await this.fetchArtistTopTracks(this.getTopResult?.id);
 					uri.id = this.artistTopTracks[this.currentPlayingTrackIndex]?.id;
@@ -802,6 +791,7 @@ export default {
 					: '';
 			}
 		},
+
 		//Episode
 		currentReleaseDate(date = 0) {
 			if (date) {
@@ -897,8 +887,11 @@ export default {
 		currentAlbumTracks() {
 			return this.getCurrentAlbum?.tracks?.items;
 		},
+		getCurrentPlaylist() {
+			return this.$store.getters['playlists/getPlaylist'];
+		},
 		currentPlaylist() {
-			return this.$store.getters['playlists/getPlaylist']?.tracks?.items;
+			return this.getCurrentPlaylist?.tracks?.items;
 		},
 		artistTopTracks() {
 			return this.$store.getters['artists/getTopTracks'];
@@ -918,21 +911,19 @@ export default {
 			return this.$store.getters['artists/getCurrentArtist']?.id;
 		},
 		findCurrentPlayingTrackIndex() {
-			return (this.typeOfSelectedSection =
-				'playlist' || this.topResultType === 'playlist')
-				? this.currentPlaylist?.indexOf(
-						this.currentPlaylist?.find(
-							item => item.track.id === this.currentTrackID
-						)
-				  )
-				: (this.typeOfSelectedSection =
-						'album' || this.topResultType === 'album')
+			return this.typeOfSelectedSection === 'album'
 				? this.currentAlbumTracks?.indexOf(
 						this.currentAlbumTracks?.find(
 							item => item.id === this.currentTrackID
 						)
 				  )
-				: (this.typeOfSelectedSection = 'artist' || this.clickedArtist)
+				: this.typeOfSelectedSection === 'playlist'
+				? this.currentPlaylist?.indexOf(
+						this.currentPlaylist?.find(
+							item => item.track.id === this.currentTrackID
+						)
+				  )
+				: this.typeOfSelectedSection === 'artist' || this.clickedArtist
 				? this.artistTopTracks.indexOf(
 						this.artistTopTracks.find(item => item.id === this.currentTrackID)
 				  )
@@ -969,7 +960,16 @@ export default {
 				? this.getCurrentlyPlayingTrack?.context?.uri ===
 						this.getCurrentAlbum?.uri &&
 						this.getCurrentlyPlayingTrack?.is_playing
-				: this.topResultType === 'artist'
+				: this.typeOfSelectedSection === 'playlist'
+				? this.getCurrentlyPlayingTrack?.context?.uri ===
+						this.getCurrentPlaylist?.uri &&
+				  this.getCurrentlyPlayingTrack?.is_playing
+				: this.typeOfSelectedSection === 'artist'
+				? this.isPlayingArtistTopTracks
+				: '';
+		},
+		isPlayingContextUriFirstBox() {
+			return this.topResultType === 'artist'
 				? this.isPlayingArtistTopTracks
 				: this.topResultType !== 'track'
 				? this.getCurrentlyPlayingTrack?.context?.uri ===
