@@ -1,7 +1,7 @@
 <template>
 	<div v-if="isAuth" class="Search-Result p-4 lg:ml-[1rem] mx-4">
 		<SearchCategory
-			class="h-[64px] w-full top-[3.2rem] shrink sticky z-[9999] bg-dark"
+			class="h-[64px] w-full top-[3.2rem] shrink sticky z-[50] bg-dark"
 		></SearchCategory>
 		<div v-if="getSearchCategoryType === 'all'" class="relative">
 			<div class="grid grid-cols-10 mt-4 gap-6">
