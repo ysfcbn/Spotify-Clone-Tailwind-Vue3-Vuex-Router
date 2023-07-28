@@ -133,6 +133,16 @@
 						>{{ client_Secret.length }}/32</span
 					>
 				</div>
+				<p class="text-black">975fd3eb76424ac49bd2a701a015fc89</p>
+
+				<div class="w-full flex justify-content mt-2">
+					<button
+						@click="openModal"
+						class="font-semibold w-fit m-auto text-blue3"
+					>
+						How it's Work?
+					</button>
+				</div>
 
 				<div class="w-full flex justify-content mt-2">
 					<button

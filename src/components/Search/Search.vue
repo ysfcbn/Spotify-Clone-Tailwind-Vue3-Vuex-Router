@@ -1,17 +1,23 @@
 <template>
 	<div class="Search-Page p-4 mt-8 lg:ml-[1rem] mx-4">
-		<LastSearchs
-			v-if="visibleLastSearch && isAuth"
-			@searchItems="searchItems"
-		/>
-		<Wrapper v-if="isAuth" id="search" />
-		<BrowseAll />
-		<Info v-if="isAuth" />
+		<div v-if="$route.name === 'searchResult' && isAuth">
+			<SearchResult> </SearchResult>
+		</div>
+		<div v-else>
+			<LastSearchs
+				v-if="visibleLastSearch && isAuth"
+				@searchItems="searchItems"
+			/>
+			<Wrapper v-if="isAuth" id="search" />
+			<BrowseAll />
+			<Info v-if="isAuth" />
+		</div>
 	</div>
 </template>
 
 <script>
 import Wrapper from './SearchItems/Wrapper.vue';
+import SearchResult from './SearchResult.vue';
 import BrowseAll from './SearchItems/BrowseAll.vue';
 import LastSearchs from './SearchItems/LastSearchs.vue';
 import Info from '../SpotifyInfo/Info.vue';
@@ -19,7 +25,7 @@ import axios from 'axios';
 
 export default {
 	name: 'Search',
-	components: { Wrapper, BrowseAll, LastSearchs, Info },
+	components: { Wrapper, BrowseAll, LastSearchs, Info, SearchResult },
 	data() {
 		return {
 			visibleLastSearch: true,
@@ -65,6 +71,7 @@ export default {
 	},
 	async mounted() {
 		console.log('Search Mounted');
+		this.$store.commit('searchItem/searchCategoryType', 'all');
 		this.search = true;
 		await this.fetchGenreSeeds();
 		if (!this.isAuth) return;

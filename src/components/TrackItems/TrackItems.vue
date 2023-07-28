@@ -12,6 +12,7 @@
 				singlePage ||
 				TrackPage2 ||
 				artistPage ||
+				searchResult2 ||
 				playlistPage,
 			'pl-5':
 				favoriteSongs ||
@@ -22,10 +23,10 @@
 				queuePage2 ||
 				TrackPage ||
 				artistPage ||
+				searchResult2 ||
 				diskografiPage ||
 				playlistPage,
-			'lg:grid-cols-colProfile mb:grid-cols-colPresm md2:grid-cols-colPremd':
-				artistPage || userPage || queuePage || queuePage2,
+			'lg:grid-cols-colProfile mb:grid-cols-colPresm': userPage,
 			'mb:grid-cols-colPreDisco': diskografiPage || albumPage || singlePage,
 			'mb:grid-cols-colArtPop': TrackPage || TrackPage2,
 			'mb:grid-cols-colPresm md2:grid-cols-colPremd lg2:grid-cols-colPre':
@@ -35,68 +36,67 @@
 				!artistPage &&
 				!TrackPage &&
 				!userPage &&
-				!queuePage &&
-				!queuePage2 &&
 				!TrackPage2,
 			'mx-5 ':
 				!margin && !diskografiPage && !userPage && !queuePage && !queuePage2,
 		}"
 		@click="active = true"
 	>
-		<div
-			role="track-index"
-			class="flex w-full h-full items-center justify-center"
-		>
+		<slot name="index">
 			<div
-				class="relative flex text-right items-center justify-end pr-[14px] w-full"
+				role="track-index"
+				class="flex w-full h-full items-center justify-center"
 			>
-				<span
-					:class="{
-						invisible: isPlaying,
-						' text-green3': addTextGreen,
-						'group-hover:visible text-white': !isPlaying,
-					}"
-					class="text-lg group-hover:invisible"
+				<div
+					class="relative flex text-right items-center justify-end pr-[14px] w-full"
 				>
-					{{ index + 1 }}</span
-				>
-				<button
-					@click="
-						playTrack(
-							(uris = { uri: uri, index: index, id: null, type: null }),
-							$event
-						)
-					"
-					class="absolute right-3 cursor-default"
-				>
-					<svg role="img" height="16" width="16" viewBox="0 0 24 24">
-						<path
-							:class="{
-								invisible: isPlaying,
-								'group-hover:visible': !isPlaying,
-							}"
-							class="invisible"
-							fill="#FFFFFF"
-							d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
-						></path>
-						<path
-							:class="{
-								invisible: !isPlaying,
-								'group-hover:visible': isPlaying,
-							}"
-							class="invisible"
-							fill="#FFFFFF"
-							d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
-						></path>
-					</svg>
-					<Equalizer
-						v-if="isPlaying"
-						class="block group-hover:hidden"
-					></Equalizer>
-				</button>
+					<span
+						:class="{
+							invisible: isPlaying,
+							'text-green3': addTextGreen,
+							'group-hover:visible text-white': !isPlaying,
+						}"
+						class="text-lg group-hover:invisible"
+					>
+						{{ index + 1 }}</span
+					>
+					<button
+						@click="
+							playTrack(
+								(uris = { uri: uri, index: index, id: null, type: null }),
+								$event
+							)
+						"
+						class="absolute right-3 cursor-default"
+					>
+						<svg role="img" height="16" width="16" viewBox="0 0 24 24">
+							<path
+								:class="{
+									invisible: isPlaying,
+									'group-hover:visible': !isPlaying,
+								}"
+								class="invisible"
+								fill="#FFFFFF"
+								d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
+							></path>
+							<path
+								:class="{
+									invisible: !isPlaying,
+									'group-hover:visible': isPlaying,
+								}"
+								class="invisible"
+								fill="#FFFFFF"
+								d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
+							></path>
+						</svg>
+						<Equalizer
+							v-if="isPlaying"
+							class="block group-hover:hidden"
+						></Equalizer>
+					</button>
+				</div>
 			</div>
-		</div>
-
+		</slot>
 		<div class="flex justify-start items-center">
 			<slot name="trackImg">
 				<img
@@ -140,10 +140,7 @@
 
 		<div
 			v-if="!albumPage && !diskografiPage && !singlePage"
-			:class="{
-				'sm:ml-[4rem] md2:flex': userPage || queuePage || queuePage2,
-				'md2:flex flex-shrink': !userPage && !queuePage && !queuePage2,
-			}"
+			:class="{ 'sm:ml-[4rem] lg:flex': userPage, 'md2:flex': !userPage }"
 			class="flex justify-start items-center hidden sm:ml-[2px]"
 		>
 			<span
@@ -258,6 +255,8 @@ export default {
 		'trackID',
 		'contextType',
 		'artistPage',
+		'searchResult',
+		'searchResult2',
 		'userPage',
 		'queuePage',
 		'queuePage2',

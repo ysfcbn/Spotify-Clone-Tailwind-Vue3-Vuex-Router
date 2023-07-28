@@ -1,6 +1,5 @@
 <template>
-	<router-view v-if="isLoginPage" name="loginPage"> </router-view>
-	<AppInfoModal></AppInfoModal>
+	<router-view v-if="isLoginPage" name="loginPage"></router-view>
 
 	<div
 		v-if="!isLoginPage"
@@ -43,7 +42,6 @@ import Sidebar from './components/Sidebar/Sidebar.vue';
 import Footer from './components/Footer/Footer.vue';
 import LoginPage from './components/LoginPage/LoginPage.vue';
 import AppInfoModal from './components/Modal/AppInfoModal.vue';
-import AppHowitsWork from './components/Modal/AppHowitsWork.vue';
 
 export default {
 	components: {
@@ -52,7 +50,6 @@ export default {
 		Footer,
 		LoginPage,
 		AppInfoModal,
-		AppHowitsWork,
 	},
 	data() {
 		return {

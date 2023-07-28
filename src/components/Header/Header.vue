@@ -235,18 +235,25 @@
 				</div>
 
 				<div
-					v-if="isSearchVisible"
+					v-show="isSearchVisible"
 					class="flex items-center justify-start w-full pl-4"
 				>
-					<div class="w-full relative">
+					<div class="w-fit z-10 relative">
 						<form>
 							<input
-								placeholder="Sanatçılar, şarkılar ve podcastler"
+								placeholder="What do you want to listen to ?"
 								type="text"
-								class="w-[22.8rem] rounded-full p-[10px] px-12 text-black focus:outline-none"
+								ref="input"
+								class="w-[22.8rem] rounded-full p-[10px] px-12 bg-light/70 text-white hover:bg-light focus:outline-white"
+								v-model="inputField"
 							/>
 						</form>
-						<span class="absolute text-black top-2 left-3">
+						<span
+							:class="{
+								'text-white': inputField.length,
+							}"
+							class="absolute z-0 top-2 left-3 focus:text-white"
+						>
 							<svg
 								role="img"
 								height="24"
@@ -257,6 +264,18 @@
 								<path
 									fill="currentColor"
 									d="M10.533 1.279c-5.18 0-9.407 4.14-9.407 9.279s4.226 9.279 9.407 9.279c2.234 0 4.29-.77 5.907-2.058l4.353 4.353a1 1 0 101.414-1.414l-4.344-4.344a9.157 9.157 0 002.077-5.816c0-5.14-4.226-9.28-9.407-9.28zm-7.407 9.279c0-4.006 3.302-7.28 7.407-7.28s7.407 3.274 7.407 7.28-3.302 7.279-7.407 7.279-7.407-3.273-7.407-7.28z"
+								></path>
+							</svg>
+						</span>
+						<span
+							@click="clean"
+							v-if="inputField.length"
+							class="absolute flex self-center text-white top-3 right-3"
+						>
+							<svg role="img" height="14" width="14" viewBox="0 0 16 16">
+								<path
+									fill="currentColor"
+									d="M1.47 1.47a.75.75 0 011.06 0L8 6.94l5.47-5.47a.75.75 0 111.06 1.06L9.06 8l5.47 5.47a.75.75 0 11-1.06 1.06L8 9.06l-5.47 5.47a.75.75 0 01-1.06-1.06L6.94 8 1.47 2.53a.75.75 0 010-1.06z"
 								></path>
 							</svg>
 						</span>
@@ -421,6 +440,7 @@
 export default {
 	data() {
 		return {
+			inputField: '',
 			accountOptions: false,
 			dropPlaylists: false,
 			leftClick: false,
@@ -435,6 +455,11 @@ export default {
 				'controller/isClickHeaderBtn',
 				!this.isClickHeaderBtn
 			);
+		},
+
+		clean() {
+			this.inputField = '';
+			this.$router.push({ name: 'search' });
 		},
 		logout() {
 			this.$store.dispatch('logout');
@@ -507,9 +532,19 @@ export default {
 				this.$route.fullPath === '/collection/albums'
 			);
 		},
-
+		inputFieldFormula() {
+			return this.inputField.replaceAll(' ', '%20');
+		},
 		isSearchVisible() {
-			return this.$route.fullPath === '/search';
+			return (
+				this.$route.name === 'search' || this.$route.name === 'searchResult'
+			);
+		},
+		getSearchItem() {
+			return this.$store.getters['searchItem/getSearchItem'];
+		},
+		getSearchCategoryType() {
+			return this.$store.getters['searchItem/getSearchCategoryType'];
 		},
 		currentSec() {
 			return this.$route.fullPath === '/collection/playlists'
@@ -632,9 +667,43 @@ export default {
 		},
 	},
 	watch: {
-		$route() {
+		$route(to, from) {
 			this.accountOptions = false;
 			this.dropPlaylists = false;
+			setTimeout(() => {
+				if (this.$refs.input) this.$refs.input.focus();
+			}, 10);
+			if (this.$route.name === 'search') {
+				this.inputField = '';
+				setTimeout(() => {
+					if (this.$refs.input) this.$refs.input.focus();
+				}, 100);
+			}
+		},
+		async inputField(newVal, oldVal) {
+			if (newVal === '') {
+				this.$router.push({ name: 'search' });
+			} else if (newVal !== oldVal) {
+				console.log(this.inputField);
+				await this.$store.dispatch('searchItem/searchItem', this.inputField);
+				await this.$store.dispatch('searchItem/fetchSearchItem');
+				await this.$store.dispatch('searchItem/topResult1');
+				await this.$store.dispatch('searchItem/topSongs');
+
+				this.$router.push({
+					name: 'searchResult',
+					params: { q: newVal, type: this.getSearchCategoryType },
+				});
+			}
+		},
+		getSearchCategoryType(newVal, oldVal) {
+			if (newVal === '') {
+				this.$router.push({ name: 'search' });
+			} else if (newVal !== oldVal) {
+				this.$router.push({
+					params: { type: this.getSearchCategoryType },
+				});
+			}
 		},
 	},
 	mounted() {
