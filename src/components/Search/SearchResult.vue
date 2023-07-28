@@ -585,8 +585,8 @@
 <script>
 import axios from 'axios';
 import TrackItems from '../TrackItems/TrackItems.vue';
-import Card from '../Cards/Card.vue';
 import SearchCategory from './SearchCategory.vue';
+import Card from '../Cards/Card.vue';
 import SongSection from './SongSection.vue';
 
 export default {
