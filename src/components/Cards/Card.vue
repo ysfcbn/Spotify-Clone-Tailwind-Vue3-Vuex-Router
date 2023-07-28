@@ -62,8 +62,14 @@
 		<div
 			:class="{
 				'mt-4': userPage,
-				'auto-rows-auto gap-6': genrePage,
 				'auto-rows-0 overflow-hidden grid-rows-1 gap-x-6': !genrePage,
+				'auto-rows-auto gap-6':
+					genrePage ||
+					getSearchCategoryType === 'artists' ||
+					getSearchCategoryType === 'playlists' ||
+					getSearchCategoryType === 'albums' ||
+					getSearchCategoryType === 'songs',
+				'auto-rows-auto gap-6': !userPage,
 			}"
 			class="relative grid grid-cols-col180"
 		>
@@ -286,6 +292,11 @@ export default {
 					this.artistImage = data.images[0].url;
 				})
 				.catch(err => console.log(err));
+		},
+	},
+	computed: {
+		getSearchCategoryType() {
+			return this.$store.getters['searchItem/getSearchCategoryType'];
 		},
 	},
 
