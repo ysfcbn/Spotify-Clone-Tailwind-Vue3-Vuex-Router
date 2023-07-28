@@ -107,6 +107,8 @@ module.exports = {
 				colProfile: '25px minmax(230px, 1fr) minmax(150px, 1fr) 125px',
 				colSongs: '25px minmax(300px, 7fr) minmax(10px, 1fr)  110px ',
 				colSongssm: '25px minmax(280px, 1fr) 95px',
+				colSongs2: '25px minmax(300px, 7fr) minmax(10px, 1fr)  110px ',
+				colSongssm2: '25px minmax(280px, 1fr) 95px',
 				colPodcast: 'min-content 1fr  150px',
 				rowPodcast: 'min-content max-content min-content',
 				colEpisode: 'repeat(auto-fill,162px)',

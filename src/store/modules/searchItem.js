@@ -8,6 +8,7 @@ const searchItemModule = {
 		searchResultArr: null,
 		topResult: null,
 		songs: null,
+		allSongs: null,
 		searchCategoryType: 'all',
 	},
 	mutations: {
@@ -23,6 +24,10 @@ const searchItemModule = {
 		songs(state, payload) {
 			state.songs = payload;
 		},
+
+		allSongs(state, payload) {
+			state.allSongs = payload;
+		},
 		searchCategoryType(state, payload) {
 			state.searchCategoryType = payload;
 		},
@@ -31,7 +36,7 @@ const searchItemModule = {
 		async fetchSearchItem({ commit, dispatch, getters, state }) {
 			await axios
 				.get(
-					`https://api.spotify.com/v1/search?q=${state.searchItem}&type=${state.types}&limit=10`,
+					`https://api.spotify.com/v1/search?q=${state.searchItem}&type=${state.types}&limit=30`,
 					{
 						headers: {
 							Accept: 'application/json',
@@ -54,7 +59,12 @@ const searchItemModule = {
 		},
 		async topSongs({ commit, dispatch, getters }) {
 			dispatch('songs', getters.getSearchResultArr?.tracks.items.slice(0, 4));
+			dispatch('allSongs');
 		},
+		async allSongs({ commit, getters }) {
+			commit('allSongs', getters.getSearchResultArr?.tracks.items);
+		},
+
 		async searchItem({ commit }, payload) {
 			commit('searchItem', await payload);
 		},
@@ -86,6 +96,9 @@ const searchItemModule = {
 		},
 		getSongs(state) {
 			return state.songs;
+		},
+		getAllSongs(state) {
+			return state.allSongs;
 		},
 		getSearchCategoryType(state) {
 			return state.searchCategoryType;

@@ -12,6 +12,7 @@
 				singlePage ||
 				TrackPage2 ||
 				artistPage ||
+				searchResult2 ||
 				playlistPage,
 			'pl-5':
 				favoriteSongs ||
@@ -22,11 +23,13 @@
 				queuePage2 ||
 				TrackPage ||
 				artistPage ||
+				searchResult2 ||
 				diskografiPage ||
 				playlistPage,
 			'lg:grid-cols-colProfile mb:grid-cols-colPresm md2:grid-cols-colPremd':
 				artistPage || userPage || queuePage || queuePage2,
 			'mb:grid-cols-colSongssm lg:grid-cols-colSongs': searchResult,
+			'mb:grid-cols-colPresm md2:grid-cols-colPremd': searchResult2,
 			'mb:grid-cols-colPreDisco': diskografiPage || albumPage || singlePage,
 			'mb:grid-cols-colArtPop': TrackPage || TrackPage2,
 			'mb:grid-cols-colPresm md2:grid-cols-colPremd lg2:grid-cols-colPre':
@@ -39,6 +42,7 @@
 				!queuePage &&
 				!queuePage2 &&
 				!searchResult &&
+				!searchResult2 &&
 				!TrackPage2,
 			'mx-5 ':
 				!margin && !diskografiPage && !userPage && !queuePage && !queuePage2,
@@ -264,6 +268,7 @@ export default {
 		'contextType',
 		'artistPage',
 		'searchResult',
+		'searchResult2',
 		'userPage',
 		'queuePage',
 		'queuePage2',

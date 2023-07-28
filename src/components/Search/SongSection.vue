@@ -3,15 +3,15 @@
 		:class="{ 'mx-5 z-0': margin }"
 		class="playlistContainer relative h-full min-w-[450]"
 	>
-		<trackItemsHeader :margin="true" :playlistPage="true" />
+		<trackItemsHeader :margin="true" :searchResult="true" />
 		<div class="trackItems--container mt-2">
 			<TrackItems
-				v-for="(track, i) in getSongs"
+				v-for="(track, i) in getAllSongs"
 				:key="track.id"
 				:id="track.id"
 				:track="track"
 				:uri="track.uri"
-				:artistPage="true"
+				:searchResult2="true"
 				:itemUri="track.uri"
 				:trackID="track.id"
 				:index="i"
@@ -72,8 +72,8 @@ export default {
 		},
 	},
 	computed: {
-		getSongs() {
-			return this.$store.getters['searchItem/getSongs'];
+		getAllSongs() {
+			return this.$store.getters['searchItem/getAllSongs'];
 		},
 	},
 };

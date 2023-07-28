@@ -1,7 +1,7 @@
 <template>
 	<div v-if="isAuth" class="Search-Result p-4 lg:ml-[1rem] mx-4">
 		<SearchCategory
-			class="h-[64px] w-full top-12 shrink sticky z-20 bg-dark"
+			class="h-[64px] w-full top-[3.2rem] shrink sticky z-[9999] bg-dark"
 		></SearchCategory>
 		<div v-if="getSearchCategoryType === 'all'" class="relative">
 			<div class="grid grid-cols-10 mt-4 gap-6">
@@ -30,7 +30,7 @@
 									playContextUri(
 										(uri = {
 											uri: getTopResult.uri,
-											index: 0,
+											index: currentPlayingTrackIndex,
 											type: getTopResult.type,
 										}),
 										(href = getTopResult.href)
@@ -712,7 +712,10 @@ export default {
 		},
 		async playContextUri(uri, href) {
 			console.log(uri);
-			if (
+			if (this.topResultType === 'artist' && this.isPlayingArtistTopTracks) {
+				console.log('ÇALIYORRRRRRRRRRRRRR');
+				await this.$store.dispatch('controller/pauseCurrentTrack');
+			} else if (
 				uri.uri === this.getCurrentlyPlayingTrack?.context?.uri &&
 				this.getCurrentlyPlayingTrack?.is_playing
 			) {
