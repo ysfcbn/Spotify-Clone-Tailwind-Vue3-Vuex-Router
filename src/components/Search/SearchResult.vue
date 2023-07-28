@@ -197,6 +197,7 @@
 				</div>
 			</div>
 		</div>
+		<SongSection v-if="getSearchCategoryType === 'songs'"></SongSection>
 		<div class="relative" v-if="isAuth">
 			<Card
 				v-if="
@@ -586,10 +587,11 @@ import axios from 'axios';
 import TrackItems from '../TrackItems/TrackItems.vue';
 import Card from '../Cards/Card.vue';
 import SearchCategory from './SearchCategory.vue';
+import SongSection from './SongSection.vue';
 
 export default {
 	name: 'PlaylistPage',
-	components: { TrackItems, Card, SearchCategory },
+	components: { TrackItems, Card, SearchCategory, SongSection },
 	data() {
 		return {
 			selectedType: '',

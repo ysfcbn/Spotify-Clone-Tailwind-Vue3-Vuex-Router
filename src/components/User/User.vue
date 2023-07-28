@@ -307,7 +307,7 @@
 
 		<!-- Public Playlists -->
 		<section class="p-5 lg:ml-[1rem]">
-			<Card :currentData="publicPlaylists">
+			<Card :userPage="userPage" :currentData="publicPlaylists">
 				<template #cardTitle>Public Playlists</template>
 				<template #imgContainer="{ data }">
 					<div class="h-full">

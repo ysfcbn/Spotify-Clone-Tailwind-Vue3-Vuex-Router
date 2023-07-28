@@ -10,6 +10,8 @@
 		<div :class="{ 'mx-5': !margin }">
 			<div
 				:class="{
+					'lg:grid-cols-colProfile mb:grid-cols-colPresm md2:grid-cols-colPremd':
+						searchResult,
 					'mb:grid-cols-colPreDisco': albumPage || diskografiPage,
 					'mb:grid-cols-colPresm md2:grid-cols-colPremd lg2:grid-cols-colPre':
 						favoriteSongs || playlistPage,
@@ -25,7 +27,10 @@
 				<div v-if="!albumPage && !diskografiPage" class="hidden md2:block">
 					Album
 				</div>
-				<div v-if="!albumPage && !diskografiPage" class="hidden lg2:block">
+				<div
+					v-if="!albumPage && !diskografiPage && !searchResult"
+					class="hidden lg2:block"
+				>
 					Date added
 				</div>
 				<div
@@ -60,10 +65,10 @@ export default {
 	props: [
 		'margin',
 		'albumPage',
-		'user',
 		'favoriteSongs',
 		'playlistPage',
 		'diskografiPage',
+		'searchResult',
 	],
 };
 </script>
