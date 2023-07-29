@@ -26,8 +26,11 @@
 				<div v-if="!albumPage && !diskografiPage" class="hidden md2:block">
 					Album
 				</div>
-				<div v-if="!albumPage && !diskografiPage" class="hidden lg2:block">
-					TARİH EKLENDİ
+				<div
+					v-if="!albumPage && !diskografiPage && !searchResult"
+					class="hidden lg2:block"
+				>
+					Date added
 				</div>
 				<div
 					:class="{
