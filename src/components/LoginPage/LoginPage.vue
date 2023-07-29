@@ -144,15 +144,6 @@
 					</button>
 				</div>
 
-				<div class="w-full flex justify-content mt-2">
-					<button
-						@click="openModal"
-						class="font-semibold w-fit m-auto text-blue3"
-					>
-						How it's Work?
-					</button>
-				</div>
-
 				<button
 					@click.prevent="login"
 					class="w-full mt-[1rem] rounded-full text-black font-semibold bg-green3 text-md uppercase p-3 hover:scale-105 cursor-default mb-2"
