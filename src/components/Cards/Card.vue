@@ -9,15 +9,15 @@
 					<slot name="cardTitle"></slot>
 				</h2>
 				<h6 v-if="userPage" class="text-lightest text-sm">
-					Yalnızca sana görünür
+					Only visible to you
 				</h6>
 			</div>
 			<div class="">
 				<h6
-					style="font-weight: 600"
-					class="h-full mb:text-[10px] md:text-[12px] text-md leading-10 text-lightest hover:underline uppercase cursor-pointer pb-2 px-2 tracking-widest"
+					style="font-weight: 700"
+					class="h-full mb:text-[11px] leading-10 text-lightest hover:underline cursor-pointer pb-2 px-2 tracking-widest font-semibold"
 				>
-					<slot name="seeMore"> TÜMÜNÜ GÖSTER</slot>
+					<slot name="seeMore"> Show all</slot>
 				</h6>
 			</div>
 		</div>
@@ -32,21 +32,21 @@
 					:class="popPublications ? 'active' : 'inactive'"
 					class="w-fit h-fit rounded-full px-3 py-[6px] cursor-default bg-dark2 hover:bg-dark3/70 transition duration-200"
 				>
-					<span>Popüler yayınlar</span>
+					<span>Popular releases</span>
 				</button>
 				<button
 					@click="toggleAlbums"
 					:class="albums ? 'active' : 'inactive'"
 					class="w-fit h-fit rounded-full px-3 py-[6px] mx-2 cursor-default bg-dark2 hover:bg-dark3/70 transition duration-200"
 				>
-					<span>Albümler</span>
+					<span>Albums</span>
 				</button>
 				<button
 					@click="toggleSingles"
 					:class="singles ? 'active' : 'inactive'"
 					class="w-fit h-fit rounded-full px-3 py-[6px] cursor-default bg-dark2 hover:bg-dark3/70 transition duration-200"
 				>
-					<span>Singlelar ve EPler</span>
+					<span>Singles and EPs</span>
 				</button>
 				<button
 					v-if="isCompExist"
@@ -54,7 +54,7 @@
 					:class="compilations ? 'active' : 'inactive'"
 					class="w-fit h-fit rounded-full px-3 py-[6px] cursor-default bg-dark2 hover:bg-dark3/70 transition duration-200 mx-2"
 				>
-					<span>Derlemeler</span>
+					<span>Compilations</span>
 				</button>
 			</div>
 		</div>
@@ -62,7 +62,8 @@
 		<div
 			:class="{
 				'mt-4': userPage,
-				'auto-rows-auto gap-6': genrePage,
+
+				'auto-rows-auto gap-6': !userPage && getSearchCategoryType !== 'all',
 				'auto-rows-0 overflow-hidden grid-rows-1 gap-x-6': !genrePage,
 			}"
 			class="relative grid grid-cols-col180"
@@ -80,7 +81,7 @@
 				"
 				:id="
 					shows
-						? data?.show.id
+						? data?.show?.id
 						: artists
 						? data?.id
 						: albums
@@ -109,7 +110,7 @@
 						<slot name="imgContainer" :data="data"> </slot>
 						<slot name="playBtn" :data="data">
 							<div
-								v-if="!shows && !follows"
+								v-if="!shows && !follows && !topResultShows && !episodes"
 								class="right-0 bottom-0 absolute flex items-center py-1 px-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
 							>
 								<button
@@ -182,6 +183,8 @@ export default {
 		'userPage',
 		'follows',
 		'shows',
+		'topResultShows',
+		'episodes',
 		'genrePage',
 		'popPublications',
 		'albums',
@@ -239,6 +242,12 @@ export default {
 						params: { id: `${cardID}` },
 					});
 				}
+				if (this.topResultShows) {
+					this.$router.push({ name: 'show', params: { id: cardID } });
+				}
+				if (this.episodes) {
+					this.$router.push({ name: 'episode', params: { id: cardID } });
+				}
 			} else if (this.artists) {
 				this.$router.push({ name: 'artist', params: { id: cardID } });
 			} else if (this.shows) {
@@ -278,6 +287,11 @@ export default {
 					this.artistImage = data.images[0].url;
 				})
 				.catch(err => console.log(err));
+		},
+	},
+	computed: {
+		getSearchCategoryType() {
+			return this.$store.getters['searchItem/getSearchCategoryType'];
 		},
 	},
 
