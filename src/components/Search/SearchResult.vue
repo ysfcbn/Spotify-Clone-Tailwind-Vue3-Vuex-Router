@@ -713,7 +713,6 @@ export default {
 		async playContextUri(uri, href) {
 			console.log(uri);
 			if (this.topResultType === 'artist' && this.isPlayingArtistTopTracks) {
-				console.log('ÇALIYORRRRRRRRRRRRRR');
 				await this.$store.dispatch('controller/pauseCurrentTrack');
 			} else if (
 				uri.uri === this.getCurrentlyPlayingTrack?.context?.uri &&
