@@ -61,9 +61,12 @@
 		<!-- Cards -->
 		<div
 			:class="{
+				// 'mt-4': userPage,
+				// 'auto-rows-auto gap-6':
+				// 	!userPage && getSearchCategoryType !== 'all',
+				// 'auto-rows-0 overflow-hidden grid-rows-1 gap-x-6': !genrePage,
 				'mt-4': userPage,
-
-				'auto-rows-auto gap-6': !userPage && getSearchCategoryType !== 'all',
+				'auto-rows-auto gap-6': genrePage || getSearchCategoryType !== 'all',
 				'auto-rows-0 overflow-hidden grid-rows-1 gap-x-6': !genrePage,
 			}"
 			class="relative grid grid-cols-col180"
