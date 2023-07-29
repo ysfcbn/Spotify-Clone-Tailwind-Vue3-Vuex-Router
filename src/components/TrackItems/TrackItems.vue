@@ -26,7 +26,10 @@
 				searchResult2 ||
 				diskografiPage ||
 				playlistPage,
-			'lg:grid-cols-colProfile mb:grid-cols-colPresm': userPage,
+			'lg:grid-cols-colProfile mb:grid-cols-colPresm md2:grid-cols-colPremd':
+				artistPage || userPage || queuePage || queuePage2,
+			'mb:grid-cols-colSongssm lg:grid-cols-colSongs': searchResult,
+			'mb:grid-cols-colPresm md2:grid-cols-colPremd': searchResult2,
 			'mb:grid-cols-colPreDisco': diskografiPage || albumPage || singlePage,
 			'mb:grid-cols-colArtPop': TrackPage || TrackPage2,
 			'mb:grid-cols-colPresm md2:grid-cols-colPremd lg2:grid-cols-colPre':
@@ -36,6 +39,10 @@
 				!artistPage &&
 				!TrackPage &&
 				!userPage &&
+				!queuePage &&
+				!queuePage2 &&
+				!searchResult &&
+				!searchResult2 &&
 				!TrackPage2,
 			'mx-5 ':
 				!margin && !diskografiPage && !userPage && !queuePage && !queuePage2,
@@ -140,7 +147,12 @@
 
 		<div
 			v-if="!albumPage && !diskografiPage && !singlePage"
-			:class="{ 'sm:ml-[4rem] lg:flex': userPage, 'md2:flex': !userPage }"
+			:class="{
+				'sm:ml-[4rem] md2:flex': userPage || queuePage || queuePage2,
+				'md2:flex flex-shrink':
+					!userPage && !queuePage && !queuePage2 && !searchResult,
+				'lg:flex flex-shrink': searchResult,
+			}"
 			class="flex justify-start items-center hidden sm:ml-[2px]"
 		>
 			<span
