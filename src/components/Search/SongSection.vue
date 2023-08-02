@@ -1,9 +1,9 @@
 <template>
 	<div
-		:class="{ 'mx-5 z-0': margin }"
+		:class="{ ' z-0': margin }"
 		class="playlistContainer relative h-full min-w-[450]"
 	>
-		<trackItemsHeader :margin="true" :searchResult="true" />
+		<trackItemsHeader :margin="margin" :searchResult="true" />
 		<div class="trackItems--container mt-2">
 			<TrackItems
 				v-for="(track, i) in getAllSongs"
@@ -15,7 +15,7 @@
 				:itemUri="track.uri"
 				:trackID="track.id"
 				:index="i"
-				:margin="true"
+				:margin="margin"
 				:contextType="track.type"
 			>
 				<template #trackImg>
@@ -189,9 +189,13 @@ export default {
 
 			this.observer2 = new IntersectionObserver(entries => {
 				if (entries[0].isIntersecting) {
+					console.log('intersecting', entries[0]);
+
 					this.presentation.classList.add('prebg');
 					this.margin = false;
 				} else {
+					console.log('notintersecting', entries[0]);
+
 					this.presentation.classList.remove('prebg');
 					this.margin = true;
 				}
