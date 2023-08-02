@@ -1,5 +1,6 @@
 <template>
 	<div
+		id="songSection"
 		:class="{ 'mx-5 z-0': margin }"
 		class="playlistContainer relative h-full min-w-[450]"
 	>
