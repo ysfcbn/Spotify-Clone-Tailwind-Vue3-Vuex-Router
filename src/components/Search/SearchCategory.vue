@@ -1,7 +1,7 @@
 <template>
 	<div
 		id="searchCategory"
-		class="flex items-center justify-start text-sm overflow-x-auto h-[40px] w-full top-[3.9rem] sticky z-[50] bg-dark"
+		class="flex items-center justify-start text-sm overflow-x-auto h-[40px] w-full top-[3.8rem] sticky z-[50] bg-dark"
 	>
 		<button
 			@click="toggleAll"

@@ -533,7 +533,7 @@
 				:topResultShows="true"
 				:currentData="getSearchResult?.shows?.items"
 			>
-				<template #cardTitle>Podcasts</template>
+				<template #cardTitle>Podcasts & Shows</template>
 
 				<template #imgContainer="{ data }">
 					<div class="w-full relative mb-5">
@@ -550,13 +550,31 @@
 				</template>
 			</Card>
 
+			<div
+				class="mb-6 max-w-[890px] min-w-[440px]"
+				v-if="getSearchCategoryType === 'podcasts'"
+			>
+				<h3
+					class="text-white text-[1.3rem] tracking-tighter pb-4"
+					style="font-weight: 700"
+				>
+					Episodes
+				</h3>
+
+				<PodcastEpisodes
+					class="sm:max-w-[790px] lg3:max-w-[1600px]"
+					v-for="(episode, i) in allEpisodes"
+					:key="episode.id"
+					:index="i"
+					:episode="episode"
+					:searchResult="true"
+					:checkUserFavEpisode="checkUserFavEpisode"
+				/>
+			</div>
 			<Card
-				v-if="
-					getSearchCategoryType === 'podcasts' ||
-					getSearchCategoryType === 'all'
-				"
+				v-if="getSearchCategoryType === 'all'"
 				:episodes="true"
-				:currentData="getSearchResult?.episodes?.items"
+				:currentData="allEpisodes"
 			>
 				<template #cardTitle>Episodes</template>
 
@@ -591,10 +609,17 @@ import TrackItems from '../TrackItems/TrackItems.vue';
 import SearchCategory from './SearchCategory.vue';
 import Card from '../Cards/Card.vue';
 import SongSection from './SongSection.vue';
+import PodcastEpisodes from '../Podcast/PodcastEpisodes.vue';
 
 export default {
 	name: 'PlaylistPage',
-	components: { TrackItems, Card, SearchCategory, SongSection },
+	components: {
+		TrackItems,
+		Card,
+		SearchCategory,
+		SongSection,
+		PodcastEpisodes,
+	},
 	data() {
 		return {
 			selectedType: '',
@@ -799,6 +824,40 @@ export default {
 			};
 			return result();
 		},
+		async checkUserFavEpisode() {
+			await axios
+				.get(
+					'https://api.spotify.com/v1/me/episodes/contains?ids=' +
+						this.allEpisodesIDs,
+					{
+						headers: {
+							Accept: 'application/json',
+							'Content-Type': 'application/json',
+							Authorization: 'Bearer ' + this.getToken,
+						},
+					}
+				)
+				.then(({ data }) => {
+					this.$store.dispatch('episodes/currentEpisodeIsFav', data);
+				})
+				.catch(err => console.log(err));
+		},
+		async removeAddEpisode(currentID, event) {
+			console.log(currentID);
+			let selectedID;
+			if (currentID) {
+				selectedID = currentID;
+			} else selectedID = event.target.closest('.episodeContainer').id;
+			console.log(selectedID);
+			const isFavEpisodeID = this.favEpisodes.find(
+				item => item.episode.id === selectedID
+			)?.episode.id;
+			isFavEpisodeID
+				? await this.deleteEpisode(isFavEpisodeID)
+				: await this.addEpisode(selectedID);
+			await this.fetchFavEpisodes();
+			this.checkUserFavEpisode();
+		},
 		//Songs
 		trackDuration(duration) {
 			const minutes = Math.floor(duration / 60000);
@@ -823,6 +882,16 @@ export default {
 		getSearchResult() {
 			return this.$store.getters['searchItem/getSearchResultArr'];
 		},
+		allEpisodes() {
+			return this.getSearchResult?.episodes?.items;
+		},
+		allEpisodesIDs() {
+			return this.allEpisodes?.map(item => item.id).join(',');
+		},
+		favEpisodes() {
+			return this.$store.getters['episodes/getFavEpisodes'].items;
+		},
+
 		getSearchCategoryType() {
 			return this.$store.getters['searchItem/getSearchCategoryType'];
 		},
@@ -963,8 +1032,9 @@ export default {
 		},
 	},
 
-	async mounted() {
-		console.log('searchResult Mounted!');
+	async created() {
+		console.log('searchResult created!');
+		await this.checkUserFavEpisode();
 	},
 };
 </script>
