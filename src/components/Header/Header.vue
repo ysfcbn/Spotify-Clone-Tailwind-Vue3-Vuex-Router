@@ -48,7 +48,7 @@
 				</div>
 
 				<div
-					v-if="currentPlaylist && !isNavVisible"
+					v-if="currentPlaylist && !isNavVisible && !isSearchVisible"
 					:class="{
 						activeBtn: getHeaderBtn && isDiskografiPage && listView,
 						'transition-opacity duration-700 activeBtn':
@@ -244,7 +244,7 @@
 								placeholder="What do you want to listen to ?"
 								type="text"
 								ref="input"
-								class="w-[22.8rem] rounded-full p-[10px] px-12 bg-light/70 text-white hover:bg-light focus:outline-white"
+								class="w-[22.8rem] h-[3rem] rounded-full p-[10px] px-12 bg-light/70 text-white hover:bg-light"
 								v-model="inputField"
 							/>
 						</form>
@@ -252,7 +252,7 @@
 							:class="{
 								'text-white': inputField.length,
 							}"
-							class="absolute z-0 top-2 left-3 focus:text-white"
+							class="absolute z-0 top-3 left-3 focus:text-white"
 						>
 							<svg
 								role="img"
@@ -270,7 +270,7 @@
 						<span
 							@click="clean"
 							v-if="inputField.length"
-							class="absolute flex self-center text-white top-3 right-3"
+							class="absolute flex self-center text-white top-4 right-3"
 						>
 							<svg role="img" height="14" width="14" viewBox="0 0 16 16">
 								<path
@@ -668,6 +668,9 @@ export default {
 	},
 	watch: {
 		$route(to, from) {
+			if (to.name !== 'searchResult') {
+				this.$store.commit('searchItem/searchCategoryType', 'all');
+			}
 			this.accountOptions = false;
 			this.dropPlaylists = false;
 			setTimeout(() => {

@@ -2,9 +2,10 @@
 	<div
 		:class="{
 			'top-[114px]': diskografiPage,
-			'top-[64px] sticky': !diskografiPage,
+			'top-[64px] sticky': !diskografiPage && !searchResult,
+			'top-[94px] sticky': searchResult,
 		}"
-		class="w-[100%] presentation py-1 border-b border-opacwhite overflow-hidden pl-[1.4rem] lg:pl-[2.2rem]"
+		class="w-[100%] presentation py-1 border-b border-opacwhite overflow-hidden pl-[1.4rem] lg:pl-[2.2rem] prebg"
 		style="z-index: 30"
 	>
 		<div :class="{ 'mx-5': !margin }">

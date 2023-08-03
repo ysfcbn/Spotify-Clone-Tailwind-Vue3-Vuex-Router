@@ -877,9 +877,7 @@ export default {
 			});
 		},
 	},
-	beforeCreate() {
-		this.$store.commit('searchItem/searchCategoryType', 'all');
-	},
+
 	async created() {
 		console.log('user Mounted');
 		this.userPage = true;

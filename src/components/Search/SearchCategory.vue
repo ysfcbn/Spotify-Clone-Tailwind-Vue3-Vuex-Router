@@ -1,5 +1,8 @@
 <template>
-	<div class="flex items-center justify-start text-sm overflow-x-auto">
+	<div
+		id="searchCategory"
+		class="flex items-center justify-start text-sm overflow-x-auto h-[40px] w-full top-[3.8rem] sticky z-[50] bg-dark"
+	>
 		<button
 			@click="toggleAll"
 			:class="all ? 'active' : 'inactive'"
@@ -10,21 +13,21 @@
 		<button
 			@click="toggleArtists"
 			:class="artists ? 'active' : 'inactive'"
-			class="w-fit h-fit rounded-full px-3 py-[6px] cursor-default bg-dark2 hover:bg-dark3/70 transition duration-200 mx-2"
+			class="w-fit h-fit rounded-full px-3 py-[6px] cursor-default bg-dark2 hover:bg-dark3/70 transition duration-200 mx-3"
 		>
 			<span>Artists</span>
 		</button>
 		<button
 			@click="togglePlaylists"
 			:class="playlists ? 'active' : 'inactive'"
-			class="w-fit h-fit rounded-full px-3 py-[6px] mx-2 cursor-default bg-dark2 hover:bg-dark3/70 transition duration-200"
+			class="w-fit h-fit rounded-full px-3 py-[6px] cursor-default bg-dark2 hover:bg-dark3/70 transition duration-200"
 		>
 			<span>Playlists</span>
 		</button>
 		<button
 			@click="toggleAlbums"
 			:class="albums ? 'active' : 'inactive'"
-			class="w-fit h-fit rounded-full px-3 py-[6px] cursor-default bg-dark2 hover:bg-dark3/70 transition duration-200 mx-2"
+			class="w-fit h-fit rounded-full px-3 py-[6px] cursor-default bg-dark2 hover:bg-dark3/70 transition duration-200 mx-3"
 		>
 			<span>Albums</span>
 		</button>
@@ -38,7 +41,7 @@
 		<button
 			@click="toggleSongs"
 			:class="songs ? 'active' : 'inactive'"
-			class="w-fit h-fit rounded-full px-3 py-[6px] cursor-default bg-dark2 hover:bg-dark3/70 transition duration-200 mx-2"
+			class="w-fit h-fit rounded-full px-3 py-[6px] cursor-default bg-dark2 hover:bg-dark3/70 transition duration-200 mx-3"
 		>
 			<span>Songs</span>
 		</button>
