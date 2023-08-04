@@ -10,6 +10,7 @@ const searchItemModule = {
 		songs: null,
 		allSongs: null,
 		searchCategoryType: 'all',
+		searchedItem: [],
 	},
 	mutations: {
 		searchItem(state, payload) {
@@ -30,6 +31,9 @@ const searchItemModule = {
 		},
 		searchCategoryType(state, payload) {
 			state.searchCategoryType = payload;
+		},
+		searchedItem(state, payload) {
+			state.searchedItem.push(payload);
 		},
 	},
 	actions: {
@@ -64,7 +68,9 @@ const searchItemModule = {
 		async allSongs({ commit, getters }) {
 			commit('allSongs', getters.getSearchResultArr?.tracks.items);
 		},
-
+		searchedItem({ commit }, payload) {
+			commit('searchedItem', payload);
+		},
 		async searchItem({ commit }, payload) {
 			commit('searchItem', await payload);
 		},
@@ -102,6 +108,9 @@ const searchItemModule = {
 		},
 		getSearchCategoryType(state) {
 			return state.searchCategoryType;
+		},
+		getSearchedItem(state) {
+			return state.searchedItem;
 		},
 	},
 };

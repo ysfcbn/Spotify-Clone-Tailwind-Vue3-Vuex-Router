@@ -1,8 +1,9 @@
 <template>
-  <div
-    class="bg-dark1 hover:bg-opacblack1 ease duration-200 w-full h-auto cursor-pointer rounded-md flex-1 p-4 relative group"
-  >
-    <div class="h-full">
+	<div
+		class="bg-dark1 hover:bg-opacblack1 ease duration-200 w-full h-auto cursor-pointer rounded-md flex-1 p-4 relative group"
+	>
+		<Card> </Card>
+		<!-- <div class="h-full">
       <div class="w-full mb-5 relative">
         <img
           :class="{
@@ -51,24 +52,27 @@
           {{ track.artist }}
         </div>
       </div>
-    </div>
-  </div>
+    </div> -->
+	</div>
 </template>
 
 <script>
+import Card from '../../Cards/Card.vue';
+
 export default {
-  props: ["track", "searchs"],
-  emits: ["filterSearch"],
-  data() {
-    return { ButtonId: "" };
-  },
-  methods: {
-    closeTrack(_, event) {
-      console.log(this.searchs);
-      this.ButtonId = event.target.closest(".close--button").id;
-      this.$emit("filterSearch", this.ButtonId);
-    },
-  },
+	components: { Card },
+	props: ['track', 'searchs'],
+	emits: ['filterSearch'],
+	data() {
+		return { ButtonId: '' };
+	},
+	methods: {
+		closeTrack(_, event) {
+			console.log(this.searchs);
+			this.ButtonId = event.target.closest('.close--button').id;
+			this.$emit('filterSearch', this.ButtonId);
+		},
+	},
 };
 </script>
 
@@ -76,20 +80,20 @@ export default {
 .fade-cart-move,
 .fade-card-enter-active,
 .fade-card-leave-active {
-  transition: opacity 0.1s ease-in;
+	transition: opacity 0.1s ease-in;
 }
 
 .fade-card-leave-active {
-  position: absolute;
-  visibility: hidden;
+	position: absolute;
+	visibility: hidden;
 }
 
 .fade-card-enter-to,
 .fade-card-leave-from {
-  opacity: 1;
+	opacity: 1;
 }
 .fade-card-enter-from,
 .fade-card-leave-to {
-  opacity: 0;
+	opacity: 0;
 }
 </style>

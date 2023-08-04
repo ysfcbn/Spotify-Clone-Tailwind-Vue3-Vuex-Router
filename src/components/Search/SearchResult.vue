@@ -1,6 +1,9 @@
 <template>
 	<div v-if="isAuth" class="Search-Result p-4 lg:ml-[1rem]">
+		<!-- search Category -->
 		<SearchCategory class=""></SearchCategory>
+
+		<!-- First Box (Top Result) -->
 		<div v-if="getSearchCategoryType === 'all'" class="relative">
 			<div class="grid grid-cols-10 mt-4 gap-6">
 				<div
@@ -141,6 +144,8 @@
 						</div>
 					</div>
 				</div>
+
+				<!-- categoryType === 'all' Songs Section -->
 				<div
 					class="min-w-[25rem] lg1:col-span-6 sm:row-start-2 sm:col-span-full lg1:row-start-1"
 				>
@@ -195,8 +200,11 @@
 				</div>
 			</div>
 		</div>
+
+		<!-- categoryType === 'songs' Songs Section -->
 		<SongSection v-if="getSearchCategoryType === 'songs'"></SongSection>
 		<div class="relative top-6" v-if="isAuth">
+			<!-- Featured Playlists -->
 			<Card
 				v-if="
 					topResultType === 'artist' &&
@@ -275,6 +283,7 @@
 				</template>
 			</Card>
 
+			<!-- Artists -->
 			<Card
 				v-if="
 					getSearchCategoryType === 'artists' || getSearchCategoryType === 'all'
@@ -354,6 +363,7 @@
 				</template>
 			</Card>
 
+			<!-- Albums -->
 			<Card
 				v-if="
 					getSearchCategoryType === 'albums' || getSearchCategoryType === 'all'
@@ -445,6 +455,7 @@
 				</template>
 			</Card>
 
+			<!-- Playlists -->
 			<Card
 				v-if="
 					getSearchCategoryType === 'playlists' ||
@@ -525,6 +536,7 @@
 				</template>
 			</Card>
 
+			<!-- podcasts/shows -->
 			<Card
 				v-if="
 					getSearchCategoryType === 'podcasts' ||
@@ -550,6 +562,7 @@
 				</template>
 			</Card>
 
+			<!-- categoryType === 'podcasts' Episodes -->
 			<div
 				class="mb-6 max-w-[890px] min-w-[440px]"
 				v-if="getSearchCategoryType === 'podcasts'"
@@ -571,6 +584,8 @@
 					:checkUserFavEpisode="checkUserFavEpisode"
 				/>
 			</div>
+
+			<!-- Episodes -->
 			<Card
 				v-if="getSearchCategoryType === 'all'"
 				:episodes="true"
@@ -725,6 +740,7 @@ export default {
 			if (e.target.closest('#artistName')?.id === 'artistName') return;
 			if (e.target.closest('#playBtn')?.id === 'playBtn') return;
 
+			this.$store.dispatch('searchItem/searchedItem', data);
 			this.$router.push({ name: data.type, params: { id: data.id } });
 		},
 		async playArtistTopTracks(uri) {
