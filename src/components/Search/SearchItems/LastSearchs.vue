@@ -10,7 +10,7 @@
   </div>
 
   <!-- Cards -->
-  <div v-if="searches.length">
+  <div v-if="searches.length" class="mb-8">
     <transition-group
       name="fade-card"
       tag="div"
