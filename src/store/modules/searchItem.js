@@ -40,9 +40,11 @@ const searchItemModule = {
         }
         return accumulator;
       }, []);
+      localStorage.setItem("searchedItem", JSON.stringify(state.searchedItem));
     },
     filterSearchedItem(state, payload) {
       state.searchedItem = payload;
+      localStorage.setItem("searchedItem", JSON.stringify(state.searchedItem));
     },
   },
   actions: {
@@ -78,6 +80,7 @@ const searchItemModule = {
       commit("allSongs", getters.getSearchResultArr?.tracks.items);
     },
     searchedItem({ commit, state }, payload) {
+      localStorage.removeItem("searchedItem");
       commit("searchedItem", payload);
     },
     filterSearchedItem({ commit }, payload) {

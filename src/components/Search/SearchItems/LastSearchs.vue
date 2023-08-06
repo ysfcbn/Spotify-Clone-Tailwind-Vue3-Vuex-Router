@@ -1,5 +1,5 @@
 <template>
-  <div v-if="getSearchedItem.length" id="lastSearch" class="mb-4">
+  <div v-if="searches.length" id="lastSearch" class="mb-4">
     <div class="h-fit">
       <h2
         class="text-[1.5rem] text-white leading-7 tracking-tighter font-semibold"
@@ -44,6 +44,7 @@ export default {
   methods: {
     closeTrack(id) {
       console.log(id);
+      localStorage.removeItem("searchedItem");
       this.searches = this.searches.filter((item) => item.id !== id);
       this.$store.dispatch("searchItem/filterSearchedItem", this.searches);
       console.log(this.searches);
@@ -61,7 +62,10 @@ export default {
   created() {
     console.log("LastSearch Mounted");
     this.header = document.getElementById("header");
-    this.searches = this.getSearchedItem;
+    JSON.parse(localStorage.getItem("searchedItem"))
+      ? (this.searches = JSON.parse(localStorage.getItem("searchedItem")))
+      : (this.searches = this.getSearchedItem);
+
     if (this.searches.length) {
       setTimeout(() => {
         this.lastSearchsEl = document.getElementById("lastSearch");
