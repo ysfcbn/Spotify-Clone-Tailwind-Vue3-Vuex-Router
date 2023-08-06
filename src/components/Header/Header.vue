@@ -236,15 +236,15 @@
 
 				<div
 					v-show="isSearchVisible"
-					class="flex items-center justify-start w-full pl-4"
+					class="flex items-center justify-start w-full px-4"
 				>
-					<div class="w-fit z-10 relative">
+					<div class="w-full z-10 relative">
 						<form>
 							<input
 								placeholder="What do you want to listen to ?"
 								type="text"
 								ref="input"
-								class="w-[22.8rem] h-[3rem] rounded-full p-[10px] px-12 bg-light/70 text-white hover:bg-light"
+								class="w-[22.8rem] h-[3rem] rounded-full p-[10px] px-12 bg-light/70 text-white hover:bg-light focus:outline-white"
 								v-model="inputField"
 							/>
 						</form>
