@@ -260,6 +260,7 @@
 						v-for="(track, i) in topTracks"
 						:key="track.id"
 						:id="track.id"
+						:track="track"
 						:index="i"
 						:uri="track.uri"
 						:userTopTrackUris="userTopTrackUris"
@@ -303,10 +304,11 @@
 				</div>
 			</section>
 		</div>
-		<!-- herkese açık çalma listesi -->
+
+		<!-- Public Playlists -->
 		<section class="p-5 lg:ml-[1rem]">
-			<Card :currentData="publicPlaylists">
-				<template #cardTitle>Herkese Açık Çalma Listesi</template>
+			<Card :userPage="userPage" :currentData="publicPlaylists">
+				<template #cardTitle>Public Playlists</template>
 				<template #imgContainer="{ data }">
 					<div class="h-full">
 						<div class="w-full relative mb-5">

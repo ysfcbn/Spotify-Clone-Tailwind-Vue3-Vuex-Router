@@ -34,6 +34,7 @@ const store = createStore({
 	mutations: {
 		getAccessToken(state, payload) {
 			state.accessToken = payload;
+			localStorage.setItem('access_token', state.accessToken);
 		},
 		login(state) {
 			state.isLoggedIn = true;

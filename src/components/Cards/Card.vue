@@ -177,7 +177,7 @@
 											? artist.name ===
 											  data.track.artists[data.track.artists.length - 1].name
 												? artist.name
-												: artist.name + ', '
+												: artist.name + `, `
 											: artist.name
 									}}
 								</router-link>
