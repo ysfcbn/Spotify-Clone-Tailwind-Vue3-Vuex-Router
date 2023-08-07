@@ -481,7 +481,7 @@ export default {
 			return this.currentUser?.external_urls.spotify;
 		},
 		currentUserImage() {
-			return this.currentUser?.images[0]?.url;
+			return this.currentUser?.images[1]?.url;
 		},
 		currentUserTotalFollowers() {
 			return this.currentUser?.followers.total;
