@@ -42,6 +42,7 @@ const controllerModule = {
 		allQueueList: [],
 		queueFavTrackIDs: [],
 		queueTrackList: [],
+		queueName: null,
 		recentlyPlayedTracks: null,
 		lastListenCards: null,
 		modalInfoType: null,
@@ -123,6 +124,9 @@ const controllerModule = {
 		},
 		allQueueList(state, payload) {
 			state.allQueueList = payload;
+		},
+		queueName(state, payload) {
+			state.queueName = payload;
 		},
 		queueTrackList(state, payload) {
 			state.queueTrackList.push(payload);
@@ -525,6 +529,8 @@ const controllerModule = {
 						console.log('context started');
 						dispatch('fetchCurrentlyPlayingTrack');
 						dispatch('fetchCurrentlyPlayingTrack');
+						console.log(contextUri.name);
+						commit('queueName', contextUri.name);
 						dispatch('userQueue');
 						dispatch('userQueue');
 						console.log(getters.currentTrackID);
@@ -615,11 +621,12 @@ const controllerModule = {
 						console.log('skipped to Next Track!');
 						state.queueTrackList.length ? state.queueTrackList.shift() : '';
 						dispatch('userQueue');
-						dispatch('userQueue').then(() => {
-							state.queueTrackList.length
-								? state.allQueueList.splice(0, state.queueTrackList.length)
-								: '';
-						});
+						dispatch('userQueue');
+						// dispatch('userQueue').then(() => {
+						// 	state.queueTrackList.length
+						// 		? state.allQueueList.splice(0, state.queueTrackList.length)
+						// 		: '';
+						// });
 					}
 				})
 				.catch(err => console.log(err));
@@ -694,13 +701,15 @@ const controllerModule = {
 							type: 'queue',
 							status: true,
 						});
-						dispatch('userQueue').then(() => {
-							let queueListLength = state.queueTrackList.length;
-							commit('queueTrackList', state.userQueue.queue[queueListLength]);
-							state.queueTrackList.length
-								? state.allQueueList.splice(0, state.queueTrackList.length)
-								: '';
-						});
+						dispatch('userQueue');
+						dispatch('userQueue');
+						// dispatch('userQueue').then(() => {
+						// 	let queueListLength = state.queueTrackList.length;
+						// 	commit('queueTrackList', state.userQueue.queue[queueListLength]);
+						// 	state.queueTrackList.length
+						// 		? state.allQueueList.splice(0, state.queueTrackList.length)
+						// 		: '';
+						// });
 					}
 				})
 				.catch(err => console.log(err));
@@ -814,6 +823,9 @@ const controllerModule = {
 		},
 		getAllQueueList(state) {
 			return state.allQueueList;
+		},
+		getQueueName(state) {
+			return state.queueName;
 		},
 		getCurrentTrackAlbumImage(state) {
 			return state.currentTrackAlbumImage;

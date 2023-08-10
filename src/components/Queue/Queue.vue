@@ -196,18 +196,12 @@ export default {
 				? 'playlist'
 				: 'album';
 		},
-		getPlaylistName() {
-			return this.$store.getters['playlists/getPlaylist']?.name;
-		},
-		getAlbumName() {
-			return this.$store.getters['albums/getAlbum']?.name;
+
+		getQueueName() {
+			return this.$store.getters['controller/getQueueName'];
 		},
 		getQueueContextName() {
-			return this.isQueueContextType === 'playlist'
-				? this.getPlaylistName
-				: this.isQueueContextType === 'album'
-				? this.getAlbumName
-				: '';
+			return this.getQueueName;
 		},
 		getcurrentlyPlayingQueue() {
 			return this.$store.getters['controller/getUserQueue']?.currently_playing;

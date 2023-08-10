@@ -385,6 +385,7 @@ export default {
 			} else {
 				uri.index = this.currentPlayingTrackIndex;
 				uri.id = this.currentAlbumTracks[this.currentPlayingTrackIndex]?.id;
+				uri.name = this.albumName;
 				!this.currentPlayingTrackIndex
 					? await this.$store.dispatch('controller/playSelectedContext', uri)
 					: await this.$store.dispatch('controller/playCurrentTrack', uri);
