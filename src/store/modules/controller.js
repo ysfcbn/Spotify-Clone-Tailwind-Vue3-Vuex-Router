@@ -526,6 +526,7 @@ const controllerModule = {
 						dispatch('fetchCurrentlyPlayingTrack');
 						dispatch('fetchCurrentlyPlayingTrack');
 						dispatch('userQueue');
+						dispatch('userQueue');
 						console.log(getters.currentTrackID);
 						console.log(
 							'context type=>',
@@ -613,6 +614,7 @@ const controllerModule = {
 						dispatch('setIntervalFunc');
 						console.log('skipped to Next Track!');
 						state.queueTrackList.length ? state.queueTrackList.shift() : '';
+						dispatch('userQueue');
 						dispatch('userQueue').then(() => {
 							state.queueTrackList.length
 								? state.allQueueList.splice(0, state.queueTrackList.length)
@@ -669,14 +671,17 @@ const controllerModule = {
 				.catch(err => console.log(err));
 		},
 		async addItemToQueue({ getters, dispatch, state, commit }, uri) {
-			fetch(`https://api.spotify.com/v1/me/player/queue?uri=${uri}`, {
-				method: 'POST',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-					Authorization: 'Bearer ' + getters.getToken,
-				},
-			})
+			fetch(
+				`https://api.spotify.com/v1/me/player/queue?uri=${uri}&device_id=${getters.deviceID}`,
+				{
+					method: 'POST',
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+						Authorization: 'Bearer ' + getters.getToken,
+					},
+				}
+			)
 				.then(data => {
 					console.log(data);
 					if (data.status !== 204) {
@@ -689,14 +694,13 @@ const controllerModule = {
 							type: 'queue',
 							status: true,
 						});
-						dispatch('userQueue');
-						// dispatch('userQueue').then(() => {
-						// 	let queueListLength = state.queueTrackList.length;
-						// 	commit('queueTrackList', state.userQueue.queue[queueListLength]);
-						// 	state.queueTrackList.length
-						// 		? state.allQueueList.splice(0, state.queueTrackList.length)
-						// 		: '';
-						// });
+						dispatch('userQueue').then(() => {
+							let queueListLength = state.queueTrackList.length;
+							commit('queueTrackList', state.userQueue.queue[queueListLength]);
+							state.queueTrackList.length
+								? state.allQueueList.splice(0, state.queueTrackList.length)
+								: '';
+						});
 					}
 				})
 				.catch(err => console.log(err));
