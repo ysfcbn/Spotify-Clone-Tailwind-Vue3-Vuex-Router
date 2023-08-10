@@ -72,7 +72,6 @@
 									uri: contextUri,
 									index: currentPlayingTrackIndex,
 									type: contextType,
-									name: data.name,
 								}),
 								(href = item?.context?.href)
 							)
@@ -263,7 +262,6 @@ export default {
 							uri: this.contextUri,
 							index: this.currentPlayingTrackIndex,
 							type: this.contextType,
-							name: this.item?.name,
 						},
 						this.item?.context?.href
 					);
@@ -286,12 +284,18 @@ export default {
 					this.typeOfSelectedSection = 'playlist';
 					uri.id =
 						this.currentPlaylist[this.currentPlayingTrackIndex]?.track.id;
+					uri.name = this.currentPlaylistName;
 				} else if ((await uri.type) === 'album') {
 					this.typeOfSelectedSection = 'album';
 					console.log(href);
 					if (!this.item.context) {
 						await this.fetchAlbum(this.item.track.album.href);
-					} else await this.fetchAlbum(href);
+						uri.name = this.item.track.album.name;
+						console.log('ITEM ÇALIYOR');
+					} else {
+						await this.fetchAlbum(href);
+						uri.name = this.currentAlbumName;
+					}
 					uri.id = this.currentAlbumTracks[this.currentPlayingTrackIndex]?.id;
 				}
 				uri.index = this.currentPlayingTrackIndex;
@@ -345,8 +349,14 @@ export default {
 		currentAlbumTracks() {
 			return this.$store.getters['albums/getAlbum']?.tracks?.items;
 		},
+		currentAlbumName() {
+			return this.$store.getters['albums/getAlbum']?.name;
+		},
 		currentPlaylist() {
 			return this.$store.getters['playlists/getPlaylist']?.tracks?.items;
+		},
+		currentPlaylistName() {
+			return this.$store.getters['playlists/getPlaylist']?.name;
 		},
 		artistTopTracks() {
 			return this.$store.getters['artists/getTopTracks'];
