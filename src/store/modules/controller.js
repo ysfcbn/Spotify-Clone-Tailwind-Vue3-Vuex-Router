@@ -42,6 +42,7 @@ const controllerModule = {
 		allQueueList: [],
 		queueFavTrackIDs: [],
 		queueTrackList: [],
+		lastQueueTrackListLength: null,
 		queueName: null,
 		recentlyPlayedTracks: null,
 		lastListenCards: null,
@@ -130,6 +131,9 @@ const controllerModule = {
 		},
 		queueTrackList(state, payload) {
 			state.queueTrackList.push(payload);
+		},
+		lastQueueTrackListLength(state, payload) {
+			state.lastQueueTrackListLength = payload;
 		},
 		clearQueueTrackList(state) {
 			state.queueTrackList.forEach(item => {
@@ -707,6 +711,7 @@ const controllerModule = {
 						dispatch('userQueue');
 						dispatch('userQueue').then(() => {
 							let queueListLength = state.queueTrackList.length;
+							commit('lastQueueTrackListLength', queueListLength);
 							commit('queueTrackList', state.userQueue.queue[queueListLength]);
 						});
 					}
@@ -819,6 +824,9 @@ const controllerModule = {
 		},
 		getQueueTrackList(state) {
 			return state.queueTrackList;
+		},
+		getLastQueueTrackListLength(state) {
+			return state.lastQueueTrackListLength;
 		},
 		getAllQueueList(state) {
 			return state.allQueueList;
