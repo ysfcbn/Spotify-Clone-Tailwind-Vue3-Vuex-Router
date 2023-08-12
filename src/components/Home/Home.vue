@@ -1216,8 +1216,14 @@ export default {
 		currentPlaylist() {
 			return this.$store.getters['playlists/getPlaylist']?.tracks?.items;
 		},
+		currentPlaylistName() {
+			return this.$store.getters['playlists/getPlaylist']?.name;
+		},
 		currentAlbumTracks() {
 			return this.$store.getters['albums/getAlbum']?.tracks?.items;
+		},
+		currentAlbumName() {
+			return this.$store.getters['albums/getAlbum']?.name;
 		},
 		artistTopTracks() {
 			return this.$store.getters['artists/getTopTracks'];
@@ -1353,9 +1359,17 @@ export default {
 			await this.$store.dispatch('controller/fetchCurrentlyPlayingTrack');
 
 			if (this.getCurrentlyPlayingTrack?.context) {
-				this.getCurrentlyPlayingTrack?.context?.type === 'album'
-					? this.fetchAlbum(this.getCurrentlyPlayingTrack?.context?.href)
-					: this.fetchPlaylist(this.getCurrentlyPlayingTrack?.context?.href);
+				if (this.getCurrentlyPlayingTrack?.context?.type === 'album') {
+					await this.fetchAlbum(this.getCurrentlyPlayingTrack?.context?.href);
+					this.$store.commit('controller/queueName', this.currentAlbumName);
+					console.log('ALBUMMMM', this.currentAlbumName);
+				} else {
+					await this.fetchPlaylist(
+						this.getCurrentlyPlayingTrack?.context?.href
+					);
+					this.$store.commit('controller/queueName', this.currentPlaylistName);
+					console.log('PLAYLISTTTT', this.currentPlaylistName);
+				}
 			}
 			await this.$store.dispatch('controller/userQueue');
 			await this.$store.dispatch('controller/fetchRecentlyPlayedTracks');

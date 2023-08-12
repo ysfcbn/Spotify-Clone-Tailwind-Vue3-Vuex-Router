@@ -132,6 +132,9 @@ const controllerModule = {
 			state.queueTrackList.push(payload);
 		},
 		clearQueueTrackList(state) {
+			state.queueTrackList.forEach(item => {
+				state.allQueueList.unshift(item);
+			});
 			state.queueTrackList = [];
 		},
 		recentlyPlayedTracks(state, payload) {
@@ -619,14 +622,14 @@ const controllerModule = {
 						commit('clearLastProgressMS');
 						dispatch('setIntervalFunc');
 						console.log('skipped to Next Track!');
-						state.queueTrackList.length ? state.queueTrackList.shift() : '';
+
 						dispatch('userQueue');
-						dispatch('userQueue');
-						// dispatch('userQueue').then(() => {
-						// 	state.queueTrackList.length
-						// 		? state.allQueueList.splice(0, state.queueTrackList.length)
-						// 		: '';
-						// });
+						dispatch('userQueue').then(() => {
+							if (state.queueTrackList.length) {
+								state.queueTrackList.shift();
+								state.allQueueList.splice(0, state.queueTrackList.length);
+							}
+						});
 					}
 				})
 				.catch(err => console.log(err));
@@ -702,14 +705,10 @@ const controllerModule = {
 							status: true,
 						});
 						dispatch('userQueue');
-						dispatch('userQueue');
-						// dispatch('userQueue').then(() => {
-						// 	let queueListLength = state.queueTrackList.length;
-						// 	commit('queueTrackList', state.userQueue.queue[queueListLength]);
-						// 	state.queueTrackList.length
-						// 		? state.allQueueList.splice(0, state.queueTrackList.length)
-						// 		: '';
-						// });
+						dispatch('userQueue').then(() => {
+							let queueListLength = state.queueTrackList.length;
+							commit('queueTrackList', state.userQueue.queue[queueListLength]);
+						});
 					}
 				})
 				.catch(err => console.log(err));
