@@ -38,6 +38,7 @@ const controllerModule = {
 		currentContextType: null,
 		isArtistContext: null,
 		currentTrackIsFav: '',
+		currentTrackInfo: false,
 		userQueue: [],
 		allQueueList: [],
 		queueFavTrackIDs: [],
@@ -119,6 +120,9 @@ const controllerModule = {
 		},
 		currentTrackIsFav(state, payload) {
 			state.currentTrackIsFav = payload;
+		},
+		currentTrackInfo(state, payload) {
+			state.currentTrackInfo = payload;
 		},
 		userQueue(state, payload) {
 			state.userQueue = payload;
@@ -839,6 +843,9 @@ const controllerModule = {
 		},
 		getCurrentTrackIsFav(state) {
 			return state.currentTrackIsFav;
+		},
+		getCurrentTrackInfo(state) {
+			return state.currentTrackInfo;
 		},
 		isPlayingHeaderBtn(state) {
 			return state.isPlayingHeaderBtn;

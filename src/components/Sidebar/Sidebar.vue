@@ -1,7 +1,7 @@
 <template>
 	<div
 		:class="{ 'relative min-w-[16rem]': isAuth, 'min-w-[14rem]': !isAuth }"
-		class="sidebar bg-black text-[0.8125rem] mb:text-xs sm3:text-[13px]"
+		class="sidebar bg-gradient-to-b from-black to-black-50 text-[0.8125rem] mb:text-xs sm3:text-[13px]"
 	>
 		<div class="p-5">
 			<svg viewBox="0 0 2100 440">
