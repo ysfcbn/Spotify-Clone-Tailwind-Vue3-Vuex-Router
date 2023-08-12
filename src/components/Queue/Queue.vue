@@ -111,7 +111,17 @@
 			<h2 style="font-weight: 700" class="text-lightest/80 mb-4 text-[14px]">
 				<span v-if="isQueueContextType === 'collection'">Next up</span>
 				<span v-else class="flex gap-x-2 w-full"
-					>Next from: {{ getQueueContextName }}</span
+					>Next from:
+					<router-link
+						:key="isQueueContextType"
+						:to="{
+							name: `${isQueueContextType}`,
+							params: { id: `${contextTypeID}` },
+						}"
+						class="hover:text-white"
+					>
+						{{ getQueueName }}</router-link
+					></span
 				>
 			</h2>
 			<TrackItems
@@ -186,35 +196,34 @@ export default {
 			return this.$store.getters['albums/getAlbum']?.total_tracks;
 		},
 		getCurrentlyPlayingContext() {
+			return this.$store.getters['controller/getCurrentlyPlayingTrack'];
+		},
+		getCurrentlyPlayingContextType() {
 			return this.$store.getters['controller/getCurrentlyPlayingTrack']?.context
 				?.type;
 		},
 		isQueueContextType() {
-			return this.getCurrentlyPlayingContext === 'collection'
+			return this.getCurrentlyPlayingContextType === 'collection'
 				? 'collection'
-				: this.getCurrentlyPlayingContext === 'playlist'
+				: this.getCurrentlyPlayingContextType === 'playlist'
 				? 'playlist'
 				: 'album';
 		},
-		getPlaylistName() {
-			return this.$store.getters['playlists/getPlaylist']?.name;
-		},
-		getAlbumName() {
-			return this.$store.getters['albums/getAlbum']?.name;
-		},
-		getQueueContextName() {
-			return this.isQueueContextType === 'playlist'
-				? this.getPlaylistName
-				: this.isQueueContextType === 'album'
-				? this.getAlbumName
+		contextTypeID() {
+			this.isQueueContextType === 'album'
+				? this.getcurrentlyPlayingContext?.item?.album?.id
+				: this.isQueueContextType === 'playlist'
+				? this.getcurrentlyPlayingContext?.item.id
 				: '';
 		},
+		getQueueName() {
+			return this.$store.getters['controller/getQueueName'];
+		},
+
 		getcurrentlyPlayingQueue() {
 			return this.$store.getters['controller/getUserQueue']?.currently_playing;
 		},
-		currentPlayingQueue() {
-			return [this.getcurrentlyPlayingQueue];
-		},
+
 		queueTrackList() {
 			return this.$store.getters['controller/getQueueTrackList'];
 		},

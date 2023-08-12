@@ -234,6 +234,73 @@
 					</div>
 				</template>
 			</Card>
+			<Card :currentData="recommendationsTracks" :albums="true">
+				<template #cardTitle>Recommendations for today</template>
+				<template #imgContainer="{ data }">
+					<div class="w-full relative mb-5">
+						<img
+							class="h-full w-full object-cover"
+							:src="data?.album?.images[0]?.url"
+							alt="image"
+						/>
+					</div>
+				</template>
+				<template #firstTitle="{ data }">{{ data?.album?.name }}</template>
+				<template #secondTitle="{ data }"
+					><span class="capitalize">{{ data?.album?.type }}</span>
+				</template>
+				<template #playBtn="{ data }">
+					<div
+						:class="
+							data?.album?.uri === getCurrentlyPlayingTrack?.context?.uri &&
+							getCurrentlyPlayingTrack?.is_playing
+								? 'opacity-100 translate-y-[-0.4rem]'
+								: 'opacity-0'
+						"
+						class="bg-dark1 rounded-full right-0 bottom-0 absolute flex items-center mx-2 group-hover:block group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
+					>
+						<button
+							@click="
+								playContextUri(
+									(uri = {
+										uri: data?.album?.uri,
+										index: currentPlayingTrackIndex,
+										type: data?.album?.type,
+										name: data?.album?.name,
+									}),
+									(href = data?.album?.href)
+								)
+							"
+							@mousedown="leftClick = true"
+							@mouseup="leftClick = false"
+							id="playBtn"
+							:class="{
+								' bg-green3/80 scale-80': leftClick,
+								'hover:scale-106 bg-green3/95 hover:bg-green3': !leftClick,
+							}"
+							class="p-[11px] rounded-full cursor-default shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+						>
+							<h1 class="text-white"></h1>
+							<svg role="img" height="20" width="20" viewBox="0 0 24 24">
+								<path
+									v-if="
+										data?.album?.uri ===
+											getCurrentlyPlayingTrack?.context?.uri &&
+										getCurrentlyPlayingTrack?.is_playing
+									"
+									fill="text-black"
+									d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
+								></path>
+								<path
+									v-else
+									fill="text-black"
+									d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
+								></path>
+							</svg>
+						</button>
+					</div>
+				</template>
+			</Card>
 
 			<Card :currentData="severalPlaylists" :severalPlaylist="true">
 				<template #cardTitle>Günlük müzik ihtiyacın</template>
@@ -268,6 +335,70 @@
 										uri: data?.uri,
 										index: currentPlayingTrackIndex,
 										type: data?.type,
+									}),
+									(href = data?.href)
+								)
+							"
+							@mousedown="leftClick = true"
+							@mouseup="leftClick = false"
+							id="playBtn"
+							:class="{
+								' bg-green3/80 scale-80': leftClick,
+								'hover:scale-106 bg-green3/95 hover:bg-green3 ': !leftClick,
+							}"
+							class="p-[11px] rounded-full cursor-default shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+						>
+							<h1 class="text-white"></h1>
+							<svg role="img" height="20" width="20" viewBox="0 0 24 24">
+								<path
+									v-if="
+										data?.uri === getCurrentlyPlayingTrack?.context?.uri &&
+										getCurrentlyPlayingTrack?.is_playing
+									"
+									fill="text-black"
+									d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
+								></path>
+								<path
+									v-else
+									fill="text-black"
+									d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
+								></path>
+							</svg>
+						</button>
+					</div>
+				</template>
+			</Card>
+				<template #imgContainer="{ data }">
+					<div class="w-full relative mb-5">
+						<img
+							class="h-full w-full object-cover"
+							:src="data?.images[0]?.url"
+							alt="image"
+						/>
+					</div>
+				</template>
+				<template #firstTitle="{ data }">{{ data?.name }}</template>
+				<template #secondTitle="{ data }"
+					><span>{{ data?.description }}</span>
+				</template>
+				<template #playBtn="{ data }">
+					<div
+						:class="
+							data?.uri === getCurrentlyPlayingTrack?.context?.uri &&
+							getCurrentlyPlayingTrack?.is_playing
+								? 'opacity-100 translate-y-[-0.4rem]'
+								: 'opacity-0'
+						"
+						class="bg-dark1 rounded-full right-0 bottom-0 absolute flex items-center mx-2 group-hover:block group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
+					>
+						<button
+							@click="
+								playContextUri(
+									(uri = {
+										uri: data?.uri,
+										index: currentPlayingTrackIndex,
+										type: data?.type,
+										name: data?.name,
 									}),
 									(href = data?.href)
 								)
@@ -341,6 +472,120 @@
 										uri: data?.uri,
 										index: currentPlayingTrackIndex,
 										type: data?.type,
+									}),
+									(href = data?.href)
+								)
+							"
+							@mousedown="leftClick = true"
+							@mouseup="leftClick = false"
+							id="playBtn"
+							:class="{
+								' bg-green3/80 scale-80': leftClick,
+								'hover:scale-106 bg-green3/95 hover:bg-green3 ': !leftClick,
+							}"
+							class="p-[11px] rounded-full cursor-default shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+						>
+							<h1 class="text-white"></h1>
+							<svg role="img" height="20" width="20" viewBox="0 0 24 24">
+								<path
+									v-if="
+										data?.uri === getCurrentlyPlayingTrack?.context?.uri &&
+										getCurrentlyPlayingTrack?.is_playing
+									"
+									fill="text-black"
+									d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
+								></path>
+								<path
+									v-else
+									fill="text-black"
+									d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
+								></path>
+							</svg>
+						</button>
+					</div>
+				</template>
+			</Card>
+			<Info v-if="isAuth" />
+		</div>
+		<div v-if="!isAuth" id="home">
+			<Card
+				v-for="item in totaldummydata"
+				:key="item"
+				:currentData="item"
+				:dummyCards="true"
+			>
+				<template #cardTitle>{{ item[0].mainTitle }}</template>
+				<template #imgContainer="{ data }">
+					<div class="w-full relative mb-5">
+						<img
+							class="h-full w-full object-cover"
+							:src="data?.img"
+							alt="image"
+						/>
+					</div>
+				</template>
+				<template #firstTitle="{ data }">{{ data?.firstTitle }}</template>
+				<template #secondTitle="{ data }"
+					><span>{{ data?.secondTitle }}</span>
+				</template>
+				<template #playBtn>
+					<div
+						class="right-0 bottom-0 absolute flex items-center mx-1 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
+					>
+						<button
+							id="playBtn"
+							class="p-[11px] bg-green3 rounded-full cursor-default lg:group-hover:block hover:scale-106 shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+						>
+							<h1 class="text-white"></h1>
+							<svg role="img" height="24" width="24" viewBox="0 0 24 24">
+								<path
+									v-if="false"
+									fill="text-black"
+									d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"
+								></path>
+								<path
+									v-else
+									fill="text-black"
+									d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"
+								></path>
+							</svg>
+						</button>
+					</div>
+				</template>
+			</Card>
+		</div>
+	</section>
+				<template #imgContainer="{ data }">
+					<div class="w-full relative mb-5">
+						<img
+							class="h-full w-full object-cover"
+							:src="data?.images[0]?.url"
+							alt="image"
+						/>
+					</div>
+				</template>
+				<template #firstTitle="{ data }">{{ data?.name }}</template>
+				<template #secondTitle="{ data }"
+					><span>{{ data?.description }}</span>
+				</template>
+				<template #playBtn="{ data }">
+					<div
+						:class="
+							data?.uri === getCurrentlyPlayingTrack?.context?.uri &&
+							getCurrentlyPlayingTrack?.is_playing
+								? 'opacity-100 translate-y-[-0.4rem]'
+								: 'opacity-0'
+						"
+						class="bg-dark1 rounded-full right-0 bottom-0 absolute flex items-center mx-2 group-hover:block group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
+					>
+						<button
+							@click="
+								playContextUri(
+									(uri = {
+										uri: data?.uri,
+										index: currentPlayingTrackIndex,
+										type: data?.type,
+										name: data?.name,
 									}),
 									(href = data?.href)
 								)
@@ -1213,8 +1458,14 @@ export default {
 		currentPlaylist() {
 			return this.$store.getters['playlists/getPlaylist']?.tracks?.items;
 		},
+		currentPlaylistName() {
+			return this.$store.getters['playlists/getPlaylist']?.name;
+		},
 		currentAlbumTracks() {
 			return this.$store.getters['albums/getAlbum']?.tracks?.items;
+		},
+		currentAlbumName() {
+			return this.$store.getters['albums/getAlbum']?.name;
 		},
 		artistTopTracks() {
 			return this.$store.getters['artists/getTopTracks'];
@@ -1289,9 +1540,7 @@ export default {
 			}
 		},
 	},
-	beforeCreate() {
-		this.$store.commit('searchItem/searchCategoryType', 'all');
-	},
+
 	async created() {
 		console.log('Home Mounted');
 		this.home = true;
@@ -1355,6 +1604,46 @@ export default {
 				this.getCurrentlyPlayingTrack?.context?.type === 'album'
 					? this.fetchAlbum(this.getCurrentlyPlayingTrack?.context?.href)
 					: this.fetchPlaylist(this.getCurrentlyPlayingTrack?.context?.href);
+			}
+			await this.$store.dispatch('controller/userQueue');
+			await this.$store.dispatch('controller/fetchRecentlyPlayedTracks');
+			this.getCurrentUser ? '' : await this.currentUser();
+			await this.lastListenTracks();
+			await this.lastListenCards();
+			this.recentlyPlayed.length < 6
+				? this.recentlyPlayed.unshift(this.userFavSongsLastListenItem)
+				: '';
+			this.$store.dispatch(
+				'controller/lastListenCards',
+				this.recentlyPlayedCard
+			);
+			this.recommendationsTracks ? '' : await this.fetchRecommendations();
+			this.getFavShows ? '' : await this.fetchFavShows();
+			this.severalPlaylists ? '' : await this.fetchSeveralPlaylists();
+			this.getCurrentUserTopArtists ? '' : await this.fetchTopArtists();
+			this.favTracks ? '' : await this.fetchFavTracks();
+			this.favArtists ? '' : await this.fetchFavArtists();
+			this.favAlbums ? '' : await this.fetchFavAlbums();
+			this.favEpisodes ? '' : await this.fetchFavEpisodes();
+			if (!this.RandomSelectedPlaylists.length) {
+				await this.fetchBrowseCategories();
+				this.randomNumbers();
+				await this.fetchRandomPlaylists(this.getBrowseCategories);
+			}
+		}
+	},
+			if (this.getCurrentlyPlayingTrack?.context) {
+				if (this.getCurrentlyPlayingTrack?.context?.type === 'album') {
+					await this.fetchAlbum(this.getCurrentlyPlayingTrack?.context?.href);
+					this.$store.commit('controller/queueName', this.currentAlbumName);
+					console.log('ALBUMMMM', this.currentAlbumName);
+				} else {
+					await this.fetchPlaylist(
+						this.getCurrentlyPlayingTrack?.context?.href
+					);
+					this.$store.commit('controller/queueName', this.currentPlaylistName);
+					console.log('PLAYLISTTTT', this.currentPlaylistName);
+				}
 			}
 			await this.$store.dispatch('controller/userQueue');
 			await this.$store.dispatch('controller/fetchRecentlyPlayedTracks');
