@@ -109,16 +109,18 @@
 		</div>
 		<div class="mt-[0.5rem] h-full">
 			<h2 style="font-weight: 700" class="text-lightest/80 mb-4 text-[14px]">
-				<span v-if="isQueueContextType === 'collection'">Next up</span>
+				<span v-if="getCurrentlyPlayingContextType === 'collection'"
+					>Next up</span
+				>
 				<span v-else class="flex gap-x-2 w-full"
 					>Next from:
 					<router-link
-						:key="isQueueContextType"
+						class="hover:text-white hover:underline"
+						:key="getCurrentlyPlayingContextType"
 						:to="{
-							name: `${isQueueContextType}`,
+							name: `${getCurrentlyPlayingContextType}`,
 							params: { id: `${contextTypeID}` },
 						}"
-						class="hover:text-white"
 					>
 						{{ getQueueName }}</router-link
 					></span
@@ -180,6 +182,7 @@ export default {
 	data() {
 		return {
 			queuePage: false,
+			queueTrackListLength2: 0,
 		};
 	},
 	computed: {
@@ -195,25 +198,19 @@ export default {
 		totalAlbumTracks() {
 			return this.$store.getters['albums/getAlbum']?.total_tracks;
 		},
-		getCurrentlyPlayingContext() {
+		getCurrentlyPlayingTrack() {
 			return this.$store.getters['controller/getCurrentlyPlayingTrack'];
 		},
 		getCurrentlyPlayingContextType() {
 			return this.$store.getters['controller/getCurrentlyPlayingTrack']?.context
 				?.type;
 		},
-		isQueueContextType() {
-			return this.getCurrentlyPlayingContextType === 'collection'
-				? 'collection'
-				: this.getCurrentlyPlayingContextType === 'playlist'
-				? 'playlist'
-				: 'album';
-		},
+
 		contextTypeID() {
-			this.isQueueContextType === 'album'
-				? this.getcurrentlyPlayingContext?.item?.album?.id
-				: this.isQueueContextType === 'playlist'
-				? this.getcurrentlyPlayingContext?.item.id
+			return this.getCurrentlyPlayingContextType === 'album'
+				? this.getcurrentlyPlayingQueue?.album?.id
+				: this.getCurrentlyPlayingContextType === 'playlist'
+				? this.getCurrentlyPlayingTrack?.context?.uri.split(':')[2]
 				: '';
 		},
 		getQueueName() {
@@ -226,6 +223,9 @@ export default {
 
 		queueTrackList() {
 			return this.$store.getters['controller/getQueueTrackList'];
+		},
+		lastQueueTrackListLength() {
+			return this.$store.getters['controller/getLastQueueTrackListLength'];
 		},
 		queueTrackListLength() {
 			return this.queueTrackList.length > 0
@@ -320,18 +320,22 @@ export default {
 			this.$store.commit('controller/clearQueueTrackList');
 		},
 	},
+	watch: {},
 	created() {
+		this.queuePage = true;
+		console.log(this.opened);
 		this.findFavTracks();
 		this.addGreenHeartFavTracks();
-		console.log('getQueueUris', this.getQueueUris);
-		this.queuePage = true;
-		this.queueTrackList.length
-			? this.allQueueList.splice(0, this.queueTrackList.length)
-			: '';
-		console.log('NAMES!!!!!!!!!', this.getPlaylistName, this.getAlbumName);
-
-		console.log(this.getcurrentlyPlayingQueue);
-		console.log(this.getUserQueue);
+		if (
+			this.queueTrackList.length &&
+			this.lastQueueTrackListLength !== this.queueTrackList.length
+		) {
+			this.allQueueList.splice(0, this.queueTrackList.length);
+			this.$store.commit(
+				'controller/lastQueueTrackListLength',
+				this.queueTrackList.length
+			);
+		}
 	},
 	unmounted() {
 		this.$store.commit('controller/clearQueueTracksID');
