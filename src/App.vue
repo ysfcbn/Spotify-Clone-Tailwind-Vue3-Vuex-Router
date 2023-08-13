@@ -43,17 +43,16 @@
 import Header from "./components/Header/Header.vue";
 import Sidebar from "./components/Sidebar/Sidebar.vue";
 import CurrentTrackInfo from "./components/Sidebar/CurrentTrackInfo.vue";
-import Footer from "./components/footer/footer.vue";
 import LoginPage from "./components/LoginPage/LoginPage.vue";
 import AppInfoModal from "./components/Modal/AppInfoModal.vue";
 import AppHowitsWork from "./components/Modal/AppHowitsWork.vue";
-
+import Footer from "./components/Footer/Footer.vue";
 export default {
   components: {
     Header,
     Sidebar,
-    CurrentTrackInfo,
     Footer,
+    CurrentTrackInfo,
     LoginPage,
     AppInfoModal,
     AppHowitsWork,
