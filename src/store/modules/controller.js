@@ -38,6 +38,7 @@ const controllerModule = {
     currentContextType: null,
     isArtistContext: null,
     currentTrackIsFav: "",
+    trackInfoCurrentArtist: "",
     currentTrackInfo: false,
     userQueue: [],
     allQueueList: [],
@@ -121,6 +122,10 @@ const controllerModule = {
     currentTrackIsFav(state, payload) {
       state.currentTrackIsFav = payload;
     },
+    trackInfoCurrentArtist(state, payload) {
+      state.trackInfoCurrentArtist = payload;
+    },
+
     currentTrackInfo(state, payload) {
       state.currentTrackInfo = payload;
     },
@@ -223,7 +228,7 @@ const controllerModule = {
         })
         .then(({ data }) => {
           console.log(data);
-          dispatch("artists/currentArtist", data, { root: true });
+          dispatch("trackInfoCurrentArtist", data);
         })
         .catch((err) => console.log(err));
     },
@@ -355,6 +360,10 @@ const controllerModule = {
     async currentTrackIsFav({ commit }, payload) {
       commit("currentTrackIsFav", await payload);
     },
+    async trackInfoCurrentArtist({ commit }, payload) {
+      commit("trackInfoCurrentArtist", await payload);
+    },
+
     async volumePercent({ commit, state }) {
       commit("volumePercent", await state.myDevice[0].volume_percent);
     },
@@ -877,6 +886,9 @@ const controllerModule = {
     },
     getCurrentTrackIsFav(state) {
       return state.currentTrackIsFav;
+    },
+    getTrackInfoCurrentArtist(state) {
+      return state.trackInfoCurrentArtist;
     },
     getCurrentTrackInfo(state) {
       return state.currentTrackInfo;

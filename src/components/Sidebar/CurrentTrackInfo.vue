@@ -9,17 +9,37 @@
     <div
       class="relative flex items-center justify-between ease-in duration-200 min-w-[14.5rem] w-[100%] shrink-0 h-[4rem]"
     >
-      <div class="flex relative z-0">
+      <div class="flex relative z-0 text-white">
         <router-link
-          class="sm3:text-[11px] md:text-[13px] lg:text-[17px] text-white flex shrink-0 font-semibold cursor-pointer hover:underline"
-          :key="getCurrentlyPlayingContextType"
+          v-if="!getCurrentlyPlayingContextType"
+          :key="artistID"
+          :to="{ name: 'artist', params: { id: `${artistID}` } }"
+          class="sm3:text-[11px] md:text-[13px] lg:text-[17px] flex shrink-0 font-semibold cursor-pointer hover:underline"
+        >
+          {{ contextName }}
+        </router-link>
+        <router-link
+          v-else-if="getCurrentlyPlayingContextType !== 'collection'"
+          class="sm3:text-[11px] md:text-[13px] lg:text-[17px] flex shrink-0 font-semibold cursor-pointer hover:underline"
+          :key="contextTypeID"
           :to="{
             name: `${getCurrentlyPlayingContextType}`,
-            params: { id: `${contextTypeID}` },
+            params: {
+              id: `${contextTypeID}`,
+            },
           }"
         >
-          {{ getQueueName }}</router-link
+          {{ contextName }}</router-link
         >
+
+        <router-link
+          v-else
+          :key="getCurrentlyPlayingContextType"
+          :to="{ name: 'favTracks' }"
+          class="sm3:text-[11px] md:text-[13px] lg:text-[17px] flex shrink-0 font-semibold cursor-pointer hover:underline"
+        >
+          Liked Songs
+        </router-link>
       </div>
       <div
         class="trackInfo2 text-lightest bg-black rounded-full relative flex shrink-0 left-10 w-[4rem]"
@@ -37,7 +57,7 @@
         </button>
       </div>
     </div>
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-4">
       <!-- contextImage -->
       <div class="w-full relative">
         <div class="w-full relative">
@@ -51,7 +71,7 @@
 
       <!-- trackname & artistname -->
       <div
-        class="relative flex items-center justify-between ease-in duration-200 min-w-[14.5rem] w-[100%] shrink-0 mb-4"
+        class="relative flex items-center justify-between ease-in duration-200 min-w-[14.5rem] w-[100%] shrink-0 mb-2"
       >
         <div
           class="flex flex-col overflow-hidden pl-[1px] gap-y-2 min-w-[4rem]"
@@ -78,7 +98,7 @@
                     currentTrackArtistsArr[currentTrackArtistsArr.length - 1]
                       .name
                     ? artist.name
-                    : artist.name + `,` + ` `
+                    : artist.name + `,`
                   : artist.name
               }}
             </router-link>
@@ -128,7 +148,7 @@
       <!-- About the Artist -->
       <div
         :id="artistID"
-        class="card--container relative group bg-opacwhite1 ease duration-300 w-full cursor-pointer rounded-md flex-1 mt-4"
+        class="card--container relative group bg-opacwhite1 ease duration-300 w-full cursor-pointer rounded-md"
       >
         <div class="w-full relative">
           <img
@@ -143,10 +163,10 @@
         >
           About the Artist
         </div>
-        <div class="px-2 mt-2">
-          <div class="flex items-middle flex-col p-2">
+        <div class="px-2 pt-2">
+          <div class="flex flex-col p-2">
             <div
-              class="text-white max-w-full h-[2rem] text-[20px] truncate font-semibold hover"
+              class="text-white max-w-full h-[1.5rem] text-[20px] truncate font-semibold hover"
             >
               <router-link
                 :key="artistID"
@@ -158,10 +178,10 @@
             <div
               class="flex items-center justify-between text-lightest font-semibold w-full sm:text-[11px] lg:text-[15px]"
             >
-              <span class="">
+              <span class="leading-5">
                 {{ currentArtistMonthlyListeners }} monthly listeners
               </span>
-              <div class="w-[5rem]">
+              <div class="w-[5.4rem]">
                 <button
                   @click="addRemoveArtist"
                   :class="{
@@ -169,7 +189,7 @@
                     'hover:border-white border-opacwhite2 ':
                       !currentArtistIsFav,
                   }"
-                  class="border h-fit w-[5rem] text-white px-2 py-2 rounded-full flex items-center justify-center"
+                  class="border h-fit w-full text-white px-2 py-2 rounded-full flex items-center justify-center"
                 >
                   <span
                     v-if="currentArtistIsFav"
@@ -188,8 +208,10 @@
               </div>
             </div>
           </div>
-          <div class="p-2 mt-1 h-[4.5rem] text-justify text-lightest">
-            <span style="font-weight: 400" class="line-clamp-3 text-[14px]"
+          <div class="p-2 mb-3 h-[4.5rem] text-justify text-lightest">
+            <span
+              style="font-weight: 400"
+              class="line-clamp-3 text-[14px] leading-5"
               >With an impressive string of hits, numerous awards under her
               trendy belt and concerts throughout Europe, Asia, Latin enon, one
               of those enon, one of those
@@ -199,56 +221,81 @@
       </div>
 
       <!-- Next Queue -->
-      <div class="relative px-2 pb-4 bg-opacwhite1 w-full my-6">
-        <div class="flex items-middle flex-col p-2 mt-2">
-          <div
+      <div class="relative px-2 pb-2 bg-opacwhite1 w-full mb-6 rounded-lg">
+        <div
+          style="font-weight: 700"
+          class="flex items-center justify-between h-[2rem] text-[15px] p-2 h-[3.5rem]"
+        >
+          <span class="text-white">Next in queue</span>
+          <router-link
             style="font-weight: 700"
-            class="flex items-center justify-between h-[2rem] text-[15px]"
+            :to="{ name: 'queue' }"
+            key="2"
+            class="text-[13px] text-lightest self-center hover:text-white hover:underline hover:scale-[1.03] w-[5.5rem]"
+            >Open queue</router-link
           >
-            <span class="text-white">Next in queue</span>
-            <router-link
-              style="font-weight: 700"
-              :to="{ name: 'queue' }"
-              key="2"
-              class="text-[13px] text-lightest self-center hover:text-white hover:underline hover:scale-[1.03] w-[5.5rem]"
-              >Open queue</router-link
-            >
-          </div>
         </div>
 
-        <div class="flex shrink-1 bg-opacwhite1 p-2 rounded-lg">
-          <disv class="relative flex items-center mx-3">
-            <div class="group relative shrink-0">
-              <img width="52" height="52" :src="currentTrackAlbumImage" />
+        <div class="flex shrink-1 group hover:bg-opacwhite1 p-2 rounded-lg">
+          <div class="relative flex items-center">
+            <div class="flex relative shrink-0">
+              <div class="flex items-center" data-testid="play-next-button">
+                <span class="group-hover:invisible visible w-[1.5rem]"
+                  ><svg
+                    role="img"
+                    height="16"
+                    width="16"
+                    viewBox="0 0 16 16"
+                    data-encore-id="icon"
+                  >
+                    <path
+                      fill="hsla(0,0%,100%,.7)"
+                      d="M10 2v9.5a2.75 2.75 0 1 1-2.75-2.75H8.5V2H10zm-1.5 8.25H7.25A1.25 1.25 0 1 0 8.5 11.5v-1.25z"
+                    ></path></svg></span
+                ><button
+                  @click="playTrack"
+                  class="absolute group-hover:visible invisible"
+                >
+                  <svg role="img" height="16" width="16" viewBox="0 0 24 24">
+                    <path
+                      fill="white"
+                      d="m7.05 3.606 13.49 7.788a.7.7 0 0 1 0 1.212L7.05 20.394A.7.7 0 0 1 6 19.788V4.212a.7.7 0 0 1 1.05-.606z"
+                    ></path>
+                  </svg>
+                </button>
+              </div>
+              <img
+                width="52"
+                height="52"
+                :src="nextQueue?.album?.images[0]?.url"
+              />
             </div>
-            <div class="flex flex-col overflow-x-hidden min-w-[4rem] pl-4">
+            <div
+              class="flex flex-col overflow-x-hidden min-w-[4rem] pl-4 gap-2"
+            >
               <div class="flex relative z-0">
                 <router-link
                   :to="{
                     name: 'album',
-                    params: { id: `${currentTrackAlbumID}` },
+                    params: { id: `${nextQueue?.album?.id}` },
                   }"
                   class="mb:text-[12px] sm3:text-[14px] text-white flex shrink-0 hover:underline font-semibold cursor-pointer"
                 >
-                  {{ currentTrackName }}
+                  {{ nextQueue?.name }}
                 </router-link>
               </div>
               <div class="flex relative z-0">
                 <router-link
-                  :class="
-                    currentTrackArtistsArr.length > 1 ? 'artist--name' : ''
-                  "
+                  :class="nextQueue?.artists.length > 1 ? 'artist--name' : ''"
                   class="text-[13px] text-lightest shrink-0 hover:underline hover:text-white"
-                  v-for="artist in currentTrackArtistsArr"
+                  v-for="artist in nextQueue?.artists"
                   :key="artist.id"
                   :to="{ name: 'artist', params: { id: `${artist.id}` } }"
                 >
                   {{
-                    currentTrackArtistsArr.length > 1
+                    nextQueue?.artists.length > 1
                       ? artist.name ===
-                        currentTrackArtistsArr[
-                          currentTrackArtistsArr.length - 1
-                        ].name
+                        nextQueue?.artists[nextQueue?.artists.length - 1].name
                         ? artist.name
                         : artist.name + ","
                       : artist.name
@@ -256,7 +303,7 @@
                 </router-link>
               </div>
             </div>
-          </disv>
+          </div>
         </div>
       </div>
     </div>
@@ -266,21 +313,13 @@
 <script>
 import axios from "axios";
 import AppSignUpPopUp from "../Cards/AppSignUpPopUp.vue";
-import { onBeforeMount } from "vue";
 
 export default {
   name: "Sidebar",
   components: { AppSignUpPopUp },
   props: ["toggleImg", "trackImgDisplay"],
   data() {
-    return {
-      containerHeight: 350,
-      dowloadAppHeight: "",
-      collectionPopup: false,
-      createPlaylistPopup: false,
-      favoriteSongsPopup: false,
-      visible: true,
-    };
+    return {};
   },
   methods: {
     async fetchFavArtists() {
@@ -363,6 +402,10 @@ export default {
         await this.fetchFavArtists();
       }
     },
+
+    playTrack() {
+      this.$store.dispatch("controller/skipToNextTrack");
+    },
   },
   computed: {
     isAuth() {
@@ -388,7 +431,7 @@ export default {
       return this.getCurrentlyPlayingTrack?.item?.artists[0]?.name;
     },
     currentArtist() {
-      return this.$store.getters["artists/getCurrentArtist"];
+      return this.$store.getters["controller/getTrackInfoCurrentArtist"];
     },
     artistImage() {
       return this.currentArtist?.images[0]?.url;
@@ -418,6 +461,24 @@ export default {
     },
     getQueueName() {
       return this.$store.getters["controller/getQueueName"];
+    },
+    contextName() {
+      return !this.getCurrentlyPlayingContextType
+        ? this.artistName
+        : this.getCurrentlyPlayingContextType !== "collection"
+        ? this.getQueueName
+        : "";
+    },
+    queueTrackList() {
+      return this.$store.getters["controller/getQueueTrackList"];
+    },
+    allQueueList() {
+      return this.$store.getters["controller/getAllQueueList"];
+    },
+    nextQueue() {
+      return this.queueTrackList.length
+        ? this.queueTrackList[0]
+        : this.allQueueList[0];
     },
     getCurrentTrack() {
       return this.$store.getters["controller/getCurrentlyPlayingTrack"];
