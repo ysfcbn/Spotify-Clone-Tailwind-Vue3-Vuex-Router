@@ -2,6 +2,32 @@
   <div
     class="flex text-lightest justify-end items-center min-w-[32%] shrink-0 mx-4"
   >
+    <div>
+      <button
+        @click="toggleCurTrackInfo"
+        id="trackInfo"
+        :style="{ '--visible': infoVisiblity }"
+        class="cursor-default relative"
+      >
+        <svg
+          class="hover:text-white"
+          role="img"
+          height="14"
+          width="14"
+          viewBox="0 0 16 16"
+        >
+          <path
+            :fill="trackInfo ? '#1FDF64' : 'currentColor'"
+            d="M11.196 8 6 5v6l5.196-3z"
+          ></path>
+          <path
+            :fill="trackInfo ? '#1FDF64' : 'currentColor'"
+            d="M15.002 1.75A1.75 1.75 0 0 0 13.252 0h-10.5a1.75 1.75 0 0 0-1.75 1.75v12.5c0 .966.783 1.75 1.75 1.75h10.5a1.75 1.75 0 0 0 1.75-1.75V1.75zm-1.75-.25a.25.25 0 0 1 .25.25v12.5a.25.25 0 0 1-.25.25h-10.5a.25.25 0 0 1-.25-.25V1.75a.25.25 0 0 1 .25-.25h10.5z"
+          ></path>
+        </svg>
+      </button>
+    </div>
+
     <div v-if="false">
       <button class="cursor-default">
         <svg
@@ -136,6 +162,7 @@ export default {
   name: "VolumeBar",
   data() {
     return {
+      trackInfo: false,
       queue: false,
       mute: false,
       lowVol: false,
@@ -149,14 +176,20 @@ export default {
     volumePercent() {
       return this.$store.getters["controller/getVolumePercent"];
     },
+    infoVisiblity() {
+      return this.trackInfo ? "visible" : "hidden";
+    },
     queueVisiblity() {
       return this.isQueuePage ? "visible" : "hidden";
     },
     isQueuePage() {
-      return this.$route.path === "/queue" ? true : false;
+      return this.$route.path === "/queue";
     },
   },
   methods: {
+    toggleCurTrackInfo() {
+      this.trackInfo = !this.trackInfo;
+    },
     toggleQueue() {
       if (this.isQueuePage) {
         this.$router.back();
@@ -218,6 +251,9 @@ export default {
       this.volumeLevel();
       this.percentVol = this.volumePercent;
     },
+    trackInfo(newVal, oldVal) {
+      this.$store.commit("controller/currentTrackInfo", newVal);
+    },
   },
   mounted() {
     this.volumeLevel();
@@ -231,6 +267,20 @@ export default {
 
 <style lang="scss" scoped>
 #queue::after {
+  content: "";
+  display: block;
+  position: absolute;
+  color: #1fdf64;
+  background-color: #1fdf64;
+  width: 4px;
+  height: 4px;
+  transform: translateX(-50%);
+  left: 50%;
+  margin-top: 4px;
+  border-radius: 100%;
+  visibility: var(--visible);
+}
+#trackInfo::after {
   content: "";
   display: block;
   position: absolute;
