@@ -1038,7 +1038,7 @@ export default {
 						this.getTopResult?.uri && this.getCurrentlyPlayingTrack?.is_playing
 				: this.getCurrentlyPlayingTrack?.item?.uri === this.getTopResult?.uri &&
 				  this.getCurrentlyPlayingTrack?.is_playing &&
-				  this.topResultType === 'track';
+				  !this.getCurrentlyPlayingTrack?.context;
 		},
 	},
 
