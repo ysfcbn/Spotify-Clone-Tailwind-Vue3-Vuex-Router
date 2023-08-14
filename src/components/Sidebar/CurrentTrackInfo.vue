@@ -3,7 +3,7 @@
 		:class="{
 			'relative  min-w-[15rem] max-w-[40rem] ': isAuth,
 		}"
-		class="infoContainer bg-gradient-to-b from-black to-black-50 mb:text-xs sm3:text-[13px] px-4 overflow-y-auto overflow-x-hidden"
+		class="infoContainer bg-dark1 mb:text-xs sm3:text-[13px] px-4 overflow-y-auto overflow-x-hidden"
 	>
 		<!-- Contextname -->
 		<div
@@ -42,7 +42,7 @@
 				</router-link>
 			</div>
 			<div
-				class="trackInfo2 text-lightest bg-black rounded-full relative flex shrink-0 left-10 w-[4rem]"
+				class="trackInfo2 text-lightest bg-dark1 rounded-full relative flex shrink-0 left-10 w-[4rem]"
 			>
 				<button
 					@click="closeCurrentTrackInfo"
@@ -567,7 +567,7 @@ export default {
 		top: -20px;
 		left: -14px;
 		background-image: linear-gradient(
-			(to left, rgba(8, 8, 8, 1) 15%, rgba(8, 8, 8, 0.1) 100%)
+			(to left, rgba(24, 24, 24, 1) 15%, rgba(24, 24, 24, 0.1) 100%)
 		);
 	}
 }
@@ -584,7 +584,7 @@ export default {
 		top: 0;
 		left: -18px;
 		background-image: linear-gradient(
-			(to left, rgba(1, 1, 1, 1) 15%, rgba(1, 1, 1, 0.1) 100%)
+			(to left, rgba(24, 24, 24, 1) 15%, rgba(24, 24, 24, 0.1) 100%)
 		);
 	}
 }
@@ -596,12 +596,12 @@ export default {
 		content: '';
 		position: absolute;
 		z-index: 10;
-		width: 25px;
+		width: 15px;
 		height: 100%;
 		top: 0;
 		right: 5px;
 		background-image: linear-gradient(
-			(to left, rgba(39, 39, 39, 0.8) 10%, rgba(39, 39, 39, 0.1) 100%)
+			(to left, rgba(50, 50, 50, 0.8) 25%, rgba(50, 50, 50, 0.1) 100%)
 		);
 	}
 }
@@ -610,7 +610,7 @@ export default {
 
 	&::before {
 		background-image: linear-gradient(
-			(to left, rgba(62, 62, 62, 0.8) 10%, rgba(62, 62, 62, 0.1) 100%)
+			(to left, rgba(69, 69, 69, 0.8) 25%, rgba(69, 69, 69, 0.1) 100%)
 		);
 	}
 }
