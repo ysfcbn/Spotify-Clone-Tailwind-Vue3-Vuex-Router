@@ -134,35 +134,20 @@ export default {
 			images: [
 				{
 					id: 0,
-<<<<<<< HEAD
-					description:
-						'Firstly, go this "https://developer.spotify.com/dashboard/" URL and click "Create app" button.',
-=======
 					description: `Firstly, go this "https://developer.spotify.com/dashboard" URL and click "Create app" button.`,
->>>>>>> dev
 					src: new URL(`../../assets/images/0.png`, import.meta.url).href,
 				},
 				{
 					id: 1,
-<<<<<<< HEAD
-					description: `This is most important part.
-						1) write in the first field <a>https://spotify-clone-vue3.vercel.app</a>
-						2) write in the second field <a>https://spotify-clone-vue3.vercel.app/login</a>`,
-=======
 					description: `1)write the application name to the first field
 						2) type "https://spotify-clone-vue3.vercel.app" in the third  field 
 						3) type "https://spotify-clone-vue3.vercel.app/login" in the fourth  field`,
->>>>>>> dev
 					src: new URL(`../../assets/images/1.png`, import.meta.url).href,
 				},
 				{
 					id: 2,
 					description:
-<<<<<<< HEAD
-						'After saving the application we created, click on the settigns button on the page that opens',
-=======
 						'After saving the application we created, click on the Settings button on the page that opens',
->>>>>>> dev
 					src: new URL(`../../assets/images/2.png`, import.meta.url).href,
 				},
 
@@ -224,68 +209,21 @@ export default {
 				  });
 		},
 
-		methods: {
-			closeModal(e) {
-				if (!this.$el.contains(e.target.closest('.modal'))) {
-					this.$emit('close');
-				}
-			},
-			currentImage(index) {
-				return this.images[index].src;
-			},
-			next() {
-				if (this.index <= 4) {
-					this.index++;
-					this.translateFrom = 'translateX(-50px)';
-					this.translateLeave = 'translateX(50px)';
-					this.changeImage();
-				}
-			},
-			prev() {
-				if (this.index >= 0) {
-					this.index--;
-					this.translateFrom = 'translateX(50px)';
-					this.translateLeave = 'translateX(-50px)';
-					this.changeImage();
-				}
-			},
-			changeImage() {
-				this.showImage = false;
-				setTimeout(() => {
-					this.showImage = true;
-				}, 100);
-			},
-			understand() {
-				this.showedAllInfo
-					? this.$emit('close')
-					: this.$store.dispatch('controller/modalInfoType', {
-							type: 'notUnderstand',
-					  });
-			},
-
-			jumpIndex(index) {
-				this.translateFrom = '';
-				this.translateLeave = '';
-				this.index = index;
-				this.changeImage();
-			},
+		jumpIndex(index) {
+			this.translateFrom = '';
+			this.translateLeave = '';
+			this.index = index;
+			this.changeImage();
 		},
-<<<<<<< HEAD
-		watch: {
-			index(newVal) {
-				newVal === 5 ? (this.showedAllInfo = true) : '';
-			},
-		},
-		mounted() {
-			console.log('how its work mounted');
-=======
 	},
 
 	watch: {
 		index(newVal) {
 			newVal === 4 ? (this.showedAllInfo = true) : '';
->>>>>>> dev
 		},
+	},
+	mounted() {
+		console.log('how its work mounted');
 	},
 };
 </script>
