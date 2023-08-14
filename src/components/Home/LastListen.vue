@@ -404,6 +404,8 @@ export default {
 	},
 
 	async created() {
+		this.playlistName2;
+		this.currentAlbumName;
 		if (this.contextType === 'playlist') {
 			await this.fetchPlaylist();
 		} else if (this.contextType === 'artist') {
