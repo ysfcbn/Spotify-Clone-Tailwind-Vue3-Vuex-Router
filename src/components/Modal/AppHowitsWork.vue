@@ -31,7 +31,7 @@
 						</div>
 
 						<div
-							v-show="index !== 5"
+							v-show="index !== 4"
 							class="z-30 flex justify-center items-center absolute right-[16px] h-full"
 						>
 							<button
@@ -134,38 +134,33 @@ export default {
 			images: [
 				{
 					id: 0,
-					description:
-						'Firstly, go this "https://developer.spotify.com/dashboard/" URL and click "CREATE ANN APP" button.',
+					description: `Firstly, go this "https://developer.spotify.com/dashboard" URL and click "Create app" button.`,
 					src: new URL(`../../assets/images/0.png`, import.meta.url).href,
 				},
 				{
 					id: 1,
-					description: 'Choose your App name and click "CREATE" button.',
+					description: `1)write the application name to the first field
+						2) type "https://spotify-clone-vue3.vercel.app" in the third  field 
+						3) type "https://spotify-clone-vue3.vercel.app/login" in the fourth  field`,
 					src: new URL(`../../assets/images/1.png`, import.meta.url).href,
 				},
 				{
 					id: 2,
 					description:
-						'On the screen that appears when you enter the application click "EDİT SETTİNGS" button.',
+						'After saving the application we created, click on the Settings button on the page that opens',
 					src: new URL(`../../assets/images/2.png`, import.meta.url).href,
 				},
+
 				{
 					id: 3,
-					description: `This is most important part.
-						1) write in the first field "https://spotify-clone-vue3.vercel.app"
-						2) write in the second field "https://spotify-clone-vue3.vercel.app/login"`,
+					description: 'Copy your Client ID',
 					src: new URL(`../../assets/images/3.png`, import.meta.url).href,
 				},
 				{
 					id: 4,
-					description: 'Dont forget to save changes',
-					src: new URL(`../../assets/images/4.png`, import.meta.url).href,
-				},
-				{
-					id: 5,
 					description:
-						'Finaly copy your client ID and paste first input field. Before logging in from this application, you must make sure that you are logged into the original spotify and keep it open as long as the application is running.',
-					src: new URL(`../../assets/images/5.png`, import.meta.url).href,
+						'Finally, paste the Client ID you copied into the first login field. Before logging in from this app, you should make sure you are logged in to the original spotify and keep it open as long as the app is running.',
+					src: new URL(`../../assets/images/4.png`, import.meta.url).href,
 				},
 			],
 			index: 0,
@@ -221,9 +216,10 @@ export default {
 			this.changeImage();
 		},
 	},
+
 	watch: {
 		index(newVal) {
-			newVal === 5 ? (this.showedAllInfo = true) : '';
+			newVal === 4 ? (this.showedAllInfo = true) : '';
 		},
 	},
 	mounted() {
