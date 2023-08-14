@@ -147,7 +147,11 @@
 
 				<!-- categoryType === 'all' Songs Section -->
 				<div
-					class="min-w-[25rem] lg1:col-span-6 sm:row-start-2 sm:col-span-full lg1:row-start-1"
+					:class="{
+						'lg4:col-span-6 lg4:row-start-1': !getCurrentTrackInfo,
+						'xl3:col-span-6 xl3:row-start-1': getCurrentTrackInfo,
+					}"
+					class="min-w-[30rem] sm:row-start-2 sm:col-span-full"
 				>
 					<h2 class="text-white pb-4 text-2xl font-semibold">Songs</h2>
 					<div class="relative flex h-full rounded-lg">
@@ -757,8 +761,11 @@ export default {
 			if (this.topResultType === 'artist' && this.isPlayingArtistTopTracks) {
 				await this.$store.dispatch('controller/pauseCurrentTrack');
 			} else if (
-				uri.uri === this.getCurrentlyPlayingTrack?.context?.uri &&
-				this.getCurrentlyPlayingTrack?.is_playing
+				(uri.uri === this.getCurrentlyPlayingTrack?.context?.uri &&
+					this.getCurrentlyPlayingTrack?.is_playing) ||
+				(this.topResultType === 'track' &&
+					this.getCurrentlyPlayingTrack?.item?.uri === this.getTopResult?.uri &&
+					this.getCurrentlyPlayingTrack?.is_playing)
 			) {
 				await this.$store.dispatch('controller/pauseCurrentTrack');
 			} else {
@@ -775,7 +782,6 @@ export default {
 					uri.name = this.currentAlbumName;
 				} else if ((await uri.type) === 'artist') {
 					this.typeOfSelectedSection = 'artist';
-
 					await this.fetchArtist(href);
 					await this.fetchArtistTopTracks(this.getTopResult?.id);
 					uri.id = this.artistTopTracks[this.currentPlayingTrackIndex]?.id;
@@ -901,6 +907,9 @@ export default {
 			return this.$store.getters['episodes/getFavEpisodes'].items;
 		},
 
+		getCurrentTrackInfo() {
+			return this.$store.getters['controller/getCurrentTrackInfo'];
+		},
 		getSearchCategoryType() {
 			return this.$store.getters['searchItem/getSearchCategoryType'];
 		},

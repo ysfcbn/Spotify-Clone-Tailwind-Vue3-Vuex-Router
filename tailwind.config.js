@@ -13,9 +13,11 @@ module.exports = {
 			lg2: '1028px',
 			lg1: '1060px',
 			lg3: '1278px',
+			lg4: '1140px',
 			xl: '1360px',
 			xl1: '1460px',
 			xl2: '1793px',
+			xl3: '1490px',
 		},
 		fontFamily: 'Proxima Nova',
 		container: {
