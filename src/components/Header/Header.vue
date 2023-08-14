@@ -4,10 +4,10 @@
 		:class="{
 			'home-not-auth--intersec-bg1': !isAuth,
 		}"
-		class="h-[64px] z-[60] w-full top-0 shrink sticky"
+		class="h-[64px] z-[60] w-full top-0 itex-center sticky"
 	>
 		<div
-			class="z-70 relative flex items-center justify-between mb:text-xs md:text-sm bg-transparent lg:pl-[1rem]"
+			class="z-70 relative flex w-full items-center justify-between mb:text-xs md:text-sm bg-transparent lg:pl-[1rem]"
 		>
 			<div
 				:class="{ truncate: isAuth && !isNavVisible }"
@@ -236,7 +236,7 @@
 
 				<div
 					v-show="isSearchVisible"
-					class="flex items-center justify-start w-full px-4"
+					class="flex items-center w-[22.8rem] shrink-1 px-4"
 				>
 					<div class="w-full z-10 relative">
 						<form>
@@ -244,7 +244,7 @@
 								placeholder="What do you want to listen to ?"
 								type="text"
 								ref="input"
-								class="w-[22.8rem] h-[3rem] rounded-full p-[10px] px-12 bg-light/70 text-white hover:bg-light focus:outline-white"
+								class="w-[100%] h-[3rem] rounded-full p-[10px] px-12 bg-light/70 text-white hover:bg-light focus:outline-white"
 								v-model="inputField"
 							/>
 						</form>

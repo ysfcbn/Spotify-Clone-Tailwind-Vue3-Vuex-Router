@@ -233,6 +233,21 @@ export default {
 				})
 				.catch(err => console.log(err));
 		},
+		async fetchTrack(href) {
+			return await axios
+				.get(href, {
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+						Authorization: 'Bearer ' + this.getToken,
+					},
+				})
+				.then(({ data }) => {
+					console.log(data);
+					this.$store.dispatch('albums/currentTrack', data);
+				})
+				.catch(err => console.log(err));
+		},
 		async playArtistTopTracks(uri) {
 			this.typeOfSelectedSection = 'artist';
 			console.log(uri);
@@ -325,10 +340,17 @@ export default {
 					await this.fetchAlbum(href);
 					uri.id = this.currentAlbumTracks[this.currentPlayingTrackIndex]?.id;
 					uri.name = this.currentAlbumName;
+				} else if ((await uri.type) === 'track') {
+					await this.fetchTrack(href);
+					uri.id = this.getTopResult?.id;
 				}
 				uri.index = this.currentPlayingTrackIndex;
 				console.log(uri);
-				await this.$store.dispatch('controller/playSelectedContext', uri);
+				uri.type === 'track'
+					? await this.$store.dispatch('controller/playSelectedTrack', uri)
+					: uri.type !== 'artist'
+					? await this.$store.dispatch('controller/playSelectedContext', uri)
+					: '';
 			}
 		},
 		currentReleaseDate(date = 0, isAlbum = false) {
@@ -453,10 +475,11 @@ export default {
 			return this.$store.getters['controller/isArtistContext'];
 		},
 		isPlayingContextUri() {
-			return (
-				this.getCurrentlyPlayingTrack?.context?.uri === this.contextUri &&
-				this.getCurrentlyPlayingTrack?.is_playing
-			);
+			return this.contextType === 'track'
+				? !this.getCurrentlyPlayingTrack?.context &&
+						this.getCurrentlyPlayingTrack?.is_playing
+				: this.getCurrentlyPlayingTrack?.context?.uri === this.contextUri &&
+						this.getCurrentlyPlayingTrack?.is_playing;
 		},
 		getMonths() {
 			return this.$store.getters['controller/getMonths'];

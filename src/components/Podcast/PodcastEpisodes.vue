@@ -140,7 +140,9 @@
 						</div>
 
 						<div
-							v-else-if="ifPlayed && podcastShowPage"
+							v-else-if="
+								(ifPlayed && podcastShowPage) || (searchResult && ifPlayed)
+							"
 							class="before:content-['·'] before:px-1 pr-2 flex items-center"
 						>
 							<span class="px-2">Played</span>
