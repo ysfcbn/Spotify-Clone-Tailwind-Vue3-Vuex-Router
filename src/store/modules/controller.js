@@ -677,14 +677,15 @@ const controllerModule = {
 						commit('clearLastProgressMS');
 						dispatch('setIntervalFunc');
 						console.log('skipped to Next Track!');
-
-						dispatch('userQueue');
-						dispatch('userQueue').then(() => {
-							if (state.queueTrackList.length) {
-								state.queueTrackList.shift();
-								state.allQueueList.splice(0, state.queueTrackList.length);
-							}
-						});
+						if (state.allQueueList.length) {
+							dispatch('userQueue');
+							dispatch('userQueue').then(() => {
+								if (state.queueTrackList.length) {
+									state.queueTrackList.shift();
+									state.allQueueList.splice(0, state.queueTrackList.length);
+								}
+							});
+						}
 					}
 				})
 				.catch(err => console.log(err));
