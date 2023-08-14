@@ -706,12 +706,15 @@ const controllerModule = {
 					console.log(data);
 					if (data.status === 204) {
 						console.log('skipped to Previous Track!');
-						dispatch('userQueue');
+
 						dispatch('fetchCurrentlyPlayingTrack');
 						dispatch('fetchCurrentlyPlayingTrack');
 						dispatch('clearIntervalFunc');
 						commit('clearLastProgressMS');
 						dispatch('setIntervalFunc');
+						if (state.allQueueList.length) {
+							dispatch('userQueue');
+						}
 					}
 				})
 				.catch(err => console.log(err));

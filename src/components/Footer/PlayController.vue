@@ -289,9 +289,7 @@ export default {
 		currentPlayingTrackID() {
 			return this.$store.getters['controller/currentTrackID'];
 		},
-		allQueueListLength() {
-			return this.$store.getters['controller/getAllQueueList'].length;
-		},
+
 		currentTrackUri() {
 			return this.getCurrentlyPlayingTrack?.context.uri;
 		},
@@ -344,9 +342,7 @@ export default {
 				: this.$store.dispatch('controller/playCurrentTrack');
 		},
 		async skipToNextTrack() {
-			this.allQueueListLength
-				? await this.$store.dispatch('controller/skipToNextTrack')
-				: '';
+			await this.$store.dispatch('controller/skipToNextTrack');
 		},
 		async skipToPrevTrack() {
 			await this.$store.dispatch('controller/skipToPrevTrack');
