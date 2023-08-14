@@ -135,18 +135,20 @@ export default {
 				{
 					id: 0,
 					description:
-						'Firstly, go this "https://developer.spotify.com/dashboard/" URL and click "CREATE ANN APP" button.',
+						'Firstly, go this "https://developer.spotify.com/dashboard/" URL and click "Create app" button.',
 					src: new URL(`../../assets/images/0.png`, import.meta.url).href,
 				},
 				{
 					id: 1,
-					description: 'Choose your App name and click "CREATE" button.',
+					description: `This is most important part.
+						1) write in the first field <a href="https://spotify-clone-vue3.vercel.app">https://spotify-clone-vue3.vercel.app</a>
+						2) write in the second field <a href="https://spotify-clone-vue3.vercel.app/login">https://spotify-clone-vue3.vercel.app/login</a>`,
 					src: new URL(`../../assets/images/1.png`, import.meta.url).href,
 				},
 				{
 					id: 2,
 					description:
-						'On the screen that appears when you enter the application click "EDİT SETTİNGS" button.',
+						'After saving the application we created, click on the settigns button on the page that opens',
 					src: new URL(`../../assets/images/2.png`, import.meta.url).href,
 				},
 				{
@@ -213,57 +215,7 @@ export default {
 						type: 'notUnderstand',
 				  });
 		},
-		emits: ['close'],
-		props: ['showModal', 'showModalContainer'],
-		data() {
-			return {
-				leftClick: false,
-				images: [
-					{
-						id: 0,
-						description:
-							'Firstly, go this "https://developer.spotify.com/dashboard/" URL and click "Create app" button.',
-						src: new URL(`../../assets/images/0.png`, import.meta.url).href,
-					},
-					{
-						id: 1,
-						description: `This is most important part.
-						1) write in the first field <a href="https://spotify-clone-vue3.vercel.app">https://spotify-clone-vue3.vercel.app</a>
-						2) write in the second field <a href="https://spotify-clone-vue3.vercel.app/login">https://spotify-clone-vue3.vercel.app/login</a>`,
-						src: new URL(`../../assets/images/1.png`, import.meta.url).href,
-					},
-					{
-						id: 2,
-						description:
-							'After saving the application we created, click on the settigns button on the page that opens',
-						src: new URL(`../../assets/images/2.png`, import.meta.url).href,
-					},
-					{
-						id: 3,
-						description: `This is most important part.
-						1) write in the first field "https://spotify-clone-vue3.vercel.app"
-						2) write in the second field "https://spotify-clone-vue3.vercel.app/login"`,
-						src: new URL(`../../assets/images/3.png`, import.meta.url).href,
-					},
-					{
-						id: 4,
-						description: 'Dont forget to save changes',
-						src: new URL(`../../assets/images/4.png`, import.meta.url).href,
-					},
-					{
-						id: 5,
-						description:
-							'Finaly copy your client ID and paste first input field. Before logging in from this application, you must make sure that you are logged into the original spotify and keep it open as long as the application is running.',
-						src: new URL(`../../assets/images/5.png`, import.meta.url).href,
-					},
-				],
-				index: 0,
-				translateFrom: '',
-				translateLeave: '',
-				showImage: true,
-				showedAllInfo: false,
-			};
-		},
+
 		methods: {
 			closeModal(e) {
 				if (!this.$el.contains(e.target.closest('.modal'))) {
