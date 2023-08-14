@@ -259,6 +259,7 @@ export default {
 					) {
 						uri.id =
 							this.currentPlaylist[this.currentPlayingTrackIndex]?.track.id;
+						uri.name = this.playlistName2;
 					}
 				} else if ((await uri.type) === 'album') {
 					this.typeOfSelectedSection = 'album';
@@ -268,6 +269,7 @@ export default {
 						this.typeOfSelectedSection
 					) {
 						uri.id = this.currentAlbumTracks[this.currentPlayingTrackIndex]?.id;
+						uri.name = this.currentAlbumName;
 					}
 				}
 				uri.index = this.currentPlayingTrackIndex;
@@ -311,11 +313,23 @@ export default {
 				? this.item.track.image
 				: '';
 		},
+		getCurrentAlbum() {
+			return this.$store.getters['albums/getAlbum'];
+		},
 		currentAlbumTracks() {
-			return this.$store.getters['albums/getAlbum']?.tracks?.items;
+			return this.getCurrentAlbum?.tracks?.items;
+		},
+		currentAlbumName() {
+			return this.getCurrentAlbum?.name;
+		},
+		getCurrentPlaylist() {
+			return this.$store.getters['playlists/getPlaylist'];
 		},
 		currentPlaylist() {
-			return this.$store.getters['playlists/getPlaylist']?.tracks?.items;
+			return this.getCurrentPlaylist?.tracks?.items;
+		},
+		playlistName2() {
+			return this.getCurrentPlaylist?.name;
 		},
 		currentArtist() {
 			return this.$store.getters['artists/getCurrentArtist'];

@@ -706,7 +706,6 @@ const controllerModule = {
 					console.log(data);
 					if (data.status === 204) {
 						console.log('skipped to Previous Track!');
-
 						dispatch('fetchCurrentlyPlayingTrack');
 						dispatch('fetchCurrentlyPlayingTrack');
 						dispatch('clearIntervalFunc');
