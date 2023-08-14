@@ -222,18 +222,20 @@ export default {
 					{
 						id: 0,
 						description:
-							'Firstly, go this "https://developer.spotify.com/dashboard/" URL and click "CREATE ANN APP" button.',
+							'Firstly, go this "https://developer.spotify.com/dashboard/" URL and click "Create app" button.',
 						src: new URL(`../../assets/images/0.png`, import.meta.url).href,
 					},
 					{
 						id: 1,
-						description: 'Choose your App name and click "CREATE" button.',
+						description: `This is most important part.
+						1) write in the first field <a href="https://spotify-clone-vue3.vercel.app">https://spotify-clone-vue3.vercel.app</a>
+						2) write in the second field <a href="https://spotify-clone-vue3.vercel.app/login">https://spotify-clone-vue3.vercel.app/login</a>`,
 						src: new URL(`../../assets/images/1.png`, import.meta.url).href,
 					},
 					{
 						id: 2,
 						description:
-							'On the screen that appears when you enter the application click "EDİT SETTİNGS" button.',
+							'After saving the application we created, click on the settigns button on the page that opens',
 						src: new URL(`../../assets/images/2.png`, import.meta.url).href,
 					},
 					{
