@@ -225,14 +225,14 @@
 				<div
 					v-if="allQueueList.length"
 					style="font-weight: 700"
-					class="flex items-center justify-between h-[2rem] text-[15px] p-2 h-[3.5rem]"
+					class="flex items-center justify-between h-[2rem] text-[15px] p-2 h-[3.2rem]"
 				>
 					<span class="text-white">Next in queue</span>
 					<router-link
 						style="font-weight: 700"
 						:to="{ name: 'queue' }"
 						key="2"
-						class="text-[13px] text-lightest self-center hover:text-white hover:underline hover:scale-[1.03] w-[5.5rem]"
+						class="text-[13px] text-lightest self-center hover:text-white hover:underline hover:scale-[1.03] w-[4.8rem]"
 						>Open queue</router-link
 					>
 				</div>
