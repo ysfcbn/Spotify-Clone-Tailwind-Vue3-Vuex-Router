@@ -200,6 +200,7 @@
 					:track="track"
 					:trackID="track?.id"
 					:contextType="contextType"
+					:contextName="currentPlaylist.name"
 					:index="i"
 					:playlistPage="playlistPage"
 					:margin="margin"
