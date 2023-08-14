@@ -141,8 +141,8 @@ export default {
 				{
 					id: 1,
 					description: `This is most important part.
-						1) write in the first field <a href="https://spotify-clone-vue3.vercel.app">https://spotify-clone-vue3.vercel.app</a>
-						2) write in the second field <a href="https://spotify-clone-vue3.vercel.app/login">https://spotify-clone-vue3.vercel.app/login</a>`,
+						1) write in the first field <a>https://spotify-clone-vue3.vercel.app</a>
+						2) write in the second field <a>https://spotify-clone-vue3.vercel.app/login</a>`,
 					src: new URL(`../../assets/images/1.png`, import.meta.url).href,
 				},
 				{
