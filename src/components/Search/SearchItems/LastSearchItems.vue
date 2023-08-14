@@ -318,11 +318,13 @@ export default {
 					this.typeOfSelectedSection = 'playlist';
 					uri.id =
 						this.currentPlaylist[this.currentPlayingTrackIndex]?.track.id;
+					uri.name = this.currentPlaylistName;
 				} else if ((await uri.type) === 'album') {
 					this.typeOfSelectedSection = 'album';
-					console.log(href);
+
 					await this.fetchAlbum(href);
 					uri.id = this.currentAlbumTracks[this.currentPlayingTrackIndex]?.id;
+					uri.name = this.currentAlbumName;
 				}
 				uri.index = this.currentPlayingTrackIndex;
 				console.log(uri);
@@ -393,8 +395,14 @@ export default {
 		currentAlbumTracks() {
 			return this.$store.getters['albums/getAlbum']?.tracks?.items;
 		},
+		currentAlbumName() {
+			return this.$store.getters['albums/getAlbum']?.name;
+		},
 		currentPlaylist() {
 			return this.$store.getters['playlists/getPlaylist']?.tracks?.items;
+		},
+		currentPlaylistName() {
+			return this.$store.getters['playlists/getPlaylist']?.name;
 		},
 		artistTopTracks() {
 			return this.$store.getters['artists/getTopTracks'];

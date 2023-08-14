@@ -291,7 +291,6 @@ export default {
 					if (!this.item.context) {
 						await this.fetchAlbum(this.item.track.album.href);
 						uri.name = this.item.track.album.name;
-						console.log('ITEM ÇALIYOR');
 					} else {
 						await this.fetchAlbum(href);
 						uri.name = this.currentAlbumName;

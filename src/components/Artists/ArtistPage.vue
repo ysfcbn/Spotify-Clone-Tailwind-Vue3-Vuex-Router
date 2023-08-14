@@ -436,7 +436,7 @@
 								class="absolute bottom-0 p-[40px] text-white max-w-[672px] h-[11rem] box-border"
 							>
 								<div class="text-[1rem] text-left font-semibold">
-									Aylık {{ currentArtist?.followers?.total }} dinleyici
+									Monthly {{ currentArtistMonthlyListeners }} listeners
 								</div>
 								<div
 									class="mt-[8px] h-[4.5rem] text-justify overflow-hidden line-clamp-3"

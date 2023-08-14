@@ -1,5 +1,5 @@
 <template>
-	<section class="p-5 lg:ml-[1rem] h-full">
+	<section v-if="allQueueList.length" class="p-5 lg:ml-[1rem] h-full">
 		<div class="text-white text-lg flex flex-col gap-y-5">
 			<h1 style="font-weight: 700" class="text-2xl">Queue</h1>
 			<h2 style="font-weight: 700" class="text-lightest/80 text-[14px]">
@@ -109,10 +109,22 @@
 		</div>
 		<div class="mt-[0.5rem] h-full">
 			<h2 style="font-weight: 700" class="text-lightest/80 mb-4 text-[14px]">
-				<span v-if="getCurrentlyPlayingContextType === 'collection'"
-					>Next up</span
+				<span v-if="!getCurrentlyPlayingContextType" class="flex gap-x-2 w-full"
+					>Next from:
+					<router-link
+						class="hover:text-white hover:underline"
+						:key="getCurrentlyPlayingContextType"
+						:to="{
+							name: `artist`,
+							params: { id: `${contextTypeID}` },
+						}"
+					>
+						{{ contextName }}</router-link
+					></span
 				>
-				<span v-else class="flex gap-x-2 w-full"
+				<span
+					v-else-if="getCurrentlyPlayingContextType !== 'collection'"
+					class="flex gap-x-2 w-full"
 					>Next from:
 					<router-link
 						class="hover:text-white hover:underline"
@@ -125,6 +137,7 @@
 						{{ getQueueName }}</router-link
 					></span
 				>
+				<span v-else>Next up</span>
 			</h2>
 			<TrackItems
 				v-for="(track, i) in allQueueList"
@@ -172,6 +185,12 @@
 			</TrackItems>
 		</div>
 	</section>
+	<section
+		v-else
+		class="text-white text-3xl flex items-center justify-center h-screen w-full"
+	>
+		Queue Yohhhh
+	</section>
 </template>
 
 <script>
@@ -206,17 +225,28 @@ export default {
 				?.type;
 		},
 
+		currentArtist() {
+			return this.$store.getters['controller/getTrackInfoCurrentArtist'];
+		},
 		contextTypeID() {
 			return this.getCurrentlyPlayingContextType === 'album'
-				? this.getcurrentlyPlayingQueue?.album?.id
+				? this.getCurrentlyPlayingTrack?.item?.album?.id
 				: this.getCurrentlyPlayingContextType === 'playlist'
 				? this.getCurrentlyPlayingTrack?.context?.uri.split(':')[2]
+				: !this.getCurrentlyPlayingContextType
+				? this.currentArtist?.id
 				: '';
 		},
 		getQueueName() {
 			return this.$store.getters['controller/getQueueName'];
 		},
-
+		contextName() {
+			return !this.getCurrentlyPlayingContextType
+				? this.currentArtist?.name
+				: this.getCurrentlyPlayingContextType !== 'collection'
+				? this.getQueueName
+				: '';
+		},
 		getcurrentlyPlayingQueue() {
 			return this.$store.getters['controller/getUserQueue']?.currently_playing;
 		},
