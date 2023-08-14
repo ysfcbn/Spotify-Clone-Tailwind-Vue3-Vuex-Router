@@ -713,6 +713,7 @@ const controllerModule = {
 						dispatch('setIntervalFunc');
 						if (state.allQueueList.length) {
 							dispatch('userQueue');
+							dispatch('userQueue');
 						}
 					}
 				})
