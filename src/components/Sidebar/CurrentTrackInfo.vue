@@ -45,7 +45,7 @@
 				class="trackInfo2 text-lightest bg-black rounded-full relative flex shrink-0 left-10 w-[4rem]"
 			>
 				<button
-					@click="closeTrack(msg, $event)"
+					@click="closeCurrentTrackInfo"
 					class="close--button p-[5px] hover:bg-white/20 rounded-full hover:scale-110 text-white/80 transition ease-in duration-100 z-20"
 				>
 					<svg role="img" height="14" width="14" viewBox="0 0 16 16" class="">
@@ -426,6 +426,9 @@ export default {
 		playTrack() {
 			this.$store.dispatch('controller/skipToNextTrack');
 		},
+		closeCurrentTrackInfo() {
+			this.$store.commit('controller/currentTrackInfo', false);
+		},
 	},
 	computed: {
 		isAuth() {
@@ -564,7 +567,7 @@ export default {
 		top: -20px;
 		left: -14px;
 		background-image: linear-gradient(
-			(to left, rgba(11, 11, 11, 1) 15%, rgba(11, 11, 11, 0.1) 100%)
+			(to left, rgba(8, 8, 8, 1) 15%, rgba(8, 8, 8, 0.1) 100%)
 		);
 	}
 }
@@ -581,7 +584,7 @@ export default {
 		top: 0;
 		left: -18px;
 		background-image: linear-gradient(
-			(to left, rgba(4, 4, 4, 1) 15%, rgba(4, 4, 4, 0.1) 100%)
+			(to left, rgba(1, 1, 1, 1) 15%, rgba(1, 1, 1, 0.1) 100%)
 		);
 	}
 }
