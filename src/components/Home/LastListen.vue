@@ -259,7 +259,7 @@ export default {
 					) {
 						uri.id =
 							this.currentPlaylist[this.currentPlayingTrackIndex]?.track.id;
-						this.$store.commit('controller/queueName', this.playlistName2);
+						this.$store.commit('controller/queueName', this.contextName);
 					}
 				} else if ((await uri.type) === 'album') {
 					this.typeOfSelectedSection = 'album';
