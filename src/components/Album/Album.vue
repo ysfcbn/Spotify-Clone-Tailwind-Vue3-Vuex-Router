@@ -185,6 +185,7 @@
 					:track="item"
 					:trackID="item.id"
 					:contextType="contextType"
+					:contextName="currentAlbum.name"
 					:index="i"
 					:albumPage="albumPage"
 					:margin="margin"

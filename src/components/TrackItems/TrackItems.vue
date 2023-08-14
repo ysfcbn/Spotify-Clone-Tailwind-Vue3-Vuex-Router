@@ -266,6 +266,7 @@ export default {
 		'track',
 		'trackID',
 		'contextType',
+		'contextName',
 		'artistPage',
 		'searchResult',
 		'searchResult2',
@@ -399,6 +400,7 @@ export default {
 					);
 				} else {
 					contextUri.type = this.contextType;
+					contextUri.name = this.contextName;
 					await this.$store.dispatch(
 						'controller/playSelectedContext',
 						contextUri
