@@ -327,6 +327,12 @@ export default {
 		async playContextUri(uri, href) {
 			if (this.isPlayingContextUri) {
 				await this.$store.dispatch('controller/pauseCurrentTrack');
+			} else if (
+				this.contextType === 'track' &&
+				this.currentTrackID === this.item?.uri &&
+				this.getCurrentlyPlayingTrack?.is_playing
+			) {
+				await this.$store.dispatch('controller/pauseCurrentTrack');
 			} else {
 				if ((await uri.type) === 'playlist') {
 					await this.fetchPlaylist(href);
@@ -342,7 +348,7 @@ export default {
 					uri.name = this.currentAlbumName;
 				} else if ((await uri.type) === 'track') {
 					await this.fetchTrack(href);
-					uri.id = this.getTopResult?.id;
+					uri.id = this.item?.id;
 				}
 				uri.index = this.currentPlayingTrackIndex;
 				console.log(uri);
@@ -477,6 +483,7 @@ export default {
 		isPlayingContextUri() {
 			return this.contextType === 'track'
 				? !this.getCurrentlyPlayingTrack?.context &&
+						this.currentTrackID === this.item.id &&
 						this.getCurrentlyPlayingTrack?.is_playing
 				: this.getCurrentlyPlayingTrack?.context?.uri === this.contextUri &&
 						this.getCurrentlyPlayingTrack?.is_playing;
