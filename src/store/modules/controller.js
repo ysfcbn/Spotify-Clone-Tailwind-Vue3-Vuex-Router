@@ -897,7 +897,7 @@ const controllerModule = {
 		getTrackInfoCurrentArtist(state) {
 			return state.trackInfoCurrentArtist;
 		},
-		getCurrentTrackInfo(state) {
+		get(state) {
 			return state.currentTrackInfo;
 		},
 		isPlayingHeaderBtn(state) {
