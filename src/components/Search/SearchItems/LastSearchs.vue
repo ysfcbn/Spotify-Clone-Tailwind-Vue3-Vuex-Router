@@ -36,9 +36,7 @@ export default {
   data() {
     return {
       observer: "",
-      lastSeachEl: "",
       searches: [],
-      uniqID: [],
     };
   },
   methods: {
@@ -62,9 +60,12 @@ export default {
   created() {
     console.log("LastSearch Mounted");
     this.header = document.getElementById("header");
-    JSON.parse(localStorage.getItem("searchedItem"))
-      ? (this.searches = JSON.parse(localStorage.getItem("searchedItem")))
-      : (this.searches = this.getSearchedItem);
+    if (JSON.parse(localStorage.getItem("searchedItem"))) {
+      this.searches = JSON.parse(localStorage.getItem("searchedItem"));
+      this.searches.forEach((item) =>
+        this.$store.dispatch("searchItem/searchedItem", { item, storage: true })
+      );
+    } else this.searches = this.getSearchedItem;
 
     if (this.searches.length) {
       setTimeout(() => {
