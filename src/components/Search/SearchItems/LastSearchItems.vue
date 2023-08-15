@@ -24,7 +24,8 @@
 						getCurrentlyPlayingTrack?.item?.artists[0].id === item?.id &&
 						getCurrentlyPlayingTrack?.is_playing &&
 						!getCurrentlyPlayingTrack?.context &&
-						isArtistContext
+						isArtistContext &&
+						contextType === 'artist'
 							? 'opacity-100 translate-y-[-0.4rem]'
 							: 'opacity-0'
 					"
