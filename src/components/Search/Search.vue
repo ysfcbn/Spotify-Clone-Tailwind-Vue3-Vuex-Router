@@ -92,12 +92,12 @@ export default {
 
 		this.observer = new IntersectionObserver(entries => {
 			this.header.classList.toggle(
-				'search-intersec-bg1',
+				'base-intersec-bg1',
 				entries[0].intersectionRatio <= 0.95
 			);
 
-			this.header.classList.toggle(
-				'search-intersec-bg2',
+			this.header.classList.add(
+				'base-intersec-bg2',
 				entries[0].intersectionRatio <= 0.7
 			);
 		}, this.options);
@@ -109,8 +109,8 @@ export default {
 		console.log('search Unmounted!');
 		if (!this.isAuth) return;
 		this.observer.unobserve(this.seachEl);
-		this.header.classList.remove('search-intersec-bg1');
-		this.header.classList.remove('search-intersec-bg2');
+		this.header.classList.remove('base-intersec-bg1');
+		this.header.classList.remove('base-intersec-bg2');
 	},
 };
 </script>

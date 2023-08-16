@@ -1,8 +1,9 @@
 <template>
 	<div
 		role="row"
-		class="track--container group grid grid-rows-0 border border-transparent h-[50px] hover:bg-light shrink px-1 rounded-md gap-3"
+		class="track--container group grid grid-rows-0 border border-transparent hover:bg-light h-[50px] shrink px-1 rounded-md gap-3"
 		:class="{
+			'h-[55px]': searchResult,
 			relative: !artistPage,
 			activeTrack: trackOptions,
 			activeTrack: active,
@@ -340,6 +341,7 @@ export default {
 		currentTrackID() {
 			return this.$store.getters['controller/currentTrackID'];
 		},
+
 		isPlaying() {
 			return this.contextType === 'artist'
 				? this.currentTrackID === this.trackID &&

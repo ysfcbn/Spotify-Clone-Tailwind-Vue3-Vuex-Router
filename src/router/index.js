@@ -32,9 +32,9 @@ const router = createRouter({
 			component: () => import('../components/Search/SearchResult.vue'),
 		},
 		{
-			name: 'playlists',
+			name: 'library',
 			path: '/collection/playlists',
-			component: () => import('../components/Collection/Playlists.vue'),
+			component: () => import('../components/Collection/Library.vue'),
 		},
 		{
 			name: 'podcasts',
