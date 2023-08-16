@@ -145,7 +145,7 @@ export default {
 			this.diskoHeader = document.getElementById('diskoHeader');
 			this.CardEl = document.getElementById('cardIntersect');
 
-			this.header.classList.remove('disko-intersec-bg1');
+			this.header.classList.remove('base-intersec-bg2');
 			this.diskoHeader.classList.remove('list--view-intersect');
 
 			this.options = {
@@ -155,11 +155,11 @@ export default {
 
 			this.observer = new IntersectionObserver((entries, obs) => {
 				if (entries[0].intersectionRatio <= 0.5) {
-					this.header.classList.add('disko-intersec-bg1');
+					this.header.classList.add('base-intersec-bg2');
 
 					this.diskoHeader.classList.add('list--view-intersect');
 				} else {
-					this.header.classList.remove('disko-intersec-bg1');
+					this.header.classList.remove('base-intersec-bg2');
 
 					this.diskoHeader.classList.remove('list--view-intersect');
 				}
@@ -170,7 +170,7 @@ export default {
 	},
 	beforeUnmount() {
 		this.observer.unobserve(this.CardEl);
-		this.header.classList.remove('disko-intersec-bg1');
+		this.header.classList.remove('base-intersec-bg2');
 		this.diskoHeader.classList.remove('list--view-intersect');
 	},
 };

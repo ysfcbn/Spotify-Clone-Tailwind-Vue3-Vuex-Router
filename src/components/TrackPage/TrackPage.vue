@@ -931,7 +931,7 @@ export default {
 		this.observer = new IntersectionObserver(entries => {
 			console.log(entries);
 			this.header.classList.toggle(
-				'trackPage-intersec-bg1',
+				'base-intersec-bg1',
 				entries[0].intersectionRatio <= 0.5
 			);
 
@@ -946,7 +946,7 @@ export default {
 	beforeUnmount() {
 		this.TrackPage = false;
 		if (!this.TrackEl) return;
-		this.header.classList.remove('trackPage-intersec-bg1');
+		this.header.classList.remove('base-intersec-bg1');
 		this.observer.unobserve(this.TrackEl);
 	},
 	unmounted() {

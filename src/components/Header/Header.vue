@@ -7,7 +7,7 @@
 		class="h-[64px] z-[60] w-full top-0 itex-center sticky"
 	>
 		<div
-			class="z-70 relative flex w-full items-center justify-between mb:text-xs md:text-sm bg-transparent lg:pl-[1rem]"
+			class="z-70 relative flex w-full items-center justify-between mb:text-xs md:text-sm lg:pl-[1rem]"
 		>
 			<div
 				:class="{ truncate: isAuth && !isNavVisible }"
@@ -720,22 +720,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-#header {
-	&::before {
-		content: '';
-		position: absolute;
-		z-index: 0;
-		top: 0;
-		left: 0;
-		bottom: 0;
-		width: 100%;
-		height: 100%;
-		background-size: cover;
-		background-position: top;
-		background-color: var(--bgAlbumImage);
-		backdrop-filter: blur(5px);
-	}
-}
 a.active {
 	background-color: #333333;
 }
@@ -753,74 +737,17 @@ a.active2 {
 .fav-songs-intersec-bg2 {
 	background-color: rgb(36, 22, 73) !important;
 }
-
-.profile-intersec-bg1 {
-	background-color: rgba(33, 33, 33, 0.7) !important;
-}
-.profile-intersec-bg2 {
-	background-color: rgb(33, 33, 33) !important;
-}
-
-.home-not-auth--intersec-bg1 {
-	background-color: rgba(7, 7, 7, 0.5) !important;
-}
-.home-not-auth--intersec-bg2 {
-	background-color: rgba(7, 7, 7, 0.8) !important;
-}
-.home-not-auth--intersec-bg3 {
-	background-color: rgba(7, 7, 7, 1) !important;
-}
-
 .home-intersec-bg1 {
 	background-color: rgba(36, 22, 73, 0.8) !important;
 }
 .home-intersec-bg2 {
 	background-color: rgb(36, 22, 73) !important;
 }
-.trackPage-intersec-bg1 {
-	background-color: #121212 !important;
+.profile-intersec-bg1 {
+	background-color: rgba(33, 33, 33, 0.7) !important;
 }
-
-.librarySec-intersec-bg1 {
-	background-color: rgba(7, 7, 7, 0.7) !important;
-}
-.librarySec-intersec-bg2 {
-	background-color: rgb(7, 7, 7) !important;
-}
-
-.librarySec2-intersec-bg1 {
-	background-color: rgba(7, 7, 7, 0.7) !important;
-}
-.librarySec2-intersec-bg2 {
-	background-color: rgb(7, 7, 7) !important;
-}
-
-.librarySec3-intersec-bg1 {
-	background-color: rgba(7, 7, 7, 0.7) !important;
-}
-.librarySec3-intersec-bg2 {
-	background-color: rgb(7, 7, 7) !important;
-}
-
-.librarySec4-intersec-bg1 {
-	background-color: rgba(7, 7, 7, 0.7) !important;
-}
-.librarySec4-intersec-bg2 {
-	background-color: rgb(7, 7, 7) !important;
-}
-
-.search-intersec-bg1 {
-	background-color: rgba(7, 7, 7, 0.7) !important;
-}
-.search-intersec-bg2 {
-	background-color: rgb(7, 7, 7) !important;
-}
-
-.disko-intersec-bg1 {
-	background-color: rgba(7, 7, 7) !important;
-}
-.disko-intersec-bg2 {
-	background-color: rgb(206, 20, 20) !important;
+.profile-intersec-bg2 {
+	background-color: rgb(33, 33, 33) !important;
 }
 .podcast-intersec-bg1 {
 	background-color: rgba(0, 40, 32, 0.7) !important;
@@ -828,5 +755,22 @@ a.active2 {
 
 .podcast-intersec-bg2 {
 	background-color: rgba(0, 40, 32, 1) !important;
+}
+
+.base-intersec-bg1 {
+	background-color: rgba(7, 7, 7, 0.8) !important;
+}
+.base-intersec-bg2 {
+	background-color: rgba(7, 7, 7) !important;
+}
+.base2-intersec-bg1 {
+	background-color: rgba(18, 18, 18, 0.8) !important;
+}
+.base2-intersec-bg2 {
+	background-color: rgba(18, 18, 18) !important;
+}
+
+.disko-intersec-bg1 {
+	background-color: rgba(7, 7, 7) !important;
 }
 </style>

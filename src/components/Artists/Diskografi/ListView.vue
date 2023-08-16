@@ -569,10 +569,10 @@ export default {
 
 		this.observer2 = new IntersectionObserver((entries, obs) => {
 			if (entries[0].intersectionRatio <= 0.9) {
-				this.header.classList.add('disko-intersec-bg1');
+				this.header.classList.add('base-intersec-bg2');
 				this.diskoHeader.classList.add('list--view-intersect');
 			} else {
-				this.header.classList.remove('disko-intersec-bg1');
+				this.header.classList.remove('base-intersec-bg2');
 
 				this.diskoHeader.classList.remove('list--view-intersect');
 			}
@@ -583,7 +583,7 @@ export default {
 
 	beforeUnmount() {
 		window.removeEventListener('resize', this.resizeOption);
-		this.header ? this.header.classList.remove('disko-intersec-bg1') : '';
+		this.header ? this.header.classList.remove('base-intersec-bg2') : '';
 		this.diskoHeader
 			? this.diskoHeader.classList.remove('list--view-intersect')
 			: '';
