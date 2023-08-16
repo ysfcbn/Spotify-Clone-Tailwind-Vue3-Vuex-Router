@@ -24,8 +24,7 @@
             getCurrentlyPlayingTrack?.item?.artists[0].id === item?.id &&
             getCurrentlyPlayingTrack?.is_playing &&
             !getCurrentlyPlayingTrack?.context &&
-            isArtistContext &&
-            this.allQueueList.length
+            isArtistContext
               ? 'opacity-100 translate-y-[-0.4rem]'
               : 'opacity-0'
           "
@@ -255,7 +254,6 @@ export default {
       console.log(uri.index);
       console.log(this.findCurrentPlayingTrackIndex);
       if (this.isPlayingArtistTopTracks) {
-        console.log("ALLQUEUELISTLENGHT GEÇERLİ");
         await this.$store.dispatch("controller/pauseCurrentTrack");
       } else {
         uri.index = await this.currentPlayingTrackIndex;
@@ -332,7 +330,8 @@ export default {
       } else if (
         this.contextType === "track" &&
         this.currentTrackID === this.item?.uri &&
-        this.getCurrentlyPlayingTrack?.is_playing
+        this.getCurrentlyPlayingTrack?.is_playing &&
+        !this.isArtistContext
       ) {
         await this.$store.dispatch("controller/pauseCurrentTrack");
       } else {
@@ -489,7 +488,8 @@ export default {
     isPlayingContextUri() {
       return this.contextType === "track"
         ? !this.getCurrentlyPlayingTrack?.context &&
-            this.currentTrackID === this.item.id &&
+            !this.isArtistContext &&
+            this.currentTrackID === this.item?.id &&
             this.getCurrentlyPlayingTrack?.is_playing
         : this.getCurrentlyPlayingTrack?.context?.uri === this.contextUri &&
             this.getCurrentlyPlayingTrack?.is_playing;
