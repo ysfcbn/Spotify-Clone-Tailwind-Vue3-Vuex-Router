@@ -353,9 +353,10 @@ export default {
 	watch: {},
 	created() {
 		this.queuePage = true;
-		console.log(this.opened);
 		this.findFavTracks();
 		this.addGreenHeartFavTracks();
+		this.header = document.getElementById('header');
+		this.header.classList.add('base2-intersec-bg2');
 		if (
 			this.queueTrackList.length &&
 			this.lastQueueTrackListLength !== this.queueTrackList.length
@@ -369,6 +370,7 @@ export default {
 	},
 	unmounted() {
 		this.$store.commit('controller/clearQueueTracksID');
+		this.header ? this.header.classList.remove('base2-intersec-bg2') : '';
 	},
 };
 </script>
