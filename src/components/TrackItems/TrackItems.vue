@@ -437,9 +437,7 @@ export default {
 			const isFavTrackID = this.allFavTracks.find(
 				item => item.track.id === trackID
 			)?.track.id;
-			isFavTrackID
-				? this.removeFavTrack(isFavTrackID)
-				: this.addFavTrack(trackID);
+			isFavTrackID ? this.removeFavTrack(trackID) : this.addFavTrack(trackID);
 		},
 
 		selectedTrackEl(trackID) {
@@ -525,6 +523,7 @@ export default {
 							type: 'favSong',
 							status: true,
 						});
+					this.$store.dispatch('controller/isFavTrack', trackID);
 					this.fetchFavTracks()
 						.then(() => {
 							this.playlistPage
@@ -567,6 +566,8 @@ export default {
 							type: 'favSong',
 							status: false,
 						});
+						this.$store.dispatch('controller/isFavTrack', trackID);
+
 						if (this.favoriteSongs) {
 							this.removeGreenHeartFavTracks(this.selectedTrackEl(trackID));
 						}
@@ -583,7 +584,6 @@ export default {
 									console.log(this.selectedTrackEl(trackID));
 
 									this.removeGreenHeartFavTracks(this.selectedTrackEl(trackID));
-
 									this.TrackPage
 										? this.removeGreenHeartFavTracks2(
 												this.selectedTrackEl2(trackID)

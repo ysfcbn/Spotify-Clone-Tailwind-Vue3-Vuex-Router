@@ -181,7 +181,7 @@ export default {
 							status: true,
 						});
 						this.fetchFavTracks();
-						this.$store.dispatch('controller/isFavTrack');
+						this.$store.dispatch('controller/isFavTrack', this.currentTrackID);
 					}
 				})
 				.catch(err => console.log(err));
@@ -203,7 +203,7 @@ export default {
 							status: false,
 						});
 						this.fetchFavTracks();
-						this.$store.dispatch('controller/isFavTrack');
+						this.$store.dispatch('controller/isFavTrack', this.currentTrackID);
 					}
 				})
 				.catch(err => console.log(err));

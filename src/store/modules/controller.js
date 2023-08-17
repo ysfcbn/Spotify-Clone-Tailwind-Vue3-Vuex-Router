@@ -305,7 +305,7 @@ const controllerModule = {
 								dispatch('checkUserFavArtist', data.item.artists[0].id);
 								commit('currentContextType', data?.context?.type);
 								commit('currentTrackID', data.item.id);
-								dispatch('isFavTrack');
+								dispatch('isFavTrack', getters.currentTrackID);
 								commit('currentTrackAlbumImage', data.item.album.images[0].url);
 								if (getters.getPlaybackState.is_playing) {
 									dispatch('clearIntervalFunc');
@@ -342,11 +342,12 @@ const controllerModule = {
 		async playbackState({ commit }, playback_State) {
 			commit('playbackState', await playback_State);
 		},
-		async isFavTrack({ dispatch, getters }) {
+		async isFavTrack({ dispatch, getters }, selectedTrackID) {
 			await axios
 				.get(
 					`https://api.spotify.com/v1/me/tracks/contains?ids=` +
-						getters.currentTrackID,
+						selectedTrackID,
+
 					{
 						headers: {
 							Accept: 'application/json',
@@ -704,7 +705,7 @@ const controllerModule = {
 				})
 				.catch(err => console.log(err));
 		},
-		async skipToPrevTrack({ getters, dispatch, commit }) {
+		async skipToPrevTrack({ getters, dispatch, commit, state }) {
 			fetch(
 				`https://api.spotify.com/v1/me/player/previous?device_id=${getters.deviceID}`,
 				{
@@ -727,6 +728,12 @@ const controllerModule = {
 						dispatch('setIntervalFunc');
 						if (state.allQueueList.length) {
 							dispatch('userQueue');
+							dispatch('userQueue').then(() => {
+								console.log('PREV USERQUEUE');
+								if (state.queueTrackList.length) {
+									state.allQueueList.splice(0, state.queueTrackList.length);
+								}
+							});
 						}
 					}
 				})
