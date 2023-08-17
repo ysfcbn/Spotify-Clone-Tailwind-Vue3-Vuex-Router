@@ -237,7 +237,7 @@
 			</Card>
 
 			<Card :currentData="severalPlaylists" :severalPlaylist="true">
-				<template #cardTitle>Günlük müzik ihtiyacın</template>
+				<template #cardTitle>Your daily music needs</template>
 
 				<template #imgContainer="{ data }">
 					<div class="w-full relative mb-5">

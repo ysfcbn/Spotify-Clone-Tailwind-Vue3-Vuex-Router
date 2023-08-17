@@ -22,12 +22,9 @@
 				<div
 					v-if="contextType === 'artist'"
 					:class="
-						getCurrentlyPlayingTrack?.item?.artists[0].id === item?.id &&
-						getCurrentlyPlayingTrack?.is_playing &&
-						!getCurrentlyPlayingTrack?.context &&
-						isArtistContext
-							? 'opacity-0'
-							: 'opacity-100 translate-y-[-0.4rem]'
+						isPlayingArtistTopTracks
+							? 'opacity-100 translate-y-[-0.4rem]'
+							: 'opacity-0'
 					"
 					class="bg-dark1 rounded-full right-0 bottom-0 absolute flex items-center mx-2 group-hover:block group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
 				>
@@ -397,10 +394,11 @@ export default {
 
 		isPlayingArtistTopTracks() {
 			return (
-				this.getCurrentlyPlayingTrack?.item?.artists[0].id ===
-					this.item?.track.artists[0].id &&
+				this.getCurrentlyPlayingTrack?.item?.artists[0]?.id ===
+					this.item?.track?.artists[0]?.id &&
 				!this.getCurrentlyPlayingTrack?.context &&
-				this.getCurrentlyPlayingTrack?.is_playing
+				this.getCurrentlyPlayingTrack?.is_playing &&
+				this.isArtistContext
 			);
 		},
 		isPlayingContextUri() {

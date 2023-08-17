@@ -29,12 +29,13 @@
 			</template>
 			<template #playBtn="{ data }">
 				<div
-					:class="{
-						'opacity-100 translate-y-[-0.4rem]	':
-							data?.uri === getCurrentlyPlayingTrack?.context?.uri &&
-							getCurrentlyPlayingTrack?.is_playing,
-					}"
-					class="bg-dark1 rounded-full right-0 bottom-0 absolute flex items-center my-1 mx-2 group-hover:block opacity-0 group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
+					:class="
+						data?.uri === getCurrentlyPlayingTrack?.context?.uri &&
+						getCurrentlyPlayingTrack?.is_playing
+							? 'opacity-100 translate-y-[-0.4rem]'
+							: 'opacity-0'
+					"
+					class="bg-dark1 rounded-full right-0 bottom-0 absolute flex items-center mx-2 group-hover:block group-hover:opacity-100 transition ease-in duration-200 group-hover:translate-y-[-0.4rem]"
 				>
 					<button
 						@click="
@@ -43,6 +44,7 @@
 									uri: data?.uri,
 									index: currentPlayingTrackIndex,
 									type: data?.type,
+									name: data?.name,
 								}),
 								(href = data?.href)
 							)
@@ -52,12 +54,12 @@
 						id="playBtn"
 						:class="{
 							' bg-green3/80 scale-80': leftClick,
-							'hover:scale-110 bg-green3/95 hover:bg-green3 ': !leftClick,
+							'hover:scale-106 bg-green3/95 hover:bg-green3 ': !leftClick,
 						}"
-						class="p-3 rounded-full cursor-default shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
+						class="p-[11px] rounded-full cursor-default shadow-[0px_5px_6px_2px_rgba(0,0,0,0.4)]"
 					>
 						<h1 class="text-white"></h1>
-						<svg role="img" height="24" width="24" viewBox="0 0 24 24">
+						<svg role="img" height="20" width="20" viewBox="0 0 24 24">
 							<path
 								v-if="
 									data?.uri === getCurrentlyPlayingTrack?.context?.uri &&
@@ -212,12 +214,12 @@ export default {
 			console.log(entries);
 
 			this.header.classList.toggle(
-				'librarySec3-intersec-bg1',
+				'base-intersec-bg1',
 				entries[0].intersectionRatio <= 0.95
 			);
 
 			this.header.classList.toggle(
-				'librarySec3-intersec-bg2',
+				'base-intersec-bg2',
 				entries[0].intersectionRatio <= 0.4
 			);
 
@@ -232,8 +234,8 @@ export default {
 	beforeUnmount() {
 		console.log('genrePage Unmounted');
 		this.observer.unobserve(this.genreEl);
-		this.header.classList.remove('librarySec3-intersec-bg1');
-		this.header.classList.remove('librarySec3-intersec-bg2');
+		this.header.classList.remove('base-intersec-bg1');
+		this.header.classList.remove('base-intersec-bg2');
 		this.genrePage = false;
 	},
 };

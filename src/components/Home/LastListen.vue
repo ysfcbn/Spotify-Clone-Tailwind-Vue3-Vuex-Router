@@ -357,8 +357,7 @@ export default {
 							item => item.id === this.currentTrackID
 						)
 				  )
-				: this.contextType === 'artist' &&
-				  this.contextType === this.getCurrentlyPlayingTrack?.context?.type
+				: this.contextType === 'artist'
 				? this.artistTopTracks.indexOf(
 						this.artistTopTracks.find(item => item.id === this.currentTrackID)
 				  )
