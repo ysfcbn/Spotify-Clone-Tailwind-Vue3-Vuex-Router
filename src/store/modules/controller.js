@@ -479,7 +479,8 @@ const controllerModule = {
 					{
 						uris: [uri.uri],
 						position_ms:
-							uri.id === getters.getPlaybackState?.item?.id
+							uri.id === getters.getPlaybackState?.item?.id &&
+							getters.isTrackContext
 								? getters.getPlaybackState.progress_ms
 								: 0,
 					},

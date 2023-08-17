@@ -24,7 +24,7 @@
 						getCurrentlyPlayingTrack?.item?.artists[0].id === item?.id &&
 						getCurrentlyPlayingTrack?.is_playing &&
 						!getCurrentlyPlayingTrack?.context &&
-						this.isArtistContext
+						isArtistContext
 							? 'opacity-100 translate-y-[-0.4rem]'
 							: 'opacity-0'
 					"
@@ -58,8 +58,8 @@
 				</div>
 				<div
 					v-else-if="
-						contextType == 'album' ||
-						contextType == 'playlist' ||
+						contextType === 'album' ||
+						contextType === 'playlist' ||
 						contextType === 'track'
 					"
 					:class="{
@@ -325,10 +325,10 @@ export default {
 				await this.$store.dispatch('controller/pauseCurrentTrack');
 			} else {
 				if ((await uri.type) === 'playlist') {
-					await this.fetchPlaylist(href);
 					this.typeOfSelectedSection = 'playlist';
+					await this.fetchPlaylist(href);
 					uri.id =
-						this.currentPlaylist[this.currentPlayingTrackIndex]?.track.id;
+						this.currentPlaylist[this.currentPlayingTrackIndex]?.track?.id;
 					uri.name = this.currentPlaylistName;
 				} else if ((await uri.type) === 'album') {
 					this.typeOfSelectedSection = 'album';
@@ -455,13 +455,15 @@ export default {
 		},
 
 		findCurrentPlayingTrackIndex() {
-			return this.typeOfSelectedSection === 'playlist'
+			return this.typeOfSelectedSection === 'playlist' &&
+				this.contextType === this.getCurrentlyPlayingTrack?.context?.type
 				? this.currentPlaylist?.indexOf(
 						this.currentPlaylist?.find(
 							item => item.track.id === this.currentTrackID
 						)
 				  )
-				: this.typeOfSelectedSection === 'album'
+				: this.typeOfSelectedSection === 'album' &&
+				  this.contextType === this.getCurrentlyPlayingTrack?.context?.type
 				? this.currentAlbumTracks?.indexOf(
 						this.currentAlbumTracks?.find(
 							item => item.id === this.currentTrackID
@@ -471,7 +473,7 @@ export default {
 				? this.artistTopTracks.indexOf(
 						this.artistTopTracks.find(item => item.id === this.currentTrackID)
 				  )
-				: '';
+				: 0;
 		},
 		currentPlayingTrackIndex() {
 			return this.isTrackContext && this.typeOfSelectedSection === 'artist'
