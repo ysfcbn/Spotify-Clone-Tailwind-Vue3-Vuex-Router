@@ -172,8 +172,12 @@ export default {
 	},
 	methods: {
 		closeModal(e) {
-			if (!this.$el.contains(e.target.closest('.modal'))) {
+			if (!this.$el.contains(e.target.closest('.modal')) && this.showedAllInfo) {
 				this.$emit('close');
+			} else if(!this.$el.contains(e.target.closest('.modal')) ){
+				this.$store.dispatch('controller/modalInfoType', {
+						type: 'notUnderstand',
+				  });
 			}
 		},
 		currentImage(index) {
