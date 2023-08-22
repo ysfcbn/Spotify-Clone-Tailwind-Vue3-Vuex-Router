@@ -188,15 +188,15 @@
 							<span class="leading-5">
 								{{ currentArtistMonthlyListeners }} monthly listeners
 							</span>
-							<div class="w-[5.4rem]">
+							<div class="">
 								<button
 									@click="addRemoveArtist"
 									:class="{
-										'border-white': currentArtistIsFav,
-										'hover:border-white border-opacwhite2 ':
+										'w-[5.5rem]': currentArtistIsFav,
+										'w-[4.5rem]':
 											!currentArtistIsFav,
 									}"
-									class="border h-fit w-full text-white px-2 py-2 rounded-full flex items-center justify-center"
+									class="border h-fit w-full text-white px-2 py-2 rounded-full flex items-center justify-center hover:scale-[1.1] border-opacwhite2 hover:border-white"
 								>
 									<span
 										v-if="currentArtistIsFav"
