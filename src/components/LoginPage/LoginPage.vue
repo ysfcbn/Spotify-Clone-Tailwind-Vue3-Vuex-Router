@@ -167,7 +167,7 @@
 </template>
 
 <script>
-import { getAuth } from "../LoginPage/auth.js";
+import { getAuth,getCodeFromUrl, getToken } from "../LoginPage/auth.js";
 import AppHowitsWork from "../Modal/AppHowitsWork.vue";
 
 export default {
