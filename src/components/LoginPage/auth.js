@@ -77,3 +77,31 @@ export const getAuth = async (clientId) => {
 
   window.location.href = authUrl.toString();
 };
+
+/* ✅ NEW: URL'den code alma */
+export const getCodeFromUrl = () => {
+  const params = new URLSearchParams(window.location.search);
+
+  return params.get("code");
+};
+
+/* ✅ NEW: access token alma */
+export const getToken = async (code, clientId) => {
+  const codeVerifier = localStorage.getItem("code_verifier");
+
+  const response = await fetch("https://accounts.spotify.com/api/token", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams({
+      client_id: clientId,
+      grant_type: "authorization_code",
+      code,
+      redirect_uri: REDIRECT_URI,
+      code_verifier: codeVerifier,
+    }),
+  });
+
+  return await response.json();
+};
